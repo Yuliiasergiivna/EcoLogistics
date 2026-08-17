@@ -1,0 +1,42 @@
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EcoLogistics.Models.UserBlock
+{
+    public class User
+    {
+        [Key]
+        [ScaffoldColumn(false)]
+        public Guid Id_user { get; set; } = Guid.NewGuid();
+        [MaxLength(64)]
+        [DisplayName("Votre pseudo: ")]
+        public string? Nickname { get; set; }
+        [DisplayName("Adresse électronique : ")]
+        [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas d'un format valide.")]
+        [Required(ErrorMessage = "L'adresse électronique est obligatoire.")]
+        [MaxLength(100)]
+        public string Email { get; set; }
+        [DisplayName("Mot de passe : ")]
+        [DataType(DataType.Password)]
+        [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&=\-+])[a-zA-Z\d@$!%*?&=\-+]{8,64}$", ErrorMessage = "Le mot de passe ne correspond pas à la sécurité minimale requise.")]
+        [MinLength(8, ErrorMessage = "Le mot de passe doit avoir au minimum 8 caractères.")]
+        [MaxLength(64, ErrorMessage = "Le mot de passe doit avoir au maximum 64 caractères.")]
+        public string Password { get; set; }
+        [NotMapped]
+        [DisplayName("Confirmation du mot de passe : ")]
+        [DataType(DataType.Password)]
+        [Compare(nameof(Password), ErrorMessage = "Les mots de passe ne correspondent pas.")]
+        public string ConfirmPassword { get; set; }
+        [DisplayName("Rôle : ")]
+        [MaxLength(24)]
+        public string Role { get; set; }
+        [DisplayName("Actif : ")]
+        public bool IsActive { get; set; }
+        [ScaffoldColumn(false)]
+        public Guid? Id_perso { get; set; }
+        [ForeignKey("Id_perso")]
+        public Donnees_perso? Donnees_perso { get; set; }
+    }
+}
