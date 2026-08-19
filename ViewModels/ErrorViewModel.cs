@@ -1,4 +1,4 @@
-namespace EcoLogistics.Models
+namespace EcoLogistics.ViewModels
 {
     public class ErrorViewModel
     {

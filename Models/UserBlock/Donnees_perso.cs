@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using EcoLogistics.Models.Geo;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -42,7 +43,7 @@ namespace EcoLogistics.Models.UserBlock
         public string? Statut { get; set; }
         [ScaffoldColumn(false)]
         public int Id_localite { get; set; }
-        //[ForeignKey("Id_localite")]
-       // public Localite? Localite { get; set; }
+        [ForeignKey("Id_localite")]
+        public Localite? Localite { get; set; }
     }
 }

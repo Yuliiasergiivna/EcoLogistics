@@ -4,6 +4,7 @@ using EcoLogistics.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoLogistics.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819095524_UpdateBlockGeo")]
+    partial class UpdateBlockGeo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace EcoLogistics.Migrations
 
                     b.HasKey("Id_commune");
 
-                    b.ToTable("CommuneBXLS");
+                    b.ToTable("CommuneBXL");
                 });
 
             modelBuilder.Entity("EcoLogistics.Models.Geo.Localite", b =>
@@ -89,7 +92,7 @@ namespace EcoLogistics.Migrations
 
                     b.HasIndex("Id_pays");
 
-                    b.ToTable("Localites");
+                    b.ToTable("Localite");
                 });
 
             modelBuilder.Entity("EcoLogistics.Models.Geo.Pays", b =>

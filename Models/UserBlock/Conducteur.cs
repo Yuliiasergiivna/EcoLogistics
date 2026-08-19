@@ -7,7 +7,7 @@ namespace EcoLogistics.Models.UserBlock
     {
         [Key]
         [ScaffoldColumn(false)]
-        public int Id { get; set; }
+        public int Id_conducteur { get; set; }
         [MaxLength(16, ErrorMessage = "Le numéro de plaque ne peut pas dépasser 16 caractères.")]
         [Display(Name = "Numéro de plaque: ")]
         [Required(ErrorMessage = "Le numéro de plaque est obligatoire.")]
