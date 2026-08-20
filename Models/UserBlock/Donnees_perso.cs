@@ -30,10 +30,10 @@ namespace EcoLogistics.Models.UserBlock
         [Required(ErrorMessage = "La date de création du profil est obligatoire.")]
         public DateTime Created_at { get; set; }
         [DataType(DataType.Date)]
+        [DisplayName("Date de dernière mise à jour du profil: ")]
         public DateTime? Updated_at { get; set; }
         [DisplayName("Date de licenciement: ")]
         [DataType(DataType.Date)]
-        [Required]
         public DateTime? Date_licenciement { get; set; }
         [DisplayName("Actif/Employé actuel: ")]
         [Required]
@@ -42,7 +42,7 @@ namespace EcoLogistics.Models.UserBlock
         [Display(Name = "Statut: ")]
         public string? Statut { get; set; }
         [ScaffoldColumn(false)]
-        public int Id_localite { get; set; }
+        public int? Id_localite { get; set; }
         [ForeignKey("Id_localite")]
         public Localite? Localite { get; set; }
     }

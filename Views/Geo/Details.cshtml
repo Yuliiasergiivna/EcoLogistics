@@ -1,0 +1,185 @@
+﻿@model EcoLogistics.ViewModels.Geo.GeoDetailsViewModel
+
+@{
+    ViewData["Title"] = "Détails géographiques";
+}
+
+<style>
+    :root {
+        --cf2d-green: #68A63C;
+        --cf2d-blue: #1B75BC;
+        --cf2d-dark: #2B3A42;
+    }
+
+    .cf2d-card {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .cf2d-header-green {
+        background-color: var(--cf2d-green);
+        color: #ffffff;
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
+    }
+
+    .cf2d-section-title {
+        color: var(--cf2d-blue);
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .cf2d-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .cf2d-value {
+        color: var(--cf2d-dark);
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    .btn-cf2d-secondary {
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 8px;
+    }
+
+        .btn-cf2d-secondary:hover {
+            background-color: #5a6268;
+            color: #fff;
+        }
+
+    .btn-cf2d-blue {
+        background-color: var(--cf2d-blue);
+        color: #fff;
+        border-radius: 8px;
+    }
+
+        .btn-cf2d-blue:hover {
+            background-color: #145A93;
+            color: #fff;
+        }
+</style>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg cf2d-card mb-4">
+
+                <!-- Card Header -->
+                <div class="card-header cf2d-header-green py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0 fw-bold">
+                        <i class="bi bi-geo-alt-fill me-2"></i>Détails géographiques
+                    </h2>
+                    <span class="badge bg-white text-dark fw-bold">@Model.Nom_localite</span>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Section 1: Localité -->
+                    <div class="mb-4">
+                        <h4 class="h5 cf2d-section-title mb-3">
+                            <i class="bi bi-building me-2"></i>Localité
+                        </h4>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="cf2d-label">@Html.DisplayNameFor(model => model.Nom_localite)</div>
+                                <div class="cf2d-value">@(Model.Nom_localite ?? "—")</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="cf2d-label">@Html.DisplayNameFor(model => model.Code_postal)</div>
+                                <div class="cf2d-value">
+                                    <span class="badge bg-light text-dark border">@(Model.Code_postal ?? "—")</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="cf2d-label">@Html.DisplayNameFor(model => model.Province)</div>
+                                <div class="cf2d-value">@(Model.Province ?? "—")</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Pays -->
+                    <div class="mb-4">
+                        <h4 class="h5 cf2d-section-title mb-3">
+                            <i class="bi bi-globe me-2"></i>Pays
+                        </h4>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="cf2d-label">@Html.DisplayNameFor(model => model.Nom_pays)</div>
+                                <div class="cf2d-value">@(Model.Nom_pays ?? "—")</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="cf2d-label">@Html.DisplayNameFor(model => model.Code_ISO)</div>
+                                <div class="cf2d-value">
+                                    <span class="badge bg-secondary">@(Model.Code_ISO ?? "—")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Commune BXL (Optionnel) -->
+                    @if (Model.Id_commune.HasValue)
+                    {
+                        <div class="mb-4">
+                            <h4 class="h5 cf2d-section-title mb-3">
+                                <i class="bi bi-map me-2"></i>Informations Commune (Bruxelles)
+                            </h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="cf2d-label">@Html.DisplayNameFor(model => model.Commune_principale)</div>
+                                    <div class="cf2d-value">@(Model.Commune_principale ?? "—")</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="cf2d-label">@Html.DisplayNameFor(model => model.Type)</div>
+                                    <div class="cf2d-value">@(Model.Type ?? "—")</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="cf2d-label">@Html.DisplayNameFor(model => model.Nom_fr)</div>
+                                    <div class="cf2d-value">@(Model.Nom_fr ?? "—")</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="cf2d-label">@Html.DisplayNameFor(model => model.Nom_nl)</div>
+                                    <div class="cf2d-value">@(Model.Nom_nl ?? "—")</div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="cf2d-label">@Html.DisplayNameFor(model => model.Sous_commune)</div>
+                                    <div class="cf2d-value">
+                                        @if (Model.Sous_commune)
+                                        {
+                                            <span class="badge bg-success">Oui</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-dark border">Non</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <!-- Footer / Actions -->
+                <div class="card-footer bg-light px-4 py-3 d-flex justify-content-between rounded-bottom-4">
+                    <a asp-action="Index" class="btn btn-cf2d-secondary px-4">
+                        <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                    </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id_localite" class="btn btn-cf2d-blue px-4">
+                            <i class="bi bi-pencil me-1"></i>Modifier
+                        </a>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

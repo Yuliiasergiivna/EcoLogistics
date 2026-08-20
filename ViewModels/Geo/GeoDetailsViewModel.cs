@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
 
-namespace EcoLogistics.ViewModels.Geo
-{
-
 
 namespace EcoLogistics.ViewModels.Geo
     {
@@ -48,5 +45,5 @@ namespace EcoLogistics.ViewModels.Geo
             public string? Type { get; set; }
         }
     }
-}
+
 

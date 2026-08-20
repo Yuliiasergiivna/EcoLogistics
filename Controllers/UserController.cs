@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace EcoLogistics.Controllers
 {
-    [Authorize]//Accès réservé aux utilisateurs autorisés
+    [Authorize(Roles ="Admin")]//Accès réservé aux utilisateurs autorisés
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -63,23 +63,6 @@ namespace EcoLogistics.Controllers
                 Id_commune = user.Donnees_perso?.Localite?.Id_commune,
                 Nom_commune = user.Donnees_perso?.Localite?.CommuneBXL?.Commune_principale
             };
-            //var viewModel = new UserProfileViewModel
-            //{
-            //    Nickname = "AlexDev",
-            //    Email = "alex@ecologistics.be",
-            //    Role = "Administrator",
-            //    IsUserActive = true,
-            //    Nom = "Dupont",
-            //    Prenom = "Jean",
-            //    Poste = "Logistics Manager",
-            //    Adresse = "Rue Royale 10",
-            //    Created_at = DateTime.Now.AddMonths(-6),
-            //    IsEmployeeActive = true,
-            //    Statut = "Actif",
-            //    Nom_localite = "Bruxelles",
-            //    Code_postal = "1000",
-            //    Nom_commune = "Bruxelles-Ville"
-            //};
 
             return View(viewModel);
         }

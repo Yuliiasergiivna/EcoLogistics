@@ -1,0 +1,57 @@
+﻿@model IEnumerable<EcoLogistics.Models.Geo.Localite>
+
+@{
+    ViewData["Title"] = "Gestion Géographique";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 fw-bold text-dark"><i class="bi bi-geo-alt-fill text-primary me-2"></i>Liste des Localités & Pays</h2>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle me-1"></i>Ajouter une localité
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom Localité</th>
+                        <th>Code Postal</th>
+                        <th>Province</th>
+                        <th>Pays</th>
+                        <th>Commune (BXL)</th>
+                        <th class="text-end px-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.Id_localite</td>
+                            <td>@item.Nom_localite</td>
+                            <td><span class="badge bg-light text-dark border">@item.Code_postal</span></td>
+                            <td>@(item.Province ?? "—")</td>
+                            <td>
+                                <span class="badge bg-primary">
+                                    @(item.Pays?.Nom_pays ?? "Non défini")
+                                </span>
+                            </td>
+                            <td>@(item.CommuneBXL?.Commune_principale ?? "—")</td>
+                            <td class="text-end px-4">
+                                <a asp-action="Details" asp-route-id="@item.Id_localite" class="btn btn-sm btn-outline-info me-1" title="Détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id_localite" class="btn btn-sm btn-outline-warning me-1" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

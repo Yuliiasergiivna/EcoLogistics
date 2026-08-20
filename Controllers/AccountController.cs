@@ -50,7 +50,8 @@ namespace EcoLogistics.Controllers
                     Adresse = model.Adresse,
                     Created_at = DateTime.Now,
                     IsActive = true,
-                    Statut = "Actif"
+                    Statut = "Actif",
+                    Id_localite = model.Id_localite
                 };
 
                 if (model.Id_localite.HasValue)
@@ -68,7 +69,7 @@ namespace EcoLogistics.Controllers
                     Password = model.Password,
                     Role = "User",
                     IsActive = true,
-                    Id_perso = perso.Id_perso
+                    Donnees_perso = perso
                 };
 
                 _context.Users.Add(user);
@@ -124,7 +125,7 @@ namespace EcoLogistics.Controllers
                         authProperties);
 
                     // Rediriger vers l'action Profil dans le contrôleur User
-                    return RedirectToAction("Profile", "User");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 ModelState.AddModelError(string.Empty, "Adresse électronique ou mot de passe incorrect.");

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcoLogistics.Models.UserBlock
 {
+    [Table("users")]
     public class User
     {
         [Key]
@@ -20,18 +21,11 @@ namespace EcoLogistics.Models.UserBlock
         [DisplayName("Mot de passe : ")]
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&=\-+])[a-zA-Z\d@$!%*?&=\-+]{8,64}$", ErrorMessage = "Le mot de passe ne correspond pas à la sécurité minimale requise.")]
-        [MinLength(8, ErrorMessage = "Le mot de passe doit avoir au minimum 8 caractères.")]
         [MaxLength(64, ErrorMessage = "Le mot de passe doit avoir au maximum 64 caractères.")]
         public string Password { get; set; }
-        [NotMapped]
-        [DisplayName("Confirmation du mot de passe : ")]
-        [DataType(DataType.Password)]
-        [Compare(nameof(Password), ErrorMessage = "Les mots de passe ne correspondent pas.")]
-        public string ConfirmPassword { get; set; }
         [DisplayName("Rôle : ")]
         [MaxLength(24)]
-        public string Role { get; set; }
+        public string Role { get; set; } = "User";
         [DisplayName("Actif : ")]
         public bool IsActive { get; set; }
         [ScaffoldColumn(false)]
