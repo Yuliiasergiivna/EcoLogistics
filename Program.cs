@@ -1,6 +1,8 @@
 using EcoLogistics.Data;
-using Microsoft.EntityFrameworkCore;
+using EcoLogistics.Models.UserBlock;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +21,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/Login";
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
-
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

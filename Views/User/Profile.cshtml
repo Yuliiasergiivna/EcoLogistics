@@ -1,70 +1,119 @@
-﻿@model EcoLogistics.ViewModels.UserBlock.UserProfileViewModel
+﻿@model IEnumerable<EcoLogistics.ViewModels.UserBlock.DonneesPersoListViewModel>
 
 @{
-    ViewData["Title"] = "Mon Profil";
+    ViewData["Title"] = "Liste des données personnelles";
+    var actifs = Model.Where(x => x.IsActive).ToList();
+    var inactifs = Model.Where(x => !x.IsActive).ToList();
 }
 
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2 class="h4 mb-0">@ViewData["Title"]</h2>
-            <span class="badge @(Model.IsUserActive ? "bg-success" : "bg-danger")">
-                @(Model.IsUserActive ? "Compte Actif" : "Compte Inactif")
-            </span>
-        </div>
-        <div class="card-body">
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 fw-bold text-dark">
+        <i class="bi bi-people-fill text-primary me-2"></i>Données personnelles
+    </h2>
+</div>
 
-            <!-- Informations sur le compte -->
-            <h5 class="text-secondary border-bottom pb-2">Informations du compte</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <p><strong>@Html.DisplayNameFor(m => m.Nickname)</strong> @(Model.Nickname ?? "Non renseigné")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.Email)</strong> @Model.Email</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>@Html.DisplayNameFor(m => m.Role)</strong> <span class="badge bg-secondary">@Model.Role</span></p>
-                </div>
-            </div>
-
-            <!-- Données personnelles -->
-            <h5 class="text-secondary border-bottom pb-2 mt-4">Données personnelles</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <p><strong>@Html.DisplayNameFor(m => m.Nom)</strong> @(Model.Nom ?? "Non renseigné")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.Prenom)</strong> @(Model.Prenom ?? "Non renseigné")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.Poste)</strong> @(Model.Poste ?? "Non renseigné")</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>@Html.DisplayNameFor(m => m.Statut)</strong> @(Model.Statut ?? "Non renseigné")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.IsEmployeeActive)</strong> @(Model.IsEmployeeActive ? "Oui" : "Non")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.Created_at)</strong> @Model.Created_at.ToString("dd/MM/yyyy HH:mm")</p>
-                    @if (Model.Updated_at.HasValue)
+<!-- 1. ТАБЛИЦА АКТИВНЫХ СОТРУДНИКОВ -->
+<div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="card-title mb-0 fw-bold text-success">
+            <i class="bi bi-check-circle-fill me-2"></i>Employés actifs (@actifs.Count)
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nom & Prénom</th>
+                        <th>Poste</th>
+                        <th>Localité</th>
+                        <th>Statut</th>
+                        <th class="text-end px-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!actifs.Any())
                     {
-                        <p><strong>@Html.DisplayNameFor(m => m.Updated_at)</strong> @Model.Updated_at.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-muted">Aucun employé actif trouvé.</td>
+                        </tr>
                     }
-                    @if (Model.Date_licenciement.HasValue)
+                    else
                     {
-                        <p class="text-danger"><strong>@Html.DisplayNameFor(m => m.Date_licenciement)</strong> @Model.Date_licenciement.Value.ToString("dd/MM/yyyy")</p>
+                        @foreach (var item in actifs)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.Nom @item.Prenom</td>
+                                <td>@(item.Poste ?? "—")</td>
+                                <td>@item.Nom_localite</td>
+                                <td><span class="badge bg-success">@item.Statut</span></td>
+                                <td class="text-end px-4">
+                                    <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Voir détails
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                     }
-                </div>
-            </div>
-
-            <!-- Adresse & Localité -->
-            <h5 class="text-secondary border-bottom pb-2 mt-4">Adresse & Localité</h5>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <p><strong>@Html.DisplayNameFor(m => m.Adresse)</strong> @(Model.Adresse ?? "Non renseignée")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.Nom_localite)</strong> @(Model.Nom_localite ?? "Non renseignée")</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>@Html.DisplayNameFor(m => m.Code_postal)</strong> @(Model.Code_postal ?? "Non renseigné")</p>
-                    <p><strong>@Html.DisplayNameFor(m => m.Nom_commune)</strong> @(Model.Nom_commune ?? "Non renseignée")</p>
-                </div>
-            </div>
-
+                </tbody>
+            </table>
         </div>
-        <div class="card-footer text-end">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Retour à l'accueil</a>
+    </div>
+</div>
+
+<!-- 2. КНОПКА И СЕКЦИЯ ДЛЯ УВОЛЕННЫХ СОТРУДНИКОВ -->
+<div class="mb-3">
+    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#inactifsCollapse" aria-expanded="false" aria-controls="inactifsCollapse">
+        <i class="bi bi-archive-fill me-1"></i> Afficher / Masquer les anciens employés (@inactifs.Count)
+    </button>
+</div>
+
+<div class="collapse" id="inactifsCollapse">
+    <div class="card shadow-sm border-0 rounded-3 bg-light">
+        <div class="card-header bg-secondary text-white py-2">
+            <h6 class="card-title mb-0">
+                <i class="bi bi-person-x-fill me-2"></i>Historique - Employés inactifs
+            </h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-muted">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Nom & Prénom</th>
+                            <th>Poste</th>
+                            <th>Localité</th>
+                            <th>Statut</th>
+                            <th class="text-end px-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!inactifs.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-3">Aucun ancien employé enregistré.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in inactifs)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@item.Nom @item.Prenom</td>
+                                    <td>@(item.Poste ?? "—")</td>
+                                    <td>@item.Nom_localite</td>
+                                    <td><span class="badge bg-danger">@item.Statut</span></td>
+                                    <td class="text-end px-4">
+                                        <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-eye me-1"></i>Voir détails
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

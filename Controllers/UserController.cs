@@ -20,17 +20,38 @@ namespace EcoLogistics.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim, out Guid userId))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            var list = await _context.Donnees_persos
+                .Include(d => d.Localite)
+                .Select(d => new DonneesPersoListViewModel
+                {
+                    Id_perso = d.Id_perso,
+                    Nom = d.Nom,
+                    Prenom = d.Prenom,
+                    Poste = d.Poste,
+                    Statut = d.Statut,
+                    IsActive = d.IsActive,
+                    Nom_localite = d.Localite != null ? d.Localite.Nom_localite : "—"
+                })
+                .ToListAsync();
+
+            return View(list);
+        }
+        // GET: /User/Details/{id}
+
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            //var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //if (userIdClaim == null || !Guid.TryParse(userIdClaim, out Guid userId))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
 
             var user = await _context.Users
                 .Include(u => u.Donnees_perso)
-                    .ThenInclude(p => p.Localite)
-                        .ThenInclude(l => l.CommuneBXL)
-                .FirstOrDefaultAsync(u => u.Id_user == userId);
+                    .ThenInclude(dp => dp.Localite)
+                      .ThenInclude(l =>l.CommuneBXL)
+                .FirstOrDefaultAsync(u => u.Donnees_perso.Id_perso == id);
 
             if (user == null)
             {

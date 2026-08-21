@@ -1,0 +1,75 @@
+﻿@model EcoLogistics.ViewModels.UserBlock.UserProfileViewModel
+
+@{
+    ViewData["Title"] = "Détails du profil";
+
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h2 class="h4 mb-0">@ViewData["Title"]</h2>
+            <span class="badge @(Model.IsUserActive ? "bg-success" : "bg-danger")">
+                @(Model.IsUserActive ? "Compte Actif" : "Compte Inactif")
+            </span>
+        </div>
+        <div class="card-body">
+
+            <!-- Informations sur le compte -->
+            <h5 class="text-secondary border-bottom pb-2">Informations du compte</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>@Html.DisplayNameFor(m => m.Nickname)</strong> @(Model.Nickname ?? "Non renseigné")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Email)</strong> @Model.Email</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>@Html.DisplayNameFor(m => m.Role)</strong> <span class="badge bg-secondary">@Model.Role</span></p>
+                </div>
+            </div>
+
+            <!-- Données personnelles -->
+            <h5 class="text-secondary border-bottom pb-2 mt-4">Données personnelles</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>@Html.DisplayNameFor(m => m.Nom)</strong> @(Model.Nom ?? "Non renseigné")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Prenom)</strong> @(Model.Prenom ?? "Non renseigné")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Poste)</strong> @(Model.Poste ?? "Non renseigné")</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>@Html.DisplayNameFor(m => m.Statut)</strong> @(Model.Statut ?? "Non renseigné")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.IsEmployeeActive)</strong> @(Model.IsEmployeeActive ? "Oui" : "Non")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Created_at)</strong> @Model.Created_at.ToString("dd/MM/yyyy HH:mm")</p>
+                    @if (Model.Updated_at.HasValue)
+                    {
+                        <p><strong>@Html.DisplayNameFor(m => m.Updated_at)</strong> @Model.Updated_at.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                    }
+                    @if (Model.Date_licenciement.HasValue)
+                    {
+                        <p class="text-danger"><strong>@Html.DisplayNameFor(m => m.Date_licenciement)</strong> @Model.Date_licenciement.Value.ToString("dd/MM/yyyy")</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Adresse & Localité -->
+            <h5 class="text-secondary border-bottom pb-2 mt-4">Adresse & Localité</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>@Html.DisplayNameFor(m => m.Adresse)</strong> @(Model.Adresse ?? "Non renseignée")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Nom_localite)</strong> @(Model.Nom_localite ?? "Non renseignée")</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>@Html.DisplayNameFor(m => m.Code_postal)</strong> @(Model.Code_postal ?? "Non renseigné")</p>
+                    <p><strong>@Html.DisplayNameFor(m => m.Nom_commune)</strong> @(Model.Nom_commune ?? "Non renseignée")</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer text-end">
+            <a asp-controller="User" asp-action="Profile" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+
+            </a>
+        </div>
+    </div>
+</div>
+

@@ -3,6 +3,8 @@ using EcoLogistics.Models.UserBlock;
 using EcoLogistics.ViewModels.UserBlock;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,12 @@ namespace EcoLogistics.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         // GET: Account/Register
@@ -71,7 +75,7 @@ namespace EcoLogistics.Controllers
                     IsActive = true,
                     Donnees_perso = perso
                 };
-
+                user.Password = _passwordHasher.HashPassword(user, model.Password);
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
@@ -98,34 +102,39 @@ namespace EcoLogistics.Controllers
             {
                 var user = await _context.Users
                     .Include(u => u.Donnees_perso)
-                    .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+                    .FirstOrDefaultAsync(u => u.Email == model.Email);
 
                 if (user != null)
                 {
-                    if (!user.IsActive)
+                    var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
+
+                    if (result == PasswordVerificationResult.Success)
                     {
-                        ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
-                        return View(model);
+                        if (!user.IsActive)
+                        {
+                            ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
+                            return View(model);
+                        }
+
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, user.Id_user.ToString()),
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Role, user.Role ?? "User"),
+                            new Claim("Nickname", user.Nickname ?? string.Empty)
+                        };
+
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var authProperties = new AuthenticationProperties { IsPersistent = model.RememberMe };
+
+                        await HttpContext.SignInAsync(
+                            CookieAuthenticationDefaults.AuthenticationScheme,
+                            new ClaimsPrincipal(claimsIdentity),
+                            authProperties);
+
+                        // Rediriger vers l'action Profil dans le contrôleur User
+                        return RedirectToAction("Index", "Home");
                     }
-
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id_user.ToString()),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, user.Role ?? "User"),
-                        new Claim("Nickname", user.Nickname ?? string.Empty)
-                    };
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties { IsPersistent = model.RememberMe };
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-
-                    // Rediriger vers l'action Profil dans le contrôleur User
-                    return RedirectToAction("Index", "Home");
                 }
 
                 ModelState.AddModelError(string.Empty, "Adresse électronique ou mot de passe incorrect.");
@@ -137,6 +146,7 @@ namespace EcoLogistics.Controllers
         // POST: Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
