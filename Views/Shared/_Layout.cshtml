@@ -71,7 +71,7 @@
 
                         <div class="menu-header">User</div>
                         <div class="sub-menu">
-                            <a asp-controller="User" asp-action="Index">Utilisateurs</a>
+ @*                            <a asp-controller="User" asp-action="Index">Utilisateurs</a> *@
                             @if(User.IsInRole("Admin") )
                                 {
                                 <a asp-controller="User" asp-action="Profile">Données perso</a>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using EcoLogistics.Models.Geo;
+using System.ComponentModel;
 
 
 namespace EcoLogistics.ViewModels.Geo
@@ -43,7 +44,8 @@ namespace EcoLogistics.ViewModels.Geo
 
             [DisplayName("Type : ")]
             public string? Type { get; set; }
-        }
+
+    }
     }
 
 

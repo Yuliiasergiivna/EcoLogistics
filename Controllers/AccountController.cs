@@ -25,9 +25,14 @@ namespace EcoLogistics.Controllers
 
         // GET: Account/Register
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
-            ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+            //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+            ViewBag.Localites = new SelectList(
+                await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                "Id_localite",
+                "Nom_localite"
+);
             return View();
         }
 
@@ -41,7 +46,12 @@ namespace EcoLogistics.Controllers
                 if (await _context.Users.AnyAsync(u => u.Email == model.Email))
                 {
                     ModelState.AddModelError("Email", "L'adresse électronique est déjà utilisée.");
-                    ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+                    //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+                    ViewBag.Localites = new SelectList(
+                        await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                        "Id_localite",
+                        "Nom_localite"
+);
                     return View(model);
                 }
 
@@ -82,7 +92,12 @@ namespace EcoLogistics.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+            //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+            ViewBag.Localites = new SelectList(
+                await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                "Id_localite",
+                "Nom_localite"
+            );
             return View(model);
         }
 
@@ -104,12 +119,17 @@ namespace EcoLogistics.Controllers
                     .Include(u => u.Donnees_perso)
                     .FirstOrDefaultAsync(u => u.Email == model.Email);
 
-                if (user != null)
+                if (user == null)
                 {
-                    var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
+                    TempData["WarningMessage"] = "Cet utilisateur n'existe pas. Veuillez vous inscrire d'abord.";
+                    return RedirectToAction(nameof(Register));
+                }
 
-                    if (result == PasswordVerificationResult.Success)
-                    {
+
+                var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
+
+                if (result == PasswordVerificationResult.Success)
+                {
                         if (!user.IsActive)
                         {
                             ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
@@ -134,8 +154,8 @@ namespace EcoLogistics.Controllers
 
                         // Rediriger vers l'action Profil dans le contrôleur User
                         return RedirectToAction("Index", "Home");
-                    }
                 }
+                
 
                 ModelState.AddModelError(string.Empty, "Adresse électronique ou mot de passe incorrect.");
             }

@@ -1,4 +1,5 @@
 ﻿using EcoLogistics.Data;
+using EcoLogistics.Models.Geo;
 using EcoLogistics.ViewModels.Geo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +21,17 @@ namespace EcoLogistics.Controllers
         public async Task<IActionResult> Index()
         {
             // Page principal Geo
-            var localites = await _context.Localites
+            var viewModel = new GeoIndexViewModel
+            {
+                Localites = await _context.Localites
                 .Include(l => l.CommuneBXL)
                 .Include(l => l.Pays)
-                .ToListAsync();
+                .ToListAsync(),
+                Communes = await _context.CommuneBXLs.ToListAsync(),
+                PaysList = await _context.Pays.ToListAsync()
+            };
 
-            return View(localites);
+            return View(viewModel);
         }
         // GET: Geo/Details/1
         public async Task<IActionResult> Details(int? id)

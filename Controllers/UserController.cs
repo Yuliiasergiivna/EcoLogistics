@@ -1,4 +1,5 @@
 ﻿using EcoLogistics.Data;
+using EcoLogistics.Models.UserBlock;
 using EcoLogistics.ViewModels.UserBlock;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,7 @@ namespace EcoLogistics.Controllers
             {
                 return NotFound();
             }
+            //User? user = await _context.Users.FirstOrDefaultAsync(u => u.Id_perso == id || u.Donnees_perso.Id_perso == id);
 
             var viewModel = new UserProfileViewModel
             {

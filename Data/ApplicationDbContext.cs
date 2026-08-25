@@ -15,6 +15,6 @@ namespace EcoLogistics.Data
         // --Geo
         public DbSet<Localite> Localites { get; set; }
         public DbSet<Pays> Pays { get; set; }
-        public DbSet<CommuneBXL> CommuneBXLS { get; set; }
+        public DbSet<CommuneBXL> CommuneBXLs { get; set; }
     }
 }
