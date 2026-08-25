@@ -5,16 +5,14 @@ namespace EcoLogistics.ViewModels.UserBlock
 {
     public class LoginViewModel
     {
-        [DisplayName("Adresse électronique : ")]
-        [Required(ErrorMessage = "L'adresse électronique est obligatoire.")]
-        [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas d'un format valide.")]
-        public string Email { get; set; }
+        [DisplayName("Identifiant (Pseudo ou Email) : ")]
+        [Required(ErrorMessage = "L'identifiant est obligatoire.")]
+        public string LoginInput { get; set; } = string.Empty;
 
         [DisplayName("Mot de passe : ")]
         [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
         [DataType(DataType.Password)]
-     
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [DisplayName("Se souvenir de moi")]
         public bool RememberMe { get; set; }

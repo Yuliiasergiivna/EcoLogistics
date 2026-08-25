@@ -23,7 +23,6 @@ namespace EcoLogistics.Models.UserBlock
         public string? Poste { get; set; }
         [MaxLength(100, ErrorMessage = "L'adresse ne peut pas dépasser 100 caractères.")]
         [Display(Name = "Adresse: ")]
-        [Required(ErrorMessage = "L'adresse est obligatoire.")]
         public string? Adresse { get; set; }
         [DisplayName("Date de création du profil: ")]
         [DataType(DataType.Date)]

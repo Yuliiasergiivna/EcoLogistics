@@ -15,9 +15,8 @@ namespace EcoLogistics.Models.UserBlock
         public string? Nickname { get; set; }
         [DisplayName("Adresse électronique : ")]
         [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas d'un format valide.")]
-        [Required(ErrorMessage = "L'adresse électronique est obligatoire.")]
         [MaxLength(100)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         [DisplayName("Mot de passe : ")]
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Le mot de passe est obligatoire.")]

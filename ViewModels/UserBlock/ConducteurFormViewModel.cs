@@ -11,7 +11,6 @@ namespace EcoLogistics.ViewModels.UserBlock
         [Display(Name = "N° de Plaque")]
         public string N_plaque { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "La quantité de palettes est obligatoire.")]
         [Range(0, 100, ErrorMessage = "La quantité de palettes doit être comprise entre 0 et 100.")]
         [Display(Name = "Quantité de palettes")]
         public int Quantite_Npalette { get; set; }

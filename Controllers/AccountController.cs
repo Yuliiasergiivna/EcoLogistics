@@ -43,15 +43,20 @@ namespace EcoLogistics.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+                //if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+                //                {
+                //                    ModelState.AddModelError("Email", "L'adresse électronique est déjà utilisée.");
+                //                    //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
+                //                    ViewBag.Localites = new SelectList(
+                //                        await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                //                        "Id_localite",
+                //                        "Nom_localite"
+                //);
+                //                    return View(model);
+                //                }
+                if (await _context.Users.AnyAsync(u => u.Nickname == model.Nickname))
                 {
-                    ModelState.AddModelError("Email", "L'adresse électronique est déjà utilisée.");
-                    //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
-                    ViewBag.Localites = new SelectList(
-                        await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
-                        "Id_localite",
-                        "Nom_localite"
-);
+                    ModelState.AddModelError("Nickname", "Ce pseudo est déjà utilisé.");
                     return View(model);
                 }
 
@@ -89,7 +94,21 @@ namespace EcoLogistics.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Login));
+                if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Profile", "User");
+                }
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id_user.ToString()),
+                    new Claim(ClaimTypes.Name, !string.IsNullOrEmpty(user.Nickname) ? user.Nickname : (user.Email ?? "Utilisateur")),
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim(ClaimTypes.Role, user.Role ?? "User")
+                };
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction("Index", "Home");
             }
 
             //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
@@ -117,31 +136,38 @@ namespace EcoLogistics.Controllers
             {
                 var user = await _context.Users
                     .Include(u => u.Donnees_perso)
-                    .FirstOrDefaultAsync(u => u.Email == model.Email);
+                    .FirstOrDefaultAsync(u => u.Nickname == model.LoginInput | u.Email == model.LoginInput);
 
                 if (user == null)
                 {
-                    TempData["WarningMessage"] = "Cet utilisateur n'existe pas. Veuillez vous inscrire d'abord.";
-                    return RedirectToAction(nameof(Register));
+                    ModelState.AddModelError(string.Empty, "Identifiant ou mot de passe incorrect.");
+                    return View(model);
+                    //TempData["WarningMessage"] = "Cet utilisateur n'existe pas. Veuillez vous inscrire d'abord.";
+                    //return RedirectToAction(nameof(Register));
                 }
-
+                if (!user.IsActive || (user.Donnees_perso != null && !user.Donnees_perso.IsActive))
+                {
+                    ModelState.AddModelError(string.Empty, "Votre compte a été désactivé.");
+                    return View(model);
+                }
 
                 var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
 
                 if (result == PasswordVerificationResult.Success)
                 {
-                        if (!user.IsActive)
-                        {
-                            ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
-                            return View(model);
-                        }
+                        //if (!user.IsActive)
+                        //{
+                        //    ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
+                        //    return View(model);
+                        //}
 
                         var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.NameIdentifier, user.Id_user.ToString()),
-                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Name, !string.IsNullOrEmpty(user.Nickname) ? user.Nickname :( user.Email ?? "Utilisateur")),
+                            new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                             new Claim(ClaimTypes.Role, user.Role ?? "User"),
-                            new Claim("Nickname", user.Nickname ?? string.Empty)
+                            //new Claim("Nickname", user.Nickname ?? string.Empty)
                         };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

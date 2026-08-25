@@ -11,10 +11,9 @@ namespace EcoLogistics.ViewModels.UserBlock
         public string? Nickname { get; set; }
 
         [DisplayName("Adresse électronique : ")]
-        [Required(ErrorMessage = "L'adresse électronique est obligatoire.")]
         [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas d'un format valide.")]
         [MaxLength(100, ErrorMessage = "L'adresse électronique ne peut pas dépasser 100 caractères.")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [DisplayName("Mot de passe : ")]
         [Required(ErrorMessage = "Le mot de passe est obligatoire.")]
@@ -33,21 +32,18 @@ namespace EcoLogistics.ViewModels.UserBlock
 
         // --- Données Personnelles ---
         [DisplayName("Nom de famille : ")]
-        [Required(ErrorMessage = "Le nom de famille est obligatoire.")]
         [MaxLength(32, ErrorMessage = "Le nom de famille ne peut pas dépasser 32 caractères.")]
-        public string Nom { get; set; }
+        public string? Nom { get; set; }
 
         [DisplayName("Prénom : ")]
-        [Required(ErrorMessage = "Le prénom est obligatoire.")]
         [MaxLength(32, ErrorMessage = "Le prénom ne peut pas dépasser 32 caractères.")]
-        public string Prenom { get; set; }
+        public string? Prenom { get; set; }
 
         [DisplayName("Poste : ")]
         [MaxLength(64, ErrorMessage = "Le poste ne peut pas dépasser 64 caractères.")]
         public string? Poste { get; set; }
 
         [DisplayName("Adresse : ")]
-        [Required(ErrorMessage = "L'adresse est obligatoire.")]
         [MaxLength(100, ErrorMessage = "L'adresse ne peut pas dépasser 100 caractères.")]
         public string? Adresse { get; set; }
 

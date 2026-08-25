@@ -64,11 +64,14 @@
             </div>
 
         </div>
-        <div class="card-footer text-end">
+        <div class="card-footer text-end gap-2">
+            <a asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id_perso" class="btn btn-warning">
+                <i class="bi bi-pencil me-1"></i>Modifier
+            </a>
             <a asp-controller="User" asp-action="Profile" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Retour à la liste
-
             </a>
+   
         </div>
     </div>
 </div>

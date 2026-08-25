@@ -10,9 +10,12 @@
     <h2 class="h3 fw-bold text-dark">
         <i class="bi bi-people-fill text-primary me-2"></i>Données personnelles
     </h2>
+    <a asp-controller="Account" asp-action="Register" class="btn btn-primary">
+        <i class="bi bi-person-plus-fill me-1"></i>Ajouter un utilisateur
+    </a>
 </div>
 
-<!-- 1. ТАБЛИЦА АКТИВНЫХ СОТРУДНИКОВ -->
+<!-- 1. TABLEAU DES EMPLOYÉS ACTIFS -->
 <div class="card shadow-sm border-0 rounded-3 mb-4">
     <div class="card-header bg-white py-3">
         <h5 class="card-title mb-0 fw-bold text-success">
@@ -48,9 +51,23 @@
                                 <td>@item.Nom_localite</td>
                                 <td><span class="badge bg-success">@item.Statut</span></td>
                                 <td class="text-end px-4">
-                                    <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-primary">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-primary" title="Voir détails">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-outline-warning" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-action="ToggleStatus" asp-route-id="@item.Id_perso" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger" title="Désactiver / Licencier" onclick="return confirm('Voulez-vous vraiment désactiver cet utilisateur ?');">
+                                                <i class="bi bi-person-x"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+ @*                                    <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye me-1"></i>Voir détails
-                                    </a>
+                                    </a> *@
                                 </td>
                             </tr>
                         }
@@ -61,7 +78,7 @@
     </div>
 </div>
 
-<!-- 2. КНОПКА И СЕКЦИЯ ДЛЯ УВОЛЕННЫХ СОТРУДНИКОВ -->
+<!-- 2. BOUTON ET SECTION POUR LES EMPLOYÉS LICENCIÉS-->
 <div class="mb-3">
     <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#inactifsCollapse" aria-expanded="false" aria-controls="inactifsCollapse">
         <i class="bi bi-archive-fill me-1"></i> Afficher / Masquer les anciens employés (@inactifs.Count)
@@ -104,9 +121,23 @@
                                     <td>@item.Nom_localite</td>
                                     <td><span class="badge bg-danger">@item.Statut</span></td>
                                     <td class="text-end px-4">
-                                        <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-secondary">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-secondary" title="Voir détails">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-outline-warning" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form asp-action="ToggleStatus" asp-route-id="@item.Id_perso" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-outline-success" title="Réactiver le compte" onclick="return confirm('Voulez-vous réactiver cet utilisateur ?');">
+                                                    <i class="bi bi-person-check"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+@*                                         <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-secondary">
                                             <i class="bi bi-eye me-1"></i>Voir détails
-                                        </a>
+                                        </a> *@
                                     </td>
                                 </tr>
                             }

@@ -1,0 +1,105 @@
+﻿@model EcoLogistics.ViewModels.UserBlock.UserEditViewModel
+
+@{
+    ViewData["Title"] = "Modifier l'utilisateur";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h2 class="h4 mb-0"><i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id_user" />
+                <input type="hidden" asp-for="Id_perso" />
+
+                <!-- Compte utilisateur -->
+                <h5 class="text-secondary border-bottom pb-2">Compte Utilisateur</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Nickname" class="form-label"></label>
+                        <input asp-for="Nickname" class="form-control" />
+                        <span asp-validation-for="Nickname" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Role" class="form-label"></label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center pt-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" asp-for="IsUserActive" id="IsUserActiveSwitch">
+                            <label class="form-check-label fw-bold" for="IsUserActiveSwitch">Compte Actif</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Données personnelles -->
+                <h5 class="text-secondary border-bottom pb-2 mt-4">Données Personnelles</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Nom" class="form-label"></label>
+                        <input asp-for="Nom" class="form-control" />
+                        <span asp-validation-for="Nom" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Prenom" class="form-label"></label>
+                        <input asp-for="Prenom" class="form-control" />
+                        <span asp-validation-for="Prenom" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Poste" class="form-label"></label>
+                        <input asp-for="Poste" class="form-control" />
+                        <span asp-validation-for="Poste" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Statut" class="form-label"></label>
+                        <select asp-for="Statut" class="form-select">
+                            <option value="Actif">Actif</option>
+                            <option value="Licencié">Licencié</option>
+                            <option value="En congé">En congé</option>
+                        </select>
+                        <span asp-validation-for="Statut" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Adresse -->
+                <h5 class="text-secondary border-bottom pb-2 mt-4">Localisation</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Adresse" class="form-label"></label>
+                        <input asp-for="Adresse" class="form-control" />
+                        <span asp-validation-for="Adresse" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Id_localite" class="form-label"></label>
+                        <select asp-for="Id_localite" asp-items="ViewBag.Localites" class="form-select">
+                            <option value="">-- Sélectionner une localité --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a asp-action="Profile" class="btn btn-outline-secondary me-2">Annuler</a>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
