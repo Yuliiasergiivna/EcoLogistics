@@ -10,7 +10,7 @@ namespace EcoLogistics.Models.UserBlock
         [Key]
         [ScaffoldColumn(false)]
         public Guid Id_user { get; set; } = Guid.NewGuid();
-        [MaxLength(64)]
+        [MaxLength(64, ErrorMessage ="Le pseudo ne peut pas dépasser 64 caracères")]
         [DisplayName("Votre pseudo: ")]
         public string? Nickname { get; set; }
         [DisplayName("Adresse électronique : ")]
