@@ -2,17 +2,14 @@
 
 namespace EcoLogistics.ViewModels.ClientBlock
 {
-    /// <summary>
-    /// ViewModel représentative pour la liste récapitulative et l'exportation des Clients (Vue plate / Master List).
-    /// </summary>
     public class ClientListViewModel
     {
         // --- 1. Données principales du Client (Client) ---
         public Guid Id_client { get; set; }
         [DisplayName("N° d'entreprise : ")]
-        public int? Numero_entreprise { get; set; }
+        public string? Numero_entreprise { get; set; }
         [DisplayName("Nom du producteur / Entreprise : ")]
-        public string Nom_entreprise { get; set; }
+        public string Nom_entreprise { get; set; }= string.Empty;
         [DisplayName("N° BE d'entreprise : ")]
         public string? BE_entreprise { get; set; }
         [DisplayName("Remarques : ")]

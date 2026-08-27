@@ -4,6 +4,7 @@ using EcoLogistics.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoLogistics.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827075042_UpdatePersonneContact")]
+    partial class UpdatePersonneContact
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,14 +40,17 @@ namespace EcoLogistics.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Nom_site")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
                     b.Property<string>("Numero")
+                        .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
 
                     b.Property<string>("Rue")
+                        .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
@@ -82,8 +88,7 @@ namespace EcoLogistics.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Enregistrement_BE")
                         .HasMaxLength(32)
@@ -106,9 +111,8 @@ namespace EcoLogistics.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 
-                    b.Property<string>("Numero_entreprise")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                    b.Property<int?>("Numero_entreprise")
+                        .HasColumnType("int");
 
                     b.Property<string>("Presentation")
                         .HasMaxLength(255)
@@ -189,6 +193,7 @@ namespace EcoLogistics.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_siege"));
 
                     b.Property<string>("Adresse")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -204,8 +209,8 @@ namespace EcoLogistics.Migrations
                         .HasColumnType("varchar(32)");
 
                     b.Property<string>("Site_internet")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
 
                     b.HasKey("Id_siege");
 

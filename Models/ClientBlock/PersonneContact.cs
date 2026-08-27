@@ -11,8 +11,9 @@ namespace EcoLogistics.Models.ClientBlock
         [ScaffoldColumn(false)]
         public int Id_contact { get; set; }
         [DisplayName("Nom et prénom: ")]
+        [Required(ErrorMessage = "Le nom est obligatoire.")]
         [MaxLength(64, ErrorMessage = "Le nom ne peut pas dépasser 64 caractères")]
-        public string Nom {  get; set; }
+        public string Nom { get; set; } = string.Empty;
         [DisplayName("Téléphone fixe: ")]
         [MaxLength(32, ErrorMessage = "Le numéro de téléphone ne peut pas dépasser 32 caractères")]
         public string? Telephone { get; set; }
@@ -23,9 +24,7 @@ namespace EcoLogistics.Models.ClientBlock
         [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas d'un format valide.")]
         [MaxLength(64, ErrorMessage = "L'adresse électronique ne peut pas dépasser 64 caractères")]
         public string? Email { get; set; }
-        [DisplayName("Adresse: ")]
-        [MaxLength(100, ErrorMessage = "L'adresse ne peut pas dépasser 100 caractères")]
-        public string? Adresse { get; set; }
+
         [ScaffoldColumn(false)]
         public Guid Id_client { get; set; }
         [ForeignKey("Id_client")]

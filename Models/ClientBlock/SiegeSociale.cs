@@ -15,13 +15,14 @@ namespace EcoLogistics.Models.ClientBlock
         public string? Raison_sociale { get; set; }
         [DisplayName("Adresse: ")]
         [MaxLength(100, ErrorMessage = "L'adresse ne peut pas dépasser 100 caractères")]
-        public string Adresse { get; set; }
+        public string? Adresse { get; set; }
         [DisplayName("Site internet: ")]
-        [MaxLength(32)]
+        [MaxLength(100)]
         public string? Site_internet { get; set; }
         [DisplayName("Secteur d'activité: ")]
         [MaxLength(32)]
         public string? Secteur_activite {  get; set; }
+
         [ScaffoldColumn(false)]
         public int? Id_localite { get; set; }
         [ForeignKey("Id_localite")]

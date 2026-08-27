@@ -4,9 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EcoLogistics.ViewModels.ClientBlock
 {
-    /// <summary>
-    /// ViewModel utilisée pour la création d'un nouveau Client (Entreprise) complet.
-    /// </summary>
     public class ClientCreateViewModel
     {
         // 1. INFORMATIONS DU CLIENT (Entreprise)
@@ -14,10 +11,10 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [DisplayName("Nom d'entreprise : ")]
         [Required(ErrorMessage = "Le nom d'entreprise est obligatoire.")]
         [MaxLength(64, ErrorMessage = "Le nom d'entreprise ne peut pas dépasser 64 caractères.")]
-        public string Nom_entreprise { get; set; }
+        public string Nom_entreprise { get; set; } = string.Empty;
 
         [DisplayName("Numéro d'entreprise (BCE) : ")]
-        public int? Numero_entreprise { get; set; }
+        public string? Numero_entreprise { get; set; }
 
         [DisplayName("N° BE d'entreprise : ")]
         [MaxLength(32, ErrorMessage = "Le N° BE ne peut pas dépasser 32 caractères.")]
@@ -33,8 +30,9 @@ namespace EcoLogistics.ViewModels.ClientBlock
 
         [DisplayName("Adresse électronique (Email) : ")]
         [Required(ErrorMessage = "L'adresse électronique est obligatoire.")]
+        [MaxLength(100)]
         [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas d'un format valide.")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [DisplayName("Numéro d'enregistrement BE : ")]
         [MaxLength(32)]
@@ -73,11 +71,11 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public string? Siege_Adresse { get; set; }
 
         [DisplayName("Site internet : ")]
-        [MaxLength(32)]
+        [MaxLength(100)]
         public string? Siege_Site_internet { get; set; }
 
         [DisplayName("Secteur d'activité : ")]
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string? Siege_Secteur_activite { get; set; }
 
         [DisplayName("Localité du siège social : ")]
@@ -99,12 +97,8 @@ namespace EcoLogistics.ViewModels.ClientBlock
 
         [DisplayName("Email du contact : ")]
         [EmailAddress(ErrorMessage = "L'adresse électronique du contact n'est pas valide.")]
-        [MaxLength(64)]
+        [MaxLength(64, ErrorMessage = "L'adresse électronique ne peut pas dépasser 64 caractères.")]
         public string? Contact_Email { get; set; }
-
-        [DisplayName("Adresse du contact : ")]
-        [MaxLength(100)]
-        public string? Contact_Adresse { get; set; }
 
         [DisplayName("Localité du contact : ")]
         public int? Contact_Id_localite { get; set; }
@@ -113,7 +107,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
 
         [DisplayName("Nom du site d'exploitation : ")]
         [MaxLength(64, ErrorMessage = "Le nom du site ne peut pas dépasser 64 caractères.")]
-        public string? Site_Nom { get; set; }
+        public string? Site_Nom_site { get; set; }
 
         [DisplayName("Rue du site : ")]
         [MaxLength(64, ErrorMessage = "La rue ne peut pas dépasser 64 caractères.")]
