@@ -6,8 +6,8 @@
 }
 
 <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <div class="card shadow-lg cf2d-card">
+        <div class="card-header bg-cf2d-header text-white d-flex justify-content-between align-items-center">
             <h2 class="h4 mb-0">@ViewData["Title"]</h2>
             <span class="badge @(Model.IsUserActive ? "bg-success" : "bg-danger")">
                 @(Model.IsUserActive ? "Compte Actif" : "Compte Inactif")
@@ -16,7 +16,7 @@
         <div class="card-body">
 
             <!-- Informations sur le compte -->
-            <h5 class="text-secondary border-bottom pb-2">Informations du compte</h5>
+            <h5 class="text-cf2d border-bottom pb-2">Informations du compte</h5>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <p><strong>@Html.DisplayNameFor(m => m.Nickname)</strong> @(Model.Nickname ?? "Non renseigné")</p>
@@ -28,7 +28,7 @@
             </div>
 
             <!-- Données personnelles -->
-            <h5 class="text-secondary border-bottom pb-2 mt-4">Données personnelles</h5>
+            <h5 class="text-cf2d border-bottom pb-2 mt-4">Données personnelles</h5>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <p><strong>@Html.DisplayNameFor(m => m.Nom)</strong> @(Model.Nom ?? "Non renseigné")</p>
@@ -51,7 +51,7 @@
             </div>
 
             <!-- Adresse & Localité -->
-            <h5 class="text-secondary border-bottom pb-2 mt-4">Adresse & Localité</h5>
+            <h5 class="text-cf2d border-bottom pb-2 mt-4">Adresse & Localité</h5>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <p><strong>@Html.DisplayNameFor(m => m.Adresse)</strong> @(Model.Adresse ?? "Non renseignée")</p>
@@ -68,7 +68,7 @@
             <a asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id_perso" class="btn btn-warning">
                 <i class="bi bi-pencil me-1"></i>Modifier
             </a>
-            <a asp-controller="User" asp-action="Profile" class="btn btn-outline-secondary">
+            <a asp-controller="User" asp-action="Profile" class="btn btn-cf2d">
                 <i class="bi bi-arrow-left me-1"></i>Retour à la liste
             </a>
    

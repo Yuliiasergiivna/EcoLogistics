@@ -7,8 +7,8 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
+            <div class="card shadow-lg cf2d-card">
+                <div class="card-header bg-cf2d-header text-center py-3">
                     <h3 class="h4 mb-0">Créer un compte</h3>
                 </div>
                 <div class="card-body p-4">
@@ -24,7 +24,7 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <!-- Compte Utilisateur -->
-                        <h5 class="text-secondary border-bottom pb-2 mb-3">Identifiants de connexion</h5>
+                        <h5 class="text-cf2d border-bottom pb-2 mb-3">Identifiants de connexion</h5>
 
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label fw-bold"></label>
@@ -52,7 +52,7 @@
                         </div>
 
                         <!-- Données Personnelles -->
-                        <h5 class="text-secondary border-bottom pb-2 mt-4 mb-3">Informations personnelles</h5>
+                        <h5 class="text-cf2d border-bottom pb-2 mt-4 mb-3 fw-bold">Informations personnelles</h5>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -88,13 +88,13 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+                            <button type="submit" class="btn btn-cf2d btn-lg">S'inscrire</button>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center py-3">
                     <span class="text-muted">Vous avez déjà un compte ?</span>
-                    <a asp-controller="Account" asp-action="Login" class="text-decoration-none fw-bold">Se connecter</a>
+                    <a asp-controller="Account" asp-action="Login" class="cf2d-link text-decoration-none fw-bold ms-1">Se connecter</a>
                 </div>
             </div>
         </div>

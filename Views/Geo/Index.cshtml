@@ -6,7 +6,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="h3 fw-bold text-dark">
-        <i class="bi bi-geo-alt-fill text-primary me-2"></i>Liste des Localités & Pays
+        <i class="bi bi-geo-alt-fill text-cf2d me-2"></i>Liste des Localités & Pays
     </h2>
 </div>
     <!-- Navigation Tabs -->
@@ -33,11 +33,11 @@
 
         <!-- Tab 1: Localités -->
         <div class="tab-pane fade show active" id="localites" role="tabpanel">
-            <div class="card shadow-sm border-0 rounded-3">
+            <div class="card shadow-lg cf2d-card border-0">
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-cf2d-header">
                                 <tr>
                                     <th>Nom Localité</th>
                                     <th>Code Postal</th>
@@ -55,7 +55,7 @@
                                         <td><span class="badge bg-light text-dark border">@item.Code_postal</span></td>
                                         <td>@(item.Province ?? "—")</td>
                                         <td>
-                                            <span class="badge bg-primary">
+                                            <span class="badge" style="background-color: var(--cf2d-blue);">
                                                 @(item.Pays?.Nom_pays ?? "Non défini")
                                             </span>
                                         </td>
@@ -80,7 +80,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-cf2d-header">
                                 <tr>
                                     <th>Commune principale</th>
                                     <th>Nom FR</th>
@@ -92,7 +92,7 @@
                                 @foreach (var c in Model.Communes)
                                 {
                                     <tr>
-                                        <td>@c.Commune_principale</td>
+                                        <td class="fw-bold">@c.Commune_principale</td>
                                         <td>@c.Nom_fr</td>
                                         <td>@c.Nom_nl</td>
                                         <td><span class="badge bg-secondary">@c.Type</span></td>
@@ -111,7 +111,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-cf2d-header">
                                 <tr>
                                     <th style="width: 300px;">Nom du Pays</th>
                                     <th>Code ISO</th>
@@ -121,8 +121,8 @@
                                 @foreach (var p in Model.PaysList)
                                 {
                                     <tr>
-                                        <td>@p.Nom_pays</td>
-                                        <td><span class="badge bg-info text-dark">@p.Code_ISO</span></td>
+                                    <td class="fw-bold">@p.Nom_pays</td>
+                                    <td><span class="badge bg-light text-dark border fw-bold">@p.Code_ISO</span></td>
                                     </tr>
                                 }
                             </tbody>

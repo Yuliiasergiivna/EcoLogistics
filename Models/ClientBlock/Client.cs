@@ -73,8 +73,11 @@ namespace EcoLogistics.Models.ClientBlock
         [ForeignKey("Id_siege")]
         public SiegeSociale? SiegeSociale { get; set; }
 
-
+       
+        public ICollection<PersonneContact> PersonnesContact { get; set; } = new List<PersonneContact>();
+        public ICollection<AdresseExploitation> AdressesExploitation { get; set; } = new List<AdresseExploitation>();
 
 
     }
+
 }

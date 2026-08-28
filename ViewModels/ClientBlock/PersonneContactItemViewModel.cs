@@ -26,4 +26,5 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [DisplayName("Localité : ")]
         public string? Localite_Info { get; set; }
     }
+
 }

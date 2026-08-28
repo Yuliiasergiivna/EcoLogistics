@@ -12,7 +12,7 @@ namespace EcoLogistics.Models.Geo
         [DisplayName("Commune principale: ")]
         [MaxLength(64, ErrorMessage = "Le nom de la commune principale ne peut pas dépasser 64 caractères.")]
         [Required(ErrorMessage = "Le nom de la commune principale est obligatoire.")]
-        public string Commune_principale { get; set; }
+        public string Commune_principale { get; set; }= string.Empty;
         [DisplayName("Sous-commune: ")]
         public bool Sous_commune { get; set; }
         [DisplayName("Nom en français: ")]

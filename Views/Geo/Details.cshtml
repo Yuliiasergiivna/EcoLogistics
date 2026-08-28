@@ -4,66 +4,7 @@
     ViewData["Title"] = "Détails géographiques";
 }
 
-<style>
-    :root {
-        --cf2d-green: #68A63C;
-        --cf2d-blue: #1B75BC;
-        --cf2d-dark: #2B3A42;
-    }
 
-    .cf2d-card {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .cf2d-header-green {
-        background-color: var(--cf2d-green);
-        color: #ffffff;
-        border-top-left-radius: 12px !important;
-        border-top-right-radius: 12px !important;
-    }
-
-    .cf2d-section-title {
-        color: var(--cf2d-blue);
-        border-bottom: 2px solid #e9ecef;
-        padding-bottom: 8px;
-        font-weight: 600;
-    }
-
-    .cf2d-label {
-        color: #6c757d;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-
-    .cf2d-value {
-        color: var(--cf2d-dark);
-        font-size: 1.05rem;
-        font-weight: 500;
-    }
-
-    .btn-cf2d-secondary {
-        background-color: #6c757d;
-        color: #fff;
-        border-radius: 8px;
-    }
-
-        .btn-cf2d-secondary:hover {
-            background-color: #5a6268;
-            color: #fff;
-        }
-
-    .btn-cf2d-blue {
-        background-color: var(--cf2d-blue);
-        color: #fff;
-        border-radius: 8px;
-    }
-
-        .btn-cf2d-blue:hover {
-            background-color: #145A93;
-            color: #fff;
-        }
-</style>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -71,8 +12,8 @@
             <div class="card shadow-lg cf2d-card mb-4">
 
                 <!-- Card Header -->
-                <div class="card-header cf2d-header-green py-3 px-4 d-flex justify-content-between align-items-center">
-                    <h2 class="h4 mb-0 fw-bold">
+                <div class="card-header bg-cf2d-header py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0 fw-bold text-white">
                         <i class="bi bi-geo-alt-fill me-2"></i>Détails géographiques
                     </h2>
                     <span class="badge bg-white text-dark fw-bold">@Model.Nom_localite</span>
@@ -82,7 +23,7 @@
 
                     <!-- Section 1: Localité -->
                     <div class="mb-4">
-                        <h4 class="h5 cf2d-section-title mb-3">
+                        <h4 class="h5 text-cf2d border-bottom pb-2 fw-bold mb-3">
                             <i class="bi bi-building me-2"></i>Localité
                         </h4>
                         <div class="row g-3">
@@ -105,7 +46,7 @@
 
                     <!-- Section 2: Pays -->
                     <div class="mb-4">
-                        <h4 class="h5 cf2d-section-title mb-3">
+                        <h4 class="h5 text-cf2d border-bottom pb-2 fw-bold mb-3">
                             <i class="bi bi-globe me-2"></i>Pays
                         </h4>
                         <div class="row g-3">
@@ -126,7 +67,7 @@
                     @if (Model.Id_commune.HasValue)
                     {
                         <div class="mb-4">
-                            <h4 class="h5 cf2d-section-title mb-3">
+                            <h4 class="h5 text-cf2d border-bottom pb-2 fw-boldmb-3">
                                 <i class="bi bi-map me-2"></i>Informations Commune (Bruxelles)
                             </h4>
                             <div class="row g-3">
@@ -167,7 +108,7 @@
 
                 <!-- Footer / Actions -->
                 <div class="card-footer bg-light px-4 py-3 d-flex justify-content-between rounded-bottom-4">
-                    <a asp-action="Index" class="btn btn-cf2d-secondary px-4">
+                    <a asp-action="Index" class="btn btn-cf2d px-4">
                         <i class="bi bi-arrow-left me-1"></i>Retour à la liste
                     </a>
 
