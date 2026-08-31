@@ -97,8 +97,9 @@ namespace EcoLogistics.ViewModels.ClientBlock
         // 4. PERSONNE DE CONTACT 
 
         [DisplayName("Nom et prénom du contact: ")]
+        [Required(ErrorMessage = "Le nom du contact est obligatoire.")]
         [MaxLength(64, ErrorMessage = "Le nom ne peut pas dépasser 64 caractères.")]
-        public string? Contact_Nom { get; set; }
+        public string Contact_Nom { get; set; } = string.Empty;
 
         [DisplayName("Téléphone fixe du contact: ")]
         [MaxLength(32, ErrorMessage = "Le téléphone ne peut pas dépasser 32 caractères.")]
@@ -133,7 +134,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public int? Site_Id_localite { get; set; }
 
         // LISTES DÉROULANTES (SelectLists)
-
+        
         public IEnumerable<SelectListItem>? LocaliteList { get; set; }
         public IEnumerable<SelectListItem>? UserList { get; set; }
     }

@@ -29,6 +29,12 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public string? Contact_gsm { get; set; }
         [DisplayName("Adresse électronique du contact : ")]
         public string? Contact_email { get; set; }
+        [DisplayName("Code postal (Contact) : ")]
+        public string? Contact_code_postal { get; set; }
+        [DisplayName("Commune (Contact) : ")]
+        public string? Contact_commune { get; set; }
+        [DisplayName("Pays (Contact) : ")]
+        public string? Contact_pays { get; set; }
 
         // --- 3. Adresse d'exploitation (AdresseExploitation + Geo) ---
         public int? Id_adresse_exp { get; set; }

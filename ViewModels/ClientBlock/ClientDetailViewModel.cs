@@ -39,7 +39,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
 
         // 2. ADRESSE DE LOCALITÉ DU CLIENT (GEO)
         [DisplayName("Localité : ")]
-        public string? Client_Nom_localite { get; set; }
+        public string? Client_Adresse { get; set; }
         [DisplayName("Code postal : ")]
         public string? Client_Code_postal { get; set; }
         [DisplayName("Commune : ")]
@@ -67,6 +67,8 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public string? Siege_Nom_localite { get; set; }
         [DisplayName("Code postal du siège : ")]
         public string? Siege_Code_postal { get; set; }
+        [DisplayName("Commune du siège : ")]
+        public string? Siege_Commune { get; set; }
         [DisplayName("Pays du siège : ")]
         public string? Siege_Nom_pays { get; set; }
         // 5. LISTES DES ENTITÉS LIÉES

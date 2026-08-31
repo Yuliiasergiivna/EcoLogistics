@@ -17,6 +17,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public string? Numero_entreprise { get; set; }
 
         [DisplayName("N° BE d'entreprise : ")]
+        [Required(ErrorMessage = "Le BE d'entreprise est obligatoire.")]
         [MaxLength(32, ErrorMessage = "Le N° BE ne peut pas dépasser 32 caractères.")]
         public string? BE_entreprise { get; set; }
 
