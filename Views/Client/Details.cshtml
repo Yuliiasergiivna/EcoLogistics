@@ -1,0 +1,185 @@
+﻿@model EcoLogistics.ViewModels.ClientBlock.ClientDetailViewModel
+
+@{
+    ViewData["Title"] = "Fiche Client - " + Model.Nom_entreprise;
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Page -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold text-cf2d mb-0">@Model.Nom_entreprise</h2>
+            <span class="text-muted">ID: @Model.Id_client</span>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary me-1"><i class="bi bi-arrow-left me-1"></i> Retour</a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id_client" class="btn btn-warning"><i class="bi bi-pencil me-1"></i> Modifier</a>
+            }
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Informations Générales -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-cf2d-header fw-bold">
+                    <i class="bi bi-info-circle me-2"></i>Informations Générales
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">N° BCE :</dt>
+                        <dd class="col-sm-7">@(Model.Numero_entreprise ?? "-")</dd>
+
+                        <dt class="col-sm-5">N° BE :</dt>
+                        <dd class="col-sm-7">@(Model.BE_entreprise ?? "-")</dd>
+
+                        <dt class="col-sm-5">Email général :</dt>
+                        <dd class="col-sm-7"><a href="mailto:@Model.Email">@Model.Email</a></dd>
+
+                        <dt class="col-sm-5">Téléphone :</dt>
+                        <dd class="col-sm-7">@(Model.Telephone ?? "-")</dd>
+
+                        <dt class="col-sm-5">Adresse :</dt>
+                        <dd class="col-sm-7">@(Model.Adresse ?? "-") @Model.Client_Code_postal @Model.Client_Nom_commune</dd>
+
+                        <dt class="col-sm-5">Gestionnaire :</dt>
+                        <dd class="col-sm-7">@(Model.User_Nom_complet ?? "Non assigné")</dd>
+
+                        <dt class="col-sm-5">Statut :</dt>
+                        <dd class="col-sm-7">
+                            @if (Model.Is_deleted)
+                            {
+                                <span class="badge bg-danger">Inactif</span>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background-color: var(--cf2d-green);">Actif</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Siège Social -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-cf2d-header fw-bold">
+                    <i class="bi bi-building me-2"></i>Siège Social (Juridique)
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Raison Sociale :</dt>
+                        <dd class="col-sm-7">@(Model.Siege_Raison_sociale ?? "-")</dd>
+
+                        <dt class="col-sm-5">Adresse du siège :</dt>
+                        <dd class="col-sm-7">@(Model.Siege_Adresse ?? "-")</dd>
+
+                        <dt class="col-sm-5">Localité :</dt>
+                        <dd class="col-sm-7">@Model.Siege_Code_postal @Model.Siege_Nom_localite (@Model.Siege_Nom_pays)</dd>
+
+                        <dt class="col-sm-5">Site Internet :</dt>
+                        <dd class="col-sm-7">
+                            @if (!string.IsNullOrEmpty(Model.Siege_Site_internet))
+                            {
+                                <a href="@Model.Siege_Site_internet" target="_blank">@Model.Siege_Site_internet</a>
+                            }
+                            else
+                            {
+
+                                <span>-</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-5">Secteur :</dt>
+                        <dd class="col-sm-7">@(Model.Siege_Secteur_activite ?? "-")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personnes de Contact -->
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-cf2d-header fw-bold d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-people me-2"></i>Personnes de Contact</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nom et Prénom</th>
+                                <th>Téléphone</th>
+                                <th>GSM</th>
+                                <th>Email</th>
+                                <th>Localité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.PersonnesContact.Any())
+                            {
+                                <tr><td colspan="5" class="text-center py-3 text-muted"><em>Aucun contact enregistré.</em></td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var c in Model.PersonnesContact)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@c.Nom</td>
+                                        <td>@(c.Telephone ?? "-")</td>
+                                        <td>@(c.Gsm ?? "-")</td>
+                                        <td>@(c.Email ?? "-")</td>
+                                        <td>@(c.Localite_Info ?? "-")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adresses d'Exploitation -->
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-cf2d-header fw-bold d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-geo-alt me-2"></i>Sites d'Exploitation</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nom du Site</th>
+                                <th>Rue et N°</th>
+                                <th>Code Postal</th>
+                                <th>Commune</th>
+                                <th>Pays</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.AdressesExploitation.Any())
+                            {
+                                <tr><td colspan="5" class="text-center py-3 text-muted"><em>Aucun site d'exploitation enregistré.</em></td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var s in Model.AdressesExploitation)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@s.Nom_site</td>
+                                        <td>@s.Rue @s.Numero</td>
+                                        <td>@(s.Code_postal ?? "-")</td>
+                                        <td>@(s.Commune ?? "-")</td>
+                                        <td>@(s.Pays ?? "-")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

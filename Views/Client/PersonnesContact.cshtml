@@ -1,0 +1,107 @@
+﻿@model IEnumerable<EcoLogistics.ViewModels.ClientBlock.PersonneContactItemViewModel>
+
+@{
+    ViewData["Title"] = "Personnes de contact";
+    bool isAdminOrManager = User.IsInRole("Admin") || User.IsInRole("Manager");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 fw-bold text-dark">
+        <i class="bi bi-people-fill text-cf2d me-2"></i>Personnes de contact
+    </h2>
+    @if (isAdminOrManager)
+    {
+        <a asp-action="Create" class="btn btn-cf2d fw-bold">
+            <i class="bi bi-plus-lg me-2"></i>Nouveau contact
+        </a>
+    }
+</div>
+
+<div class="card shadow-lg border-0 cf2d-card overflow-hidden">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-cf2d-header text-white">
+                    <tr>
+                        <th class="ps-4">@Html.DisplayNameFor(model => model.Nom)</th>
+                        <th>@Html.DisplayNameFor(model => model.Email)</th>
+                        <th>@Html.DisplayNameFor(model => model.Telephone) / @Html.DisplayNameFor(model => model.Gsm)</th>
+                        <th>@Html.DisplayNameFor(model => model.Localite_Info)</th>
+                        @if (isAdminOrManager)
+                        {
+                            <th class="text-end px-4">Actions</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="@(isAdminOrManager ? 5 : 4)" class="text-center py-4 text-muted">
+                                Aucune personne de contact trouvée.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold">
+                                    <i class="bi bi-person-circle text-cf2d me-2"></i>@item.Nom
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Email))
+                                    {
+                                        <a href="mailto:@item.Email" class="text-decoration-none text-dark">
+                                            <i class="bi bi-envelope me-1 text-muted"></i>@item.Email
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Telephone))
+                                    {
+                                        <div class="small"><i class="bi bi-telephone me-1 text-muted"></i>@item.Telephone</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.Gsm))
+                                    {
+                                        <div class="small"><i class="bi bi-phone me-1 text-muted"></i>@item.Gsm</div>
+                                    }
+                                    @if (string.IsNullOrEmpty(item.Telephone) && string.IsNullOrEmpty(item.Gsm))
+                                    {
+                                        <span class="text-muted small">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Localite_Info))
+                                    {
+                                        <span class="badge bg-light text-dark border fs-6 fw-normal px-2 py-1">
+                                            <i class="bi bi-geo-alt me-1 text-cf2d"></i>@item.Localite_Info
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">-</span>
+                                    }
+                                </td>
+                                @if (isAdminOrManager)
+                                {
+                                    <td class="text-end px-4">
+                                        <a asp-controller="Client" asp-action="PersonnesContact">
+                                       @*  <a asp-action="Edit" asp-route-id="@item.Id_p_contact" class="btn btn-sm btn-outline-warning me-1" title="Modifier"> *@
+                                            <i class="bi bi-pencil"> Personnes de contact</i>
+                                        </a>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
