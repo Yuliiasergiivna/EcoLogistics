@@ -486,43 +486,132 @@ namespace EcoLogistics.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        // Вспомогательные методы
+        // Méthodes auxiliaires
+        //private async Task PopulateDropdownsAsync(ClientCreateViewModel model)
+        //    {
+        //        model.LocaliteList = await GetLocaliteSelectListAsync();
+        //        model.UserList = await GetUserSelectListAsync();
+        //    }
+
+        //    private async Task PopulateDropdownsAsync(ClientEditViewModel model)
+        //    {
+        //        model.LocaliteList = await GetLocaliteSelectListAsync();
+        //        model.UserList = await GetUserSelectListAsync();
+        //    }
+
+        //    private async Task<List<SelectListItem>> GetLocaliteSelectListAsync()
+        //    {
+        //        return await _context.Localites
+        //            .AsNoTracking()
+        //            .Select(l => new SelectListItem
+        //            {
+        //                Value = l.Id_localite.ToString(),
+        //                Text = $"{l.Code_postal} - {(l.CommuneBXL != null ? l.CommuneBXL.Commune_principale : l.Nom_localite)}"
+        //            }).ToListAsync();
+        //    }
+
+        //    private async Task<List<SelectListItem>> GetUserSelectListAsync()
+        //    {
+        //        return await _context.Users
+        //            .AsNoTracking()
+        //            .Select(u => new SelectListItem
+        //            {
+        //                Value = u.Id_user.ToString(),
+        //                Text = !string.IsNullOrWhiteSpace(u.Nickname)
+        //                    ? u.Nickname
+        //                    : (u.Donnees_perso != null ? $"{u.Donnees_perso.Nom} {u.Donnees_perso.Prenom}".Trim() : u.Email)
+        //            }).ToListAsync();
+        //    }
+
+
+
+        //private async Task PopulateDropdownsAsync(object model)
+        //{
+        //    var localites = await _context.Localites
+        //        .AsNoTracking()
+        //        .Select(l => new { l.Id_localite, Display = $"{l.Code_postal} - {(l.CommuneBXL !=null ? l.CommuneBXL.Commune_principale : l.Nom_localite)} ({(l.Pays !=null ? l.Pays.Nom_pays : "" )})" })
+        //        .OrderBy(l => l.Display)
+        //        .ToListAsync();
+
+        //    var users = await _context.Donnees_persos
+        //        .AsNoTracking()
+        //        .Where(u => u.IsActive)
+        //        .Select(u => new { u.Id_perso, Display = $"{u.Nom} {u.Prenom}" })
+        //        .OrderBy(u => u.Display)
+        //        .ToListAsync();
+
+        //    var localiteList = new SelectList(localites, "Id_localite", "Display");
+        //    var userList = new SelectList(users, "Id_perso", "Display");
+
+        //    if (model is ClientCreateViewModel createModel)
+        //    {
+        //        createModel.LocaliteList = localiteList;
+        //        createModel.UserList = userList;
+        //    }
+        //    else if (model is ClientEditViewModel editModel)
+        //    {
+        //        editModel.LocaliteList = localiteList;
+        //        editModel.UserList = userList;
+        //    }
+        //}
         private async Task PopulateDropdownsAsync(ClientCreateViewModel model)
-            {
-                model.LocaliteList = await GetLocaliteSelectListAsync();
-                model.UserList = await GetUserSelectListAsync();
-            }
-
-            private async Task PopulateDropdownsAsync(ClientEditViewModel model)
-            {
-                model.LocaliteList = await GetLocaliteSelectListAsync();
-                model.UserList = await GetUserSelectListAsync();
-            }
-
-            private async Task<List<SelectListItem>> GetLocaliteSelectListAsync()
-            {
-                return await _context.Localites
-                    .AsNoTracking()
-                    .Select(l => new SelectListItem
-                    {
-                        Value = l.Id_localite.ToString(),
-                        Text = $"{l.Code_postal} - {(l.CommuneBXL != null ? l.CommuneBXL.Commune_principale : l.Nom_localite)}"
-                    }).ToListAsync();
-            }
-
-            private async Task<List<SelectListItem>> GetUserSelectListAsync()
-            {
-                return await _context.Users
-                    .AsNoTracking()
-                    .Select(u => new SelectListItem
-                    {
-                        Value = u.Id_user.ToString(),
-                        Text = !string.IsNullOrWhiteSpace(u.Nickname)
-                            ? u.Nickname
-                            : (u.Donnees_perso != null ? $"{u.Donnees_perso.Nom} {u.Donnees_perso.Prenom}".Trim() : u.Email)
-                    }).ToListAsync();
-            }
+        {
+            model.LocaliteList = await GetLocaliteSelectListAsync();
+            model.UserList = await GetUserSelectListAsync();
         }
+
+        private async Task PopulateDropdownsAsync(ClientEditViewModel model)
+        {
+            model.LocaliteList = await GetLocaliteSelectListAsync();
+            model.UserList = await GetUserSelectListAsync();
+        }
+
+        private async Task<List<SelectListItem>> GetLocaliteSelectListAsync()
+        {
+            return await _context.Localites
+                .AsNoTracking()
+                .Select(l => new SelectListItem
+                {
+                    Value = l.Id_localite.ToString(),
+                    //Text = $"{l.Code_postal} - {(l.CommuneBXL != null ? l.CommuneBXL.Commune_principale : l.Nom_localite)}"
+                    Text = l.Code_postal + " - " +
+                   (l.CommuneBXL.Commune_principale ?? l.Nom_localite) +
+                   " (" + (l.Pays.Nom_pays ?? "") + ")"
+                })
+                .OrderBy(item =>item.Text)
+                .ToListAsync();
+        }
+
+        private async Task<List<SelectListItem>> GetUserSelectListAsync()
+        {
+                var rawUsers = await _context.Users
+            .AsNoTracking()
+            .Select(u => new
+            { 
+                u.Id_user,
+                u.Nickname,
+                u.Email,
+                Nom = u.Donnees_perso.Nom,
+                Prenom = u.Donnees_perso.Prenom
+            })
+        .ToListAsync();
+            return rawUsers
+                
+                .Select(u => new SelectListItem
+                {
+                    Value = u.Id_user.ToString(),
+                    Text = !string.IsNullOrWhiteSpace(u.Nickname)
+                        ? u.Nickname
+                        : (!string.IsNullOrWhiteSpace(u.Nom) || !string.IsNullOrWhiteSpace(u.Prenom)
+                        ? $"{u.Nom}{u.Prenom}"
+                        .Trim() : u.Email)
+                })
+                .OrderBy(item => item.Text)
+                .ToList();
+        }
+
     }
+
+}
 
 
