@@ -10,10 +10,14 @@ namespace EcoLogistics.Models.ClientBlock
         [Key]
         [ScaffoldColumn(false)]
         public int Id_contact { get; set; }
-        [DisplayName("Nom et prénom: ")]
+        [DisplayName("Nom: ")]
         [Required(ErrorMessage = "Le nom est obligatoire.")]
         [MaxLength(64, ErrorMessage = "Le nom ne peut pas dépasser 64 caractères")]
         public string Nom { get; set; } = string.Empty;
+        [DisplayName("Prénom: ")]
+        [Required(ErrorMessage = "Le prénom est obligatoire.")]
+        [MaxLength(64, ErrorMessage = "Le prénom ne peut pas dépasser 64 caractères")]
+        public string Prenom { get; set; } = string.Empty;
         [DisplayName("Téléphone fixe: ")]
         [MaxLength(32, ErrorMessage = "Le numéro de téléphone ne peut pas dépasser 32 caractères")]
         public string? Telephone { get; set; }

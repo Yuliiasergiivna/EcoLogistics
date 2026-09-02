@@ -91,9 +91,10 @@
                                 @if (isAdminOrManager)
                                 {
                                     <td class="text-end px-4">
-                                        <a asp-controller="Client" asp-action="PersonnesContact">
-                                       @*  <a asp-action="Edit" asp-route-id="@item.Id_p_contact" class="btn btn-sm btn-outline-warning me-1" title="Modifier"> *@
-                                            <i class="bi bi-pencil"> Personnes de contact</i>
+                                        <a asp-controller="PersonneContact" asp-action="Edit"
+                                             asp-route-id="@item.Id_p_contact" 
+                                             class="btn btn-sm btn-outline-warning me-1" title="Modifier"> 
+                                            <i class="bi bi-pencil me-1"> Modifier</i>
                                         </a>
                                     </td>
                                 }
