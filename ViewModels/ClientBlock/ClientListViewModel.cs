@@ -19,6 +19,17 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [DisplayName("Statut supprimé : ")]
         public bool Is_deleted { get; set; }
 
+        // --- 1.1. Adresse / Localité directe du Client ---
+
+        [DisplayName("Code postal (Client) : ")]
+        public string? Client_code_postal { get; set; }
+
+        [DisplayName("Commune (Client) : ")]
+        public string? Client_commune { get; set; }
+
+        [DisplayName("Pays (Client) : ")]
+        public string? Client_pays { get; set; }
+
         // --- 2. Personne de contact principale (PersonneContact) ---
         public int? Id_p_contact { get; set; }
         [DisplayName("Personne de contact : ")]

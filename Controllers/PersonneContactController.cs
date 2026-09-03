@@ -17,14 +17,13 @@ namespace EcoLogistics.Controllers
         {
             _context = context;
         }
+
         // 1. REGISTRE GÉNÉRAL DES CONTACTS (INDEX)
         [HttpGet]
         public async Task<IActionResult> Index(string? searchString)
         {
             var query = _context.PersonneContacts
                 .AsNoTracking()
-                //.Include(p => p.Client)
-                //.Include(p => p.Localite)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchString))
@@ -32,7 +31,7 @@ namespace EcoLogistics.Controllers
                 searchString = searchString.Trim();
                 query = query.Where(p =>
                     p.Nom.Contains(searchString) ||
-                    p.Prenom.Contains(searchString) ||
+                    (p.Prenom != null && p.Prenom.Contains(searchString)) ||
                     (p.Email != null && p.Email.Contains(searchString)) ||
                     (p.Client != null && p.Client.Nom_entreprise.Contains(searchString))
                 );
@@ -55,7 +54,7 @@ namespace EcoLogistics.Controllers
             var contactsList = rawContacts.Select(p => new PersonneContactItemViewModel
             {
                 Id_p_contact = p.Id_p_contact,
-                Nom = $"{p.Nom}{p.Prenom}".Trim(),
+                Nom = $"{p.Nom} {p.Prenom}".Trim(),
                 Telephone = p.Telephone,
                 Gsm = p.Gsm,
                 Email = p.Email,
@@ -109,13 +108,13 @@ namespace EcoLogistics.Controllers
                 _context.PersonneContacts.Add(contact);
                 await _context.SaveChangesAsync();
 
-                //Revenons à la fiche client
                 return RedirectToAction("Details", "Client", new { id = model.Id_client });
             }
 
             await PopulateDropdownsAsync(model);
             return View(model);
         }
+
         // 3. EDIT (GET)
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet]
@@ -131,6 +130,7 @@ namespace EcoLogistics.Controllers
             {
                 Id_p_contact = contact.Id_contact,
                 Nom = contact.Nom,
+                Prenom = contact.Prenom,
                 Telephone = contact.Telephone,
                 Gsm = contact.Gsm,
                 Email = contact.Email,
@@ -141,6 +141,62 @@ namespace EcoLogistics.Controllers
             await PopulateDropdownsAsync(model);
             return View(model);
         }
+
+
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, PersonneContactFormViewModel model)
+        {
+            if (id != model.Id_p_contact)
+            {
+                return BadRequest();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var contact = await _context.PersonneContacts.FindAsync(id);
+                if (contact == null)
+                {
+                    return NotFound();
+                }
+
+                contact.Nom = model.Nom;
+                contact.Prenom = model.Prenom;
+                contact.Telephone = model.Telephone;
+                contact.Gsm = model.Gsm;
+                contact.Email = model.Email;
+                contact.Id_client = model.Id_client;
+                contact.Id_localite = model.Id_localite;
+
+                _context.Update(contact);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Details", "Client", new { id = model.Id_client });
+            }
+
+            await PopulateDropdownsAsync(model);
+            return View(model);
+        }
+        // 4. DELETE (POST)
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var contact = await _context.PersonneContacts.FindAsync(id);
+            if (contact != null)
+            {
+                var clientId = contact.Id_client;
+                _context.PersonneContacts.Remove(contact);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Details", "Client", new { id = clientId });
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+        // Méthode auxiliaire
         private async Task PopulateDropdownsAsync(PersonneContactFormViewModel model)
         {
             var clients = await _context.Clients
@@ -150,23 +206,29 @@ namespace EcoLogistics.Controllers
                  .ToListAsync();
 
             var localites = await _context.Localites
-                .Select(l => new { l.Id_localite, Display = $"{l.Code_postal} - {l.CommuneBXL} ({l.Pays})" })
+                .Select(l => new 
+                {
+                    l.Id_localite, 
+                    Display = l.Code_postal + " - " +
+                      (l.CommuneBXL != null ? l.CommuneBXL.Commune_principale : l.Nom_localite) +
+                      " (" + (l.Pays != null ? l.Pays.Nom_pays : "") + ")"
+                })
                 .OrderBy(l => l.Display)
                 .ToListAsync();
 
-            var clientList = new SelectList(clients, "Id_client", "Nom_entreprise");
-            var localiteList = new SelectList(localites, "Id_localite", "Display");
+            model.ClientList = new SelectList(clients, "Id_client", "Nom_entreprise", model.Id_client);
+            model.LocaliteList = new SelectList(localites, "Id_localite", "Display", model.Id_localite);
 
-            if (model is PersonneContactFormViewModel createModel)
-            {
-                createModel.ClientList = clientList;
-                createModel.LocaliteList = localiteList;
-            }
-            else if (model is PersonneContactFormViewModel editModel)
-            {
-                editModel.ClientList = clientList;
-                editModel.LocaliteList = localiteList;
-            }
+            //if (model is PersonneContactFormViewModel createModel)
+            //{
+            //    createModel.ClientList = clientList;
+            //    createModel.LocaliteList = localiteList;
+            //}
+            //else if (model is PersonneContactFormViewModel editModel)
+            //{
+            //    editModel.ClientList = clientList;
+            //    editModel.LocaliteList = localiteList;
+            //}
         }
     }
 }

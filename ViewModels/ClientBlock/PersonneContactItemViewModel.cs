@@ -11,8 +11,9 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [DisplayName("Client / Entreprise :")]
         public string? Nom_client { get; set; }
 
-        [DisplayName("Nom et prénom : ")]
+        [DisplayName("Nom : ")]
         public string Nom { get; set; } = string.Empty;
+        [DisplayName("Prénom : ")]
 
         [DisplayName("Téléphone fixe : ")]
         public string? Telephone { get; set; }

@@ -8,9 +8,6 @@ namespace EcoLogistics.ViewModels.ClientBlock
     {
         public int Id_p_contact { get; set; }
 
-        [DisplayName("Client / Entreprise :")]
-        [Required(ErrorMessage = "Le client est obligatoire.")]
-        public Guid Id_client { get; set; }
 
         [DisplayName("Nom :")]
         [Required(ErrorMessage = "Le nom est obligatoire.")]
@@ -34,6 +31,10 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [EmailAddress(ErrorMessage = "L'adresse électronique n'est pas valide.")]
         [MaxLength(64, ErrorMessage = "L'email ne peut pas dépasser 64 caractères .")]
         public string? Email { get; set; }
+
+        [DisplayName("Client / Entreprise :")]
+        [Required(ErrorMessage = "Le client est obligatoire.")]
+        public Guid Id_client { get; set; }
 
         [DisplayName("Localité :")]
         public int? Id_localite { get; set; }

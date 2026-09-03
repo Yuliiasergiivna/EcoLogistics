@@ -91,11 +91,21 @@
                                 @if (isAdminOrManager)
                                 {
                                     <td class="text-end px-4">
-                                        <a asp-controller="PersonneContact" asp-action="Edit"
-                                             asp-route-id="@item.Id_p_contact" 
-                                             class="btn btn-sm btn-outline-warning me-1" title="Modifier"> 
-                                            <i class="bi bi-pencil me-1"> Modifier</i>
-                                        </a>
+                                        <div class="d-inline-flex gap-1">
+                                            <a asp-controller="PersonneContact" asp-action="Edit"
+                                                 asp-route-id="@item.Id_p_contact" 
+                                                 class="btn btn-sm btn-outline-warning me-1" title="Modifier"> 
+                                                <i class="bi bi-pencil me-1"> Modifier</i>
+                                            </a>
+                                            <form asp-controller="PersonneContact" asp-action="Delete"
+                                                  asp-route-id="@item.Id_p_contact" method="post"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette personne de contact ?');" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 }
                             </tr>
