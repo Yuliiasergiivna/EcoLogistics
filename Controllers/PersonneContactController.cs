@@ -54,7 +54,8 @@ namespace EcoLogistics.Controllers
             var contactsList = rawContacts.Select(p => new PersonneContactItemViewModel
             {
                 Id_p_contact = p.Id_p_contact,
-                Nom = $"{p.Nom} {p.Prenom}".Trim(),
+                Nom = p.Nom ,
+                Prenom = p.Prenom,
                 Telephone = p.Telephone,
                 Gsm = p.Gsm,
                 Email = p.Email,
@@ -96,11 +97,11 @@ namespace EcoLogistics.Controllers
             {
                 var contact = new PersonneContact
                 {
-                    Nom = model.Nom,
-                    Prenom = model.Prenom,
-                    Telephone = model.Telephone,
-                    Gsm = model.Gsm,
-                    Email = model.Email,
+                    Nom = model.Nom.Trim(),
+                    Prenom = model.Prenom.Trim(),
+                    Telephone = model.Telephone?.Trim(),
+                    Gsm = model.Gsm?.Trim(),
+                    Email = model.Email?.Trim(),
                     Id_client = model.Id_client,
                     Id_localite = model.Id_localite
                 };
@@ -161,11 +162,11 @@ namespace EcoLogistics.Controllers
                     return NotFound();
                 }
 
-                contact.Nom = model.Nom;
-                contact.Prenom = model.Prenom;
-                contact.Telephone = model.Telephone;
-                contact.Gsm = model.Gsm;
-                contact.Email = model.Email;
+                contact.Nom = model.Nom.Trim();
+                contact.Prenom = model.Prenom.Trim();
+                contact.Telephone = model.Telephone?.Trim();
+                contact.Gsm = model.Gsm?.Trim();
+                contact.Email = model.Email?.Trim();
                 contact.Id_client = model.Id_client;
                 contact.Id_localite = model.Id_localite;
 
@@ -219,16 +220,6 @@ namespace EcoLogistics.Controllers
             model.ClientList = new SelectList(clients, "Id_client", "Nom_entreprise", model.Id_client);
             model.LocaliteList = new SelectList(localites, "Id_localite", "Display", model.Id_localite);
 
-            //if (model is PersonneContactFormViewModel createModel)
-            //{
-            //    createModel.ClientList = clientList;
-            //    createModel.LocaliteList = localiteList;
-            //}
-            //else if (model is PersonneContactFormViewModel editModel)
-            //{
-            //    editModel.ClientList = clientList;
-            //    editModel.LocaliteList = localiteList;
-            //}
         }
     }
 }
