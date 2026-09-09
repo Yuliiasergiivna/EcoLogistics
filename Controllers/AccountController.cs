@@ -155,13 +155,13 @@ namespace EcoLogistics.Controllers
 
                 if (result == PasswordVerificationResult.Success)
                 {
-                        //if (!user.IsActive)
-                        //{
-                        //    ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
-                        //    return View(model);
-                        //}
+                    if (!user.IsActive)
+                    {
+                        ModelState.AddModelError(string.Empty, "Votre compte est désactivé.");
+                        return View(model);
+                    }
 
-                        var claims = new List<Claim>
+                    var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.NameIdentifier, user.Id_user.ToString()),
                             new Claim(ClaimTypes.Name, !string.IsNullOrEmpty(user.Nickname) ? user.Nickname :( user.Email ?? "Utilisateur")),

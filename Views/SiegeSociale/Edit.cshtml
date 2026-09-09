@@ -1,0 +1,70 @@
+﻿@model EcoLogistics.ViewModels.ClientBlock.SiegeSocialeViewModel
+
+@{
+    ViewData["Title"] = "Modifier le Siège Social";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card cf2d-card shadow">
+            <div class="card-header bg-cf2d-header py-3">
+                <h2 class="h5 m-0 text-white">
+                    <i class="bi bi-pencil-square me-2"></i>Modifier le Siège Social
+                </h2>
+            </div>
+            <div class="card-body p-4">
+                <form asp-controller="SiegeSociale" asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="Id_siege" />
+                    <input type="hidden" asp-for="Id_client" />
+
+                    <div class="mb-3">
+                        <label asp-for="Raison_sociale" class="form-label fw-bold"></label>
+                        <input asp-for="Raison_sociale" class="form-control" />
+                        <span asp-validation-for="Raison_sociale" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Secteur_activite" class="form-label fw-bold"></label>
+                        <input asp-for="Secteur_activite" class="form-control" />
+                        <span asp-validation-for="Secteur_activite" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Adresse" class="form-label fw-bold"></label>
+                        <input asp-for="Adresse" class="form-control" />
+                        <span asp-validation-for="Adresse" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Id_localite" class="form-label fw-bold">Localité / Code Postal</label>
+                        <select asp-for="Id_localite" asp-items="Model.LocaliteList" class="form-select">
+                            <option value="">-- Sélectionner une localité --</option>
+                        </select>
+                        <span asp-validation-for="Id_localite" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Site_internet" class="form-label fw-bold"></label>
+                        <input asp-for="Site_internet" class="form-control" />
+                        <span asp-validation-for="Site_internet" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-3 border-top">
+                        <a asp-controller="SiegeSociale" asp-action="Index" class="btn btn-outline-cf2d">
+                            <i class="bi bi-arrow-left me-1"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn btn-cf2d">
+                            <i class="bi bi-save me-1"></i>Mettre à jour
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

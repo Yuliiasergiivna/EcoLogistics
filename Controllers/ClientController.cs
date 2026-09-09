@@ -337,7 +337,7 @@ namespace EcoLogistics.Controllers
             }
 
         // 5. SOFT DELETE
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleSoftDelete(Guid id)

@@ -1,0 +1,105 @@
+﻿@model EcoLogistics.ViewModels.ClientBlock.SiegeSocialeViewModel
+
+@{
+    ViewData["Title"] = "Détails du Siège Social";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card cf2d-card shadow">
+            <div class="card-header bg-cf2d-header d-flex justify-content-between align-items-center py-3">
+                <h2 class="h5 m-0 text-white">
+                    <i class="bi bi-building me-2"></i>Fiche du Siège Social
+                </h2>
+                <span class="cf2d-badge">
+                    <i class="bi bi-shield-check me-1"></i>ID: #@Model.Id_siege
+                </span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="text-muted small d-block">Raison sociale</label>
+                        <span class="fs-5 fw-bold text-cf2d">@(Model.Raison_sociale ?? "-")</span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small d-block">Secteur d'activité</label>
+                        <span class="fs-6 fw-semibold">@(Model.Secteur_activite ?? "-")</span>
+                    </div>
+
+                    <hr class="my-3 text-muted" />
+
+                    <div class="col-md-12">
+                        <label class="text-muted small d-block"><i class="bi bi-geo-alt me-1"></i>Adresse complète</label>
+                        <p class="mb-0 fs-6">
+                            @(Model.Adresse ?? "Adresse non renseignée")<br />
+                            @if (!string.IsNullOrEmpty(Model.Siege_Code_postal))
+                            {
+                                <strong>@Model.Siege_Code_postal @Model.Siege_Nom_commune</strong>
+                                @if (!string.IsNullOrEmpty(Model.Siege_Pays))
+                                {
+                                    <span>(@Model.Siege_Pays)</span>
+                                }
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                        <label class="text-muted small d-block"><i class="bi bi-globe me-1"></i>Site Internet</label>
+                        @if (!string.IsNullOrEmpty(Model.Site_internet))
+                        {
+                            <a href="@Model.Site_internet" target="_blank" class="cf2d-link fs-6 fw-semibold text-decoration-none">
+                                @Model.Site_internet <i class="bi bi-box-arrow-up-right small ms-1"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Non renseigné</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer bg-light d-flex justify-content-between py-3">
+                <a asp-controller="SiegeSociale" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Retour au répertoire
+                </a>
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <div class="d-flex gap-2">
+                        <a asp-controller="SiegeSociale" asp-action="Edit" asp-route-id="@Model.Id_siege" class="btn btn-cf2d">
+                            <i class="bi bi-pencil me-1"></i>Modifier
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-1"></i>Supprimer
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fenêtre modale de confirmation de suppression -->
+@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+{
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Confirmation</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer le siège social <strong>@Model.Raison_sociale</strong> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form asp-controller="SiegeSociale" asp-action="Delete" asp-route-id="@Model.Id_siege" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">Supprimer définitivement</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
