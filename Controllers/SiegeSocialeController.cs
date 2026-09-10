@@ -86,8 +86,9 @@ namespace EcoLogistics.Controllers
         }
 
         // 3. GET: Create
-        [Authorize(Roles = "Admin, Manager")]
+ 
         [HttpGet]
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Create(Guid? clientId)
         {
             var model = new SiegeSocialeViewModel();
@@ -100,7 +101,7 @@ namespace EcoLogistics.Controllers
             return View(model);
         }
 
-        // POST: SiegeSocialeController/Create
+        // POST: Create
         [Authorize(Roles = "Admin, Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -143,7 +144,7 @@ namespace EcoLogistics.Controllers
             return View(model);
         }
 
-        // GET: SiegeSocialeController/Edit/5
+        // GET: Edit
         [Authorize(Roles ="Admin, Manager")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id, Guid? clientId)
@@ -165,7 +166,8 @@ namespace EcoLogistics.Controllers
             return View(model);
         }
 
-        // POST: SiegeSocialeController/Edit/5
+        // POST: Edit
+        [Authorize(Roles = "Admin, Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, SiegeSocialeViewModel model)
@@ -205,7 +207,7 @@ namespace EcoLogistics.Controllers
  
         }
 
-        // POST: SiegeSocialeController/Delete/5
+        // POST: Delete
         [Authorize(Roles = "Admin, Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
