@@ -20,8 +20,11 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public string? Secteur_activite { get; set; }
         [DisplayName("Localité : ")]
         public string? Localite_Info { get; set; }
+        [DisplayName("Code postal : ")]
         public string? Siege_Code_postal { get;  set; }
+        [DisplayName("Nom de commune : ")]
         public string? Siege_Nom_commune { get;  set; }
+        [DisplayName("Pays : ")]
         public string? Siege_Pays { get; set; }
         public SelectList? LocaliteList { get; set; }
     }
