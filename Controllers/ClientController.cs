@@ -146,9 +146,9 @@ namespace EcoLogistics.Controllers
                         Nom_site = a.Nom_site ?? string.Empty,
                         Rue = a.Rue ?? string.Empty,
                         Numero = a.Numero ?? string.Empty,
-                        Code_postal = a.Localite?.Code_postal,
-                        Commune = a.Localite?.CommuneBXL?.Commune_principale,
-                        Pays = a.Localite?.Pays?.Nom_pays
+                        Adresse_Code_postal = a.Localite?.Code_postal,
+                        Adresse_Commune = a.Localite?.CommuneBXL?.Commune_principale,
+                        Adresse_Pays = a.Localite?.Pays?.Nom_pays
                     }).ToList()
                 };
 
