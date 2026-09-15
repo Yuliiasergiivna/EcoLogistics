@@ -1,4 +1,5 @@
 using EcoLogistics.Data;
+using EcoLogistics.ExcelImportService;
 using EcoLogistics.Models.UserBlock;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +23,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+builder.Services.AddScoped<ClientImportService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

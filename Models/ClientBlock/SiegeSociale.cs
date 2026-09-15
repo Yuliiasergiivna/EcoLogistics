@@ -10,6 +10,9 @@ namespace EcoLogistics.Models.ClientBlock
         [Key]
         [ScaffoldColumn(false)]
         public int Id_siege { get; set; }
+        public Guid Id_client { get; set; }
+        [ForeignKey("Id_client")]
+        public Client? Client { get; set; }
         [DisplayName("Raison sociale: ")]
         [MaxLength(100, ErrorMessage = "La raison sociale ne peut pas dépasser 100 caractères")]
         public string? Raison_sociale { get; set; }
@@ -27,6 +30,7 @@ namespace EcoLogistics.Models.ClientBlock
         public int? Id_localite { get; set; }
         [ForeignKey("Id_localite")]
         public Localite? Localite { get; set; }
+
   
     }
 }
