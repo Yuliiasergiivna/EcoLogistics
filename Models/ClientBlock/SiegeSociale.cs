@@ -14,16 +14,16 @@ namespace EcoLogistics.Models.ClientBlock
         [ForeignKey("Id_client")]
         public Client? Client { get; set; }
         [DisplayName("Raison sociale: ")]
-        [MaxLength(100, ErrorMessage = "La raison sociale ne peut pas dépasser 100 caractères")]
+        [MaxLength(255, ErrorMessage = "La raison sociale ne peut pas dépasser 255 caractères")]
         public string? Raison_sociale { get; set; }
         [DisplayName("Adresse: ")]
-        [MaxLength(100, ErrorMessage = "L'adresse ne peut pas dépasser 100 caractères")]
+        [MaxLength(255, ErrorMessage = "L'adresse ne peut pas dépasser 255 caractères")]
         public string? Adresse { get; set; }
         [DisplayName("Site internet: ")]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string? Site_internet { get; set; }
         [DisplayName("Secteur d'activité: ")]
-        [MaxLength(32)]
+        [MaxLength(255)]
         public string? Secteur_activite {  get; set; }
 
         [ScaffoldColumn(false)]

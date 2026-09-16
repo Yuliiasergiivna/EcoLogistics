@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Importer les clients depuis Excel";
+}
+
+<div class="container mt-4">
+    <h2>Importer des clients à partir d'un fichier Excel</h2>
+    <hr />
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success">
+            @ViewBag.Success
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+
+    <form asp-controller="ClientImport" asp-action="Upload" method="post" enctype="multipart/form-data" class="mt-3">
+        <div class="mb-3">
+            <label for="excelFile" class="form-label">Sélectionner un fichier Excel (.xlsx):</label>
+            <input type="file" name="excelFile" id="excelFile" class="form-control" accept=".xlsx, .xls, .xlsm" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Télécharger et importer</button>
+    </form>
+</div>

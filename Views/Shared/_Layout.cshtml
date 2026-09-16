@@ -76,6 +76,10 @@
                         <div class="menu-header"><i class="bi bi-arrow-repeat me-1"></i> Logistique</div>
                         <div class="sub-menu">
                             <a asp-controller="Enlevement" asp-action="Index"><i class="bi bi-receipt-cutoff me-1"></i> Enlèvements</a>
+                            @if(User.IsInRole("Admin"))
+                            {
+                                <a asp-controller="ClientImport" asp-action="Index"><i class="bi bi-receipt-cutoff me-1"></i> Import Excel </a>
+                            }
                         </div>
                     </div>
                 </nav>
