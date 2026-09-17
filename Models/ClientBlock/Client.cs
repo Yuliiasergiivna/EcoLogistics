@@ -33,7 +33,7 @@ namespace EcoLogistics.Models.ClientBlock
         [MaxLength(100, ErrorMessage = "L'adresse électronique ne peut pas dépasser 100 caractères.")]
         public string? Email { get; set; }
         [DisplayName("Remarques: ")]
-        [MaxLength(500, ErrorMessage ="La remarque ne peut pas dépasser 500 caractères")]
+        [MaxLength(2000, ErrorMessage ="La remarque ne peut pas dépasser 2000 caractères")]
         public string? Remarques { get; set; }
         [DisplayName("Numéro d'enregistrement BE: ")]
         [MaxLength(100)]
@@ -45,7 +45,7 @@ namespace EcoLogistics.Models.ClientBlock
         [MaxLength(100)]
         public string? Type_enregistrement { get; set; }
         [DisplayName("Presentation: ")]
-        [MaxLength(500, ErrorMessage ="Presentation ne peut pas dépasser 500 caractères")]
+        [MaxLength(4000, ErrorMessage ="Presentation ne peut pas dépasser 4000 caractères")]
         public string? Presentation {  get; set; }
         [DisplayName("Date de création: ")]
         [DataType(DataType.Date)]
