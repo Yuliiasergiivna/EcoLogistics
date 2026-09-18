@@ -9,7 +9,6 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h2 class="fw-bold text-cf2d mb-0">@Model.Nom_entreprise</h2>
-            <span class="text-muted">ID: @Model.Id_client</span>
         </div>
         <div>
             <a asp-action="Index" class="btn btn-secondary me-1"><i class="bi bi-arrow-left me-1"></i> Retour</a>
@@ -70,32 +69,51 @@
                     <i class="bi bi-building me-2"></i>Siège Social (Juridique)
                 </div>
                 <div class="card-body">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-5">Raison Sociale :</dt>
-                        <dd class="col-sm-7">@(Model.Siege_Raison_sociale ?? "-")</dd>
+                    @if (Model.Id_siege != null || !string.IsNullOrEmpty(Model.Siege_Raison_sociale))
+                    {
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5">Raison Sociale :</dt>
+                            <dd class="col-sm-7">@(Model.Siege_Raison_sociale ?? "-")</dd>
 
-                        <dt class="col-sm-5">Adresse du siège :</dt>
-                        <dd class="col-sm-7">@(Model.Siege_Adresse ?? "-")</dd>
+                            <dt class="col-sm-5">Adresse du siège :</dt>
+                            <dd class="col-sm-7">@(Model.Siege_Adresse ?? "-")</dd>
 
-                        <dt class="col-sm-5">Localité :</dt>
-                        <dd class="col-sm-7">@Model.Siege_Code_postal @Model.Siege_Nom_localite (@Model.Siege_Nom_pays)</dd>
+                            <dt class="col-sm-5">Localité :</dt>
+                            <dd class="col-sm-7">
+                                @if(!string.IsNullOrEmpty(Model.Siege_Code_postal) || !string.IsNullOrEmpty(Model.Siege_Nom_localite))
+                                {
+                                    
+                                    @($"{Model.Siege_Code_postal} {Model.Siege_Nom_localite} ({@Model.Siege_Nom_pays})")
+                                }
+                                else
+                                {
+                                    <span> - </span>
+                                }
+                            </dd>
 
-                        <dt class="col-sm-5">Site Internet :</dt>
-                        <dd class="col-sm-7">
-                            @if (!string.IsNullOrEmpty(Model.Siege_Site_internet))
-                            {
-                                <a href="@Model.Siege_Site_internet" target="_blank">@Model.Siege_Site_internet</a>
-                            }
-                            else
-                            {
+                            <dt class="col-sm-5">Site Internet :</dt>
+                            <dd class="col-sm-7">
+                                @if (!string.IsNullOrEmpty(Model.Siege_Site_internet))
+                                {
+                                    <a href="@Model.Siege_Site_internet" target="_blank">@Model.Siege_Site_internet</a>
+                                }
+                                else
+                                {
 
-                                <span>-</span>
-                            }
-                        </dd>
+                                    <span>-</span>
+                                }
+                            </dd>
 
-                        <dt class="col-sm-5">Secteur :</dt>
-                        <dd class="col-sm-7">@(Model.Siege_Secteur_activite ?? "-")</dd>
-                    </dl>
+                            <dt class="col-sm-5">Secteur :</dt>
+                            <dd class="col-sm-7">@(Model.Siege_Secteur_activite ?? "-")</dd>
+                        </dl>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <em>Aucun siège social enregistré pour ce client.</em>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

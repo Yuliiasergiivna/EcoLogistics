@@ -114,6 +114,13 @@ namespace EcoLogistics.Controllers
                     .FirstOrDefaultAsync(c => c.Id_client == id);
 
                 if (client == null) return NotFound();
+
+            var siege = client.SiegeSociale
+                 ?? await _context.SiegeSociales
+                    .Include(s => s.Localite).ThenInclude(l => l!.CommuneBXL)
+                    .Include(s => s.Localite).ThenInclude(l => l!.Pays)
+                    .FirstOrDefaultAsync(s => s.Raison_sociale == client.Nom_entreprise);
+
             var primaryContact = client.PersonnesContact.FirstOrDefault();
             var primaryExploitation = client.AdressesExploitation.FirstOrDefault();
 
@@ -147,14 +154,14 @@ namespace EcoLogistics.Controllers
                                 : client.User.Email) : "Non assigné",
                     User_Email = client.User?.Email,
 
-                    Id_siege = client.SiegeSociale?.Id_siege,
-                    Siege_Raison_sociale = client.SiegeSociale?.Raison_sociale,
-                    Siege_Adresse = client.SiegeSociale?.Adresse,
-                    Siege_Site_internet = client.SiegeSociale?.Site_internet,
-                    Siege_Secteur_activite = client.SiegeSociale?.Secteur_activite,
-                    Siege_Nom_localite = client.SiegeSociale?.Localite?.CommuneBXL?.Commune_principale,
-                    Siege_Code_postal = client.SiegeSociale?.Localite?.Code_postal,
-                    Siege_Nom_pays = client.SiegeSociale?.Localite?.Pays?.Nom_pays,
+                    Id_siege = siege?.Id_siege,
+                    Siege_Raison_sociale = siege?.Raison_sociale,
+                    Siege_Adresse = siege?.Adresse,
+                    Siege_Site_internet = siege?.Site_internet,
+                    Siege_Secteur_activite = siege?.Secteur_activite,
+                    Siege_Nom_localite = siege?.Localite?.CommuneBXL?.Commune_principale,
+                    Siege_Code_postal = siege?.Localite?.Code_postal,
+                    Siege_Nom_pays = siege?.Localite?.Pays?.Nom_pays,
 
                     PersonnesContact = client.PersonnesContact.Select(p => new PersonneContactItemViewModel
                     {
@@ -271,7 +278,6 @@ namespace EcoLogistics.Controllers
                 var model = new ClientEditViewModel
                 {
                     Id_client = client.Id_client,
-
                     Nom_entreprise = client.Nom_entreprise,
                     Numero_entreprise = client.Numero_entreprise,
                     BE_entreprise = client.BE_entreprise,
@@ -310,38 +316,96 @@ namespace EcoLogistics.Controllers
                 {
                     try
                     {
-                        var client = await _context.Clients
-                            .Include(c => c.SiegeSociale)
-                            .FirstOrDefaultAsync(c => c.Id_client == id);
+                    //    var client = await _context.Clients
+                    //        .Include(c => c.SiegeSociale)
+                    //        .FirstOrDefaultAsync(c => c.Id_client == id);
 
-                        if (client == null) return NotFound();
+                    //    if (client == null) return NotFound();
 
-                        client.Nom_entreprise = model.Nom_entreprise;
-                        client.Numero_entreprise = model.Numero_entreprise;
-                        client.BE_entreprise = model.BE_entreprise;
-                        client.Adresse = model.Adresse;
-                        client.Telephone = model.Telephone;
-                        client.Email = model.Email;
-                        client.Enregistrement_BE = model.Enregistrement_BE;
-                        client.Agrement_BE = model.Agrement_BE;
-                        client.Type_enregistrement = model.Type_enregistrement;
-                        client.Remarques = model.Remarques;
-                        client.Presentation = model.Presentation;
-                        client.Is_deleted = model.Is_deleted;
-                        client.Id_user = model.Id_user;
-                        client.Id_localite = model.Id_localite;
-                        client.Updated_at = DateTime.Now;
+                    //    client.Nom_entreprise = model.Nom_entreprise;
+                    //    client.Numero_entreprise = model.Numero_entreprise;
+                    //    client.BE_entreprise = model.BE_entreprise;
+                    //    client.Adresse = model.Adresse;
+                    //    client.Telephone = model.Telephone;
+                    //    client.Email = model.Email;
+                    //    client.Enregistrement_BE = model.Enregistrement_BE;
+                    //    client.Agrement_BE = model.Agrement_BE;
+                    //    client.Type_enregistrement = model.Type_enregistrement;
+                    //    client.Remarques = model.Remarques;
+                    //    client.Presentation = model.Presentation;
+                    //    client.Is_deleted = model.Is_deleted;
+                    //    client.Id_user = model.Id_user;
+                    //    client.Id_localite = model.Id_localite;
+                    //    client.Updated_at = DateTime.Now;
 
-                    //SiegeSociale
-                        if (client.SiegeSociale != null)
+                    ////SiegeSociale
+                    //    if (client.SiegeSociale != null)
+                    //{
+                    //    client.SiegeSociale.Raison_sociale = model.Siege_Raison_sociale;
+                    //    client.SiegeSociale.Adresse = model.Siege_Adresse;
+                    //    client.SiegeSociale.Site_internet = model.Siege_Site_internet;
+                    //    client.SiegeSociale.Secteur_activite = model.Siege_Secteur_activite;
+                    //    client.SiegeSociale.Id_localite = model.Siege_Id_localite;
+                    //}
+                    //else if (!string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse))
+                    //{
+                    //    var newSiege = new SiegeSociale
+                    //    {
+                    //        Raison_sociale = model.Siege_Raison_sociale,
+                    //        Adresse = model.Siege_Adresse,
+                    //        Site_internet = model.Siege_Site_internet,
+                    //        Secteur_activite = model.Siege_Secteur_activite,
+                    //        Id_localite = model.Siege_Id_localite
+                    //    };
+                    //     _context.SiegeSociales.Add(newSiege);
+                    //    await _context.SaveChangesAsync();
+                    //    client.Id_siege = newSiege.Id_siege;
+                    //}
+                    //    await _context.SaveChangesAsync();
+                    //    return RedirectToAction(nameof(Details), new { id = client.Id_client });
+                    var client = await _context.Clients
+                        .Include(c => c.SiegeSociale)
+                        .FirstOrDefaultAsync(c => c.Id_client == id);
+
+                    if (client == null) return NotFound();
+
+                    client.Nom_entreprise = model.Nom_entreprise;
+                    client.Numero_entreprise = model.Numero_entreprise;
+                    client.BE_entreprise = model.BE_entreprise;
+                    client.Adresse = model.Adresse;
+                    client.Telephone = model.Telephone;
+                    client.Email = model.Email;
+                    client.Enregistrement_BE = model.Enregistrement_BE;
+                    client.Agrement_BE = model.Agrement_BE;
+                    client.Type_enregistrement = model.Type_enregistrement;
+                    client.Remarques = model.Remarques;
+                    client.Presentation = model.Presentation;
+                    client.Is_deleted = model.Is_deleted;
+                    client.Id_user = model.Id_user;
+                    client.Id_localite = model.Id_localite;
+                    client.Updated_at = DateTime.Now;
+
+                    // Логика обновления / создания головного офиса
+                    bool hasSiegeInput = !string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse);
+
+                    if (client.SiegeSociale != null)
                     {
-                        client.SiegeSociale.Raison_sociale = model.Siege_Raison_sociale;
-                        client.SiegeSociale.Adresse = model.Siege_Adresse;
-                        client.SiegeSociale.Site_internet = model.Siege_Site_internet;
-                        client.SiegeSociale.Secteur_activite = model.Siege_Secteur_activite;
-                        client.SiegeSociale.Id_localite = model.Siege_Id_localite;
+                        if (hasSiegeInput)
+                        {
+                            client.SiegeSociale.Raison_sociale = model.Siege_Raison_sociale;
+                            client.SiegeSociale.Adresse = model.Siege_Adresse;
+                            client.SiegeSociale.Site_internet = model.Siege_Site_internet;
+                            client.SiegeSociale.Secteur_activite = model.Siege_Secteur_activite;
+                            client.SiegeSociale.Id_localite = model.Siege_Id_localite;
+                        }
+                        else
+                        {
+                            // Если пользователь полностью очистил данные о головном офисе
+                            _context.SiegeSociales.Remove(client.SiegeSociale);
+                            client.Id_siege = null;
+                        }
                     }
-                    else if (!string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse))
+                    else if (hasSiegeInput)
                     {
                         var newSiege = new SiegeSociale
                         {
@@ -351,13 +415,14 @@ namespace EcoLogistics.Controllers
                             Secteur_activite = model.Siege_Secteur_activite,
                             Id_localite = model.Siege_Id_localite
                         };
-                         _context.SiegeSociales.Add(newSiege);
+                        _context.SiegeSociales.Add(newSiege);
                         await _context.SaveChangesAsync();
                         client.Id_siege = newSiege.Id_siege;
                     }
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Details), new { id = client.Id_client });
-                    }
+
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Details), new { id = client.Id_client });
+                }
                     catch (Exception)
                     {
                         ModelState.AddModelError("", "Une erreur est survenue lors de la mise à jour.");
@@ -433,7 +498,7 @@ namespace EcoLogistics.Controllers
                     Text = !string.IsNullOrWhiteSpace(u.Nickname)
                         ? u.Nickname
                         : (!string.IsNullOrWhiteSpace(u.Nom) || !string.IsNullOrWhiteSpace(u.Prenom)
-                        ? $"{u.Nom}{u.Prenom}"
+                        ? $"{u.Nom} {u.Prenom}"
                         .Trim() : u.Email)
                 })
                 .OrderBy(item => item.Text)
