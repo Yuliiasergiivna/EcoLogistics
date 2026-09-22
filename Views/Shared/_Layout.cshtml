@@ -15,16 +15,31 @@
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <!-- PANNEAU SUPÉRIEUR (Affiché uniquement aux utilisateurs autorisés) -->
-        <nav class="navbar navbar-dark navbar-cf2d px-3 py-2">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
-                <img src="~/images/logo.png" alt="CF2D Logo" height="70" class="bg-white p-1 rounded" />
-                <span class="fs-4">EcoLogistics</span>
-            </a>
-            <div class="d-flex align-items-center text-white">
-                <span class="me-3"><i class="bi bi-person-circle"></i> @User.Identity.Name</span>
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-outline-light btn-sm">Déconnexion</button>
-                </form>
+        <nav class="navbar navbar-expand-md navbar-dark navbar-cf2d px-3 py-2 sticky-top shadow-sm ">
+            <div class="container-fluid p-0">
+                    <!-- LOGO & TITLE -->
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2 me-auto" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="CF2D Logo" height="50" class="bg-white p-1 rounded" />
+                    <span class="fs-4 d-none d-sm-inline">EcoLogistics</span>
+                </a>
+                <!-- USER INFO & LOGOUT -->
+                <div class="d-flex align-items-center text-white me-2">
+                    <span class="me-2 text-truncate style="max-width: 120px;" title="@User.Identity.Name">
+                        <i class="bi bi-person-circle"></i> @User.Identity.Name
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right d-sm-none"></i>
+                            <span class="">Déconnexion</span>
+                        </button>
+                    </form>
+                </div>
+                <!-- BURGER BUTTON (Affiche uniquement sur mobile) -->
+                <button class="navbar-toggler border-0 shadow-none text-white ms-1 d-md-none" type="button" 
+                        data-bs-toggle="collapse" data-bs-target="#sidebarMenu" 
+                        aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="bi bi-list fs-2"></i>
+                </button>
             </div>
         </nav>
 
@@ -32,13 +47,13 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Menu d'accompagnement -->
-                <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-                    <div class="position-sticky pt-3">
-                        <div class="menu-header"><i class="bi bi-house-door me-1"></i> MENU PRINCIPAL</div>
+                <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
+                    <div class="position-sticky">
+                        <div class="menu-header fw-bold text uppercase text-secondary mb-2">
+                            <i class="bi bi-house-door me-1"></i> MENU PRINCIPAL
+                        </div>
 
                         <!-- USER SECTION -->
-                      
- @*                            <a asp-controller="User" asp-action="Index">Utilisateurs</a> *@
                             @if(User.IsInRole("Admin") )
                                 {
                             <div class="menu-header"><i class="bi bi-people me-1"></i>User</div>

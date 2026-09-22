@@ -24,6 +24,7 @@ namespace EcoLogistics.Controllers
             {
                 var query = _context.Clients
                     .AsNoTracking()
+                    .OrderBy(c => c.Nom_entreprise)
                     .AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(searchString))
