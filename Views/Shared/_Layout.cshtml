@@ -24,7 +24,7 @@
                 </a>
                 <!-- USER INFO & LOGOUT -->
                 <div class="d-flex align-items-center text-white me-2">
-                    <span class="me-2 text-truncate style="max-width: 120px;" title="@User.Identity.Name">
+                    <span class="me-2 text-truncate" style="max-width: 120px;" title="@User.Identity.Name">
                         <i class="bi bi-person-circle"></i> @User.Identity.Name
                     </span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">

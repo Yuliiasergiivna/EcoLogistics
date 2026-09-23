@@ -13,8 +13,8 @@ namespace EcoLogistics.ViewModels.ClientBlock
 
         [DisplayName("Nom : ")]
         public string Nom { get; set; } = string.Empty;
-        [DisplayName("Prénom : ")]
-        public string? Prenom { get; set; }
+        //[DisplayName("Prénom : ")]
+        //public string? Prenom { get; set; }
 
         [DisplayName("Téléphone fixe : ")]
         public string? Telephone { get; set; }

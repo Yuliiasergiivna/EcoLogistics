@@ -13,9 +13,9 @@ namespace EcoLogistics.Models.ClientBlock
         [DisplayName("Nom: ")]
         [MaxLength(255, ErrorMessage = "Le nom ne peut pas dépasser 255 caractères")]
         public string? Nom { get; set; }
-        [DisplayName("Prénom: ")]
-        [MaxLength(255, ErrorMessage = "Le prénom ne peut pas dépasser 255 caractères")]
-        public string? Prenom { get; set; }
+        //[DisplayName("Prénom: ")]
+        //[MaxLength(255, ErrorMessage = "Le prénom ne peut pas dépasser 255 caractères")]
+        //public string? Prenom { get; set; }
         [DisplayName("Téléphone fixe: ")]
         [MaxLength(100, ErrorMessage = "Le numéro de téléphone ne peut pas dépasser 100 caractères")]
         public string? Telephone { get; set; }

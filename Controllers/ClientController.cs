@@ -168,7 +168,7 @@ namespace EcoLogistics.Controllers
                     {
                         Id_p_contact = p.Id_contact,
                         Nom = p.Nom,
-                        Prenom = p.Prenom,
+                        //Prenom = p.Prenom,
                         Telephone = p.Telephone,
                         Gsm = p.Gsm,
                         Email = p.Email,

@@ -23,14 +23,14 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-cf2d-header text-white">
                     <tr>
-                        <th class="ps-4">@Html.DisplayNameFor(model => model.Nom_client)</th>
-                        <th>@Html.DisplayNameFor(model => model.Nom)</th>
-                        <th>@Html.DisplayNameFor(model => model.Email)</th>
-                        <th>@Html.DisplayNameFor(model => model.Telephone) / @Html.DisplayNameFor(model => model.Gsm)</th>
-                        <th>@Html.DisplayNameFor(model => model.Localite_Info)</th>
+                        <th class="ps-3" style="width: 20%">@Html.DisplayNameFor(model => model.Nom_client)</th>
+                        <th style="width: 20%">@Html.DisplayNameFor(model => model.Nom)</th>
+                        <th style="width: 20%">@Html.DisplayNameFor(model => model.Email)</th>
+                        <th style="width: 20%">@Html.DisplayNameFor(model => model.Telephone) / @Html.DisplayNameFor(model => model.Gsm)</th>
+                        <th style="width: 10%">@Html.DisplayNameFor(model => model.Localite_Info)</th>
                         @if (isAdminOrManager)
                         {
-                            <th class="text-end px-4">Actions</th>
+                            <th class="text-end px-4" style="width: 10%">Actions</th>
                         }
                     </tr>
                 </thead>
@@ -61,7 +61,7 @@
                                     }
                                 </td>
                                 <td class="fw-bold">
-                                    <i class="bi bi-person-circle text-cf2d me-2"></i>@item.Nom @item.Prenom
+                                    <i class="bi bi-person-circle text-cf2d me-2"></i>@item.Nom
                                 </td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.Email))
@@ -107,7 +107,7 @@
                                         <div class="d-inline-flex gap-1">
                                             <a asp-controller="PersonneContact" asp-action="Edit"
                                                  asp-route-id="@item.Id_p_contact" 
-                                                 class="btn btn-sm btn-outline-warning me-1" title="Modifier"> 
+                                                 class="btn btn-sm btn-outline-warning me-1"> 
                                                 <i class="bi bi-pencil me-1"> </i>Modifier
                                             </a>
                                             <form asp-controller="PersonneContact" asp-action="Delete"

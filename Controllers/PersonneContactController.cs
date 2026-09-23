@@ -24,6 +24,9 @@ namespace EcoLogistics.Controllers
         {
             var query = _context.PersonneContacts
                 .AsNoTracking()
+                .Include(p => p.Client)
+                .OrderBy(p => p.Client.Nom_entreprise)
+                .ThenBy(p =>p.Nom)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchString))
@@ -31,7 +34,7 @@ namespace EcoLogistics.Controllers
                 searchString = searchString.Trim();
                 query = query.Where(p =>
                     p.Nom.Contains(searchString) ||
-                    (p.Prenom != null && p.Prenom.Contains(searchString)) ||
+                    //(p.Prenom != null && p.Prenom.Contains(searchString)) ||
                     (p.Email != null && p.Email.Contains(searchString)) ||
                     (p.Client != null && p.Client.Nom_entreprise.Contains(searchString))
                 );
@@ -40,7 +43,7 @@ namespace EcoLogistics.Controllers
             {
                 Id_p_contact = p.Id_contact,
                 p.Nom,
-                p.Prenom,
+                //p.Prenom,
                 p.Telephone,
                 p.Gsm,
                 p.Email,
@@ -55,7 +58,7 @@ namespace EcoLogistics.Controllers
             {
                 Id_p_contact = p.Id_p_contact,
                 Nom = p.Nom ,
-                Prenom = p.Prenom,
+                //Prenom = p.Prenom,
                 Telephone = p.Telephone,
                 Gsm = p.Gsm,
                 Email = p.Email,
@@ -98,7 +101,7 @@ namespace EcoLogistics.Controllers
                 var contact = new PersonneContact
                 {
                     Nom = model.Nom.Trim(),
-                    Prenom = model.Prenom.Trim(),
+                    //Prenom = model.Prenom.Trim(),
                     Telephone = model.Telephone?.Trim(),
                     Gsm = model.Gsm?.Trim(),
                     Email = model.Email?.Trim(),
@@ -131,7 +134,7 @@ namespace EcoLogistics.Controllers
             {
                 Id_p_contact = contact.Id_contact,
                 Nom = contact.Nom,
-                Prenom = contact.Prenom,
+                //Prenom = contact.Prenom,
                 Telephone = contact.Telephone,
                 Gsm = contact.Gsm,
                 Email = contact.Email,
@@ -163,7 +166,7 @@ namespace EcoLogistics.Controllers
                 }
 
                 contact.Nom = model.Nom.Trim();
-                contact.Prenom = model.Prenom.Trim();
+                //contact.Prenom = model.Prenom.Trim();
                 contact.Telephone = model.Telephone?.Trim();
                 contact.Gsm = model.Gsm?.Trim();
                 contact.Email = model.Email?.Trim();

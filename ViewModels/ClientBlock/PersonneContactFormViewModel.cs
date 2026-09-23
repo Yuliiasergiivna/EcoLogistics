@@ -14,10 +14,9 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [MaxLength(64, ErrorMessage = "Le nom ne peut pas dépasser 64 caractères.")]
         public string Nom { get; set; } = string.Empty;
 
-        [DisplayName("Prénom :")]
-        [Required(ErrorMessage = "Le prénom est obligatoire.")]
-        [MaxLength(64, ErrorMessage = "Le prénom ne peut pas dépasser 64 caractères.")]
-        public string Prenom { get; set; } = string.Empty;
+        //[DisplayName("Prénom :")]
+        //[MaxLength(64, ErrorMessage = "Le prénom ne peut pas dépasser 64 caractères.")]
+        //public string Prenom { get; set; };
 
         [DisplayName("Téléphone fixe :")]
         [MaxLength(32, ErrorMessage = "Le numéro ne peut pas dépasser 32 caractères.")]
