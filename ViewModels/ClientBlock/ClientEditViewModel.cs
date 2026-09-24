@@ -132,9 +132,10 @@ namespace EcoLogistics.ViewModels.ClientBlock
 
         [DisplayName("Localité du site: ")]
         public int? Site_Id_localite { get; set; }
+  
 
         // LISTES DÉROULANTES (SelectLists)
-        
+
         public IEnumerable<SelectListItem>? LocaliteList { get; set; }
         public IEnumerable<SelectListItem>? UserList { get; set; }
     }

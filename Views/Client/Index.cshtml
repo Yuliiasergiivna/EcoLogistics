@@ -21,7 +21,7 @@
             <form method="get" asp-action="Index" class="row g-2">
                 <div class="col-md-10">
                     <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"
-                           class="form-control" placeholder="Rechercher par nom, N° BCE ou email..." />
+                           class="form-control" placeholder="Rechercher par nom..." />
                 </div>
                 <div class="col-md-2 d-grid">
                     <button type="submit" class="btn btn-cf2d"><i class="bi bi-search me-1"></i> Rechercher</button>
@@ -35,11 +35,6 @@
         <div class="top-scroll-wrapper border-bottom p-1">
             <div class="top-scroll-content"></div>
         </div>
-@*         <div class="card-header bg-white border-0 py-2 d-md-none text-end">
-            <span class="scroll-hint">
-                <i class="bi bi-arrow-left-right me-1"></i> Glissez pour voir plus <i class="bi bi-arrows-arrows"></i>
-            </span>
-        </div> *@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -50,7 +45,7 @@
                             <th>Contact Principal</th>
                             <th>Exploitation (Site)</th>
                             <th>Statut</th>
-                            <th style="width: 150px;">Actions</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,15 +92,16 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <div class="btn-group btn-group-sm" role="group">
+                                        <div class="d-inline-flex gap-1" role="group">
+                                       @*  <div class="btn-group btn-group-sm" role="group"> *@
                                             <a asp-action="Details" asp-route-id="@item.Id_client"
-                                               class="btn btn-outline-cf2d" title="Détails">
+                                               class="btn btn-sm btn-outline-info" title="Détails">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
                                             {
                                                 <a asp-action="Edit" asp-route-id="@item.Id_client"
-                                                   class="btn btn-outline-warning" title="Modifier">
+                                                   class="btn btn-sm btn-outline-warning" title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                             }
@@ -114,7 +110,7 @@
                                                 <form asp-action="ToggleSoftDelete" asp-route-id="@item.Id_client"
                                                       method="post" class="d-inline">
                                                     @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-outline-danger"
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
                                                             onclick="return confirm('Voulez-vous modifier le statut de ce client ?');"
                                                             title="Changer statut">
                                                         <i class="bi bi-power"></i>
@@ -191,7 +187,7 @@
                 const query = this.value.toLowerCase().trim();
 
                 tableRows.forEach(row => {
-                    // Propuskayem stroku, esli klienty ne naydeny
+                    //Si client n'était pas trouvé
                     if (row.cells.length === 1) return;
 
                     const text = row.textContent.toLowerCase();

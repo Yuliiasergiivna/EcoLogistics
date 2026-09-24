@@ -1,4 +1,6 @@
-﻿using EcoLogistics.Data;
+﻿using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Office2016.Drawing.Command;
+using EcoLogistics.Data;
 using EcoLogistics.Models.ClientBlock;
 using EcoLogistics.ViewModels.ClientBlock;
 using Microsoft.AspNetCore.Authorization;
@@ -272,11 +274,16 @@ namespace EcoLogistics.Controllers
             {
                 var client = await _context.Clients
                     .Include(c => c.SiegeSociale)
+                    .Include(c => c.PersonnesContact)
+                    .Include(c => c.AdressesExploitation)
                     .FirstOrDefaultAsync(c => c.Id_client == id);
 
                 if (client == null) return NotFound();
 
-                var model = new ClientEditViewModel
+            var primaryContact = client.PersonnesContact.FirstOrDefault();
+            var primaryExploitation = client.AdressesExploitation.FirstOrDefault();
+
+            var model = new ClientEditViewModel
                 {
                     Id_client = client.Id_client,
                     Nom_entreprise = client.Nom_entreprise,
@@ -300,6 +307,17 @@ namespace EcoLogistics.Controllers
                     Siege_Secteur_activite = client.SiegeSociale?.Secteur_activite,
                     Siege_Id_localite = client.SiegeSociale?.Id_localite,
 
+                    Contact_Nom = primaryContact?.Nom,
+                    Contact_Email = primaryContact?.Email,
+                    Contact_Telephone = primaryContact?.Telephone,
+                    Contact_Gsm = primaryContact?.Gsm,
+                    Contact_Id_localite = primaryContact?.Id_localite,
+
+                    Site_Nom = primaryExploitation?.Nom_site,
+                    Site_Rue = primaryExploitation?.Rue,
+                    Site_Numero = primaryExploitation?.Numero,
+                    Site_Id_localite = primaryExploitation?.Id_localite
+
                 };
 
                 await PopulateDropdownsAsync(model);
@@ -317,55 +335,10 @@ namespace EcoLogistics.Controllers
                 {
                     try
                     {
-                    //    var client = await _context.Clients
-                    //        .Include(c => c.SiegeSociale)
-                    //        .FirstOrDefaultAsync(c => c.Id_client == id);
-
-                    //    if (client == null) return NotFound();
-
-                    //    client.Nom_entreprise = model.Nom_entreprise;
-                    //    client.Numero_entreprise = model.Numero_entreprise;
-                    //    client.BE_entreprise = model.BE_entreprise;
-                    //    client.Adresse = model.Adresse;
-                    //    client.Telephone = model.Telephone;
-                    //    client.Email = model.Email;
-                    //    client.Enregistrement_BE = model.Enregistrement_BE;
-                    //    client.Agrement_BE = model.Agrement_BE;
-                    //    client.Type_enregistrement = model.Type_enregistrement;
-                    //    client.Remarques = model.Remarques;
-                    //    client.Presentation = model.Presentation;
-                    //    client.Is_deleted = model.Is_deleted;
-                    //    client.Id_user = model.Id_user;
-                    //    client.Id_localite = model.Id_localite;
-                    //    client.Updated_at = DateTime.Now;
-
-                    ////SiegeSociale
-                    //    if (client.SiegeSociale != null)
-                    //{
-                    //    client.SiegeSociale.Raison_sociale = model.Siege_Raison_sociale;
-                    //    client.SiegeSociale.Adresse = model.Siege_Adresse;
-                    //    client.SiegeSociale.Site_internet = model.Siege_Site_internet;
-                    //    client.SiegeSociale.Secteur_activite = model.Siege_Secteur_activite;
-                    //    client.SiegeSociale.Id_localite = model.Siege_Id_localite;
-                    //}
-                    //else if (!string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse))
-                    //{
-                    //    var newSiege = new SiegeSociale
-                    //    {
-                    //        Raison_sociale = model.Siege_Raison_sociale,
-                    //        Adresse = model.Siege_Adresse,
-                    //        Site_internet = model.Siege_Site_internet,
-                    //        Secteur_activite = model.Siege_Secteur_activite,
-                    //        Id_localite = model.Siege_Id_localite
-                    //    };
-                    //     _context.SiegeSociales.Add(newSiege);
-                    //    await _context.SaveChangesAsync();
-                    //    client.Id_siege = newSiege.Id_siege;
-                    //}
-                    //    await _context.SaveChangesAsync();
-                    //    return RedirectToAction(nameof(Details), new { id = client.Id_client });
                     var client = await _context.Clients
                         .Include(c => c.SiegeSociale)
+                        .Include(c => c.PersonnesContact)
+                        .Include(c => c.AdressesExploitation)
                         .FirstOrDefaultAsync(c => c.Id_client == id);
 
                     if (client == null) return NotFound();
@@ -386,7 +359,9 @@ namespace EcoLogistics.Controllers
                     client.Id_localite = model.Id_localite;
                     client.Updated_at = DateTime.Now;
 
-                    // Логика обновления / создания головного офиса
+                    // 1. Siege Sociale
+
+                    //Logique de mise à jour/création d'un siège social
                     bool hasSiegeInput = !string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse);
 
                     if (client.SiegeSociale != null)
@@ -401,7 +376,7 @@ namespace EcoLogistics.Controllers
                         }
                         else
                         {
-                            // Если пользователь полностью очистил данные о головном офисе
+                            // Si l'utilisateur a complètement effacé les données du siège social
                             _context.SiegeSociales.Remove(client.SiegeSociale);
                             client.Id_siege = null;
                         }
@@ -419,6 +394,74 @@ namespace EcoLogistics.Controllers
                         _context.SiegeSociales.Add(newSiege);
                         await _context.SaveChangesAsync();
                         client.Id_siege = newSiege.Id_siege;
+                    }
+
+                    // 2. Contact Principal
+
+                    bool hasContactInput = !string.IsNullOrWhiteSpace(model.Contact_Nom) || !string.IsNullOrWhiteSpace(model.Contact_Email);
+                    var primaryContact = client.PersonnesContact.FirstOrDefault();
+
+                    if(primaryContact != null)
+                    {
+                        if (hasContactInput)
+                        {
+                            primaryContact.Nom = model.Contact_Nom;
+                            primaryContact.Email = model.Contact_Email;
+                            primaryContact.Telephone = model.Contact_Telephone;
+                            primaryContact.Gsm = model.Contact_Gsm;
+                            primaryContact.Id_localite = model.Contact_Id_localite;
+                        }
+                        else
+                        {
+                            _context.PersonneContacts.Remove(primaryContact);
+                        }
+                    }
+                    else if (hasContactInput)
+                    {
+                        var newContact = new PersonneContact
+                        {
+                            Id_contact = model.Id_p_contact ?? 0,
+                            Nom = model.Contact_Nom!,
+                            Email = model.Contact_Email,
+                            Telephone = model.Contact_Telephone,
+                            Gsm = model.Contact_Gsm,
+                            Id_localite = model.Contact_Id_localite,
+                            Id_client = client.Id_client 
+                        };
+                        _context.PersonneContacts.Add(newContact);
+
+                    }
+                    // 3. Site d'exploitation principal
+                    bool hasExploitationInput = !string.IsNullOrWhiteSpace(model.Site_Nom) || !string.IsNullOrWhiteSpace(model.Site_Rue);
+                    var primaryExploitation = client.AdressesExploitation.FirstOrDefault();
+
+                    if (primaryExploitation != null) 
+                    {
+                        if (hasExploitationInput)
+                        {
+
+                            primaryExploitation.Nom_site = model.Site_Nom;
+                            primaryExploitation.Rue = model.Site_Rue;
+                            primaryExploitation.Numero = model.Site_Numero;
+                            primaryExploitation.Id_localite = model.Site_Id_localite;
+                        }
+                        else
+                        {
+                            _context.AdressesExploitation.Remove(primaryExploitation);
+                        }
+                    }
+                    else if (hasExploitationInput)
+                    {
+                        var newExploitation = new AdresseExploitation
+                        {
+                            Id_adresse_exp = model.Id_adresse_exp ?? 0,
+                            Nom_site = model.Site_Nom,
+                            Rue = model.Site_Rue,
+                            Numero = model.Site_Numero,
+                            Id_localite = model.Site_Id_localite,
+                            Id_client = client.Id_client
+                        };
+                        _context.AdressesExploitation.Add(newExploitation);
                     }
 
                     await _context.SaveChangesAsync();
