@@ -19,6 +19,13 @@
                     <input type="hidden" asp-for="Id_siege" />
                     <input type="hidden" asp-for="Id_client" />
 
+                    @if (!string.IsNullOrEmpty(Model.Nom_entreprise))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Client associé :</label>
+                            <input type="text" class="form-control bg-light" value="@Model.Nom_entreprise" readonly />
+                        </div>
+                    }
                     <div class="mb-3">
                         <label asp-for="Raison_sociale" class="form-label fw-bold"></label>
                         <input asp-for="Raison_sociale" class="form-control" />

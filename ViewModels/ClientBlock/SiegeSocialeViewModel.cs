@@ -27,5 +27,6 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [DisplayName("Pays : ")]
         public string? Siege_Pays { get; set; }
         public SelectList? LocaliteList { get; set; }
+        public string? Nom_entreprise { get; set; }
     }
 }

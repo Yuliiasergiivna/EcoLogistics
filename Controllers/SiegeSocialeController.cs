@@ -25,24 +25,31 @@ namespace EcoLogistics.Controllers
         {
             var query = _context.SiegeSociales
                 .AsNoTracking()
+                .Include(s => s.Client)
                 .Include(s => s.Localite)
                     .ThenInclude(l => l!.CommuneBXL)
                 .Include(s => s.Localite)
                     .ThenInclude(l => l!.Pays)
                 .AsQueryable();
+            // 1. Appliquer le filtrage par chaîne de recherche
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 searchString = searchString.Trim();
                 query = query.Where(c =>
                     c.Raison_sociale != null && c.Raison_sociale.Contains(searchString) ||
                     (c.Adresse != null && c.Adresse.Contains(searchString)) ||
-                    (c.Site_internet != null && c.Site_internet.Contains(searchString))
+                    (c.Site_internet != null && c.Site_internet.Contains(searchString)) ||
+                    (c.Client != null && c.Client.Nom_entreprise != null && c.Client.Nom_entreprise.Contains(searchString))
                 );
             }
+
+            // 2. Nous appliquons le tri APRÈS le filtrage
+            query = query.OrderBy(s => s.Client != null ? s.Client.Nom_entreprise : s.Raison_sociale);
 
             var siegeList = await query.Select(c  => new SiegeSocialeViewModel
             {
                 Id_siege = c.Id_siege,
+                Nom_entreprise = c.Client != null ? c.Client.Nom_entreprise : null,
                 Raison_sociale = c.Raison_sociale,
                 Adresse = c.Adresse,
                 Site_internet = c.Site_internet,
@@ -113,10 +120,10 @@ namespace EcoLogistics.Controllers
                 {
                     var siege = new SiegeSociale
                     {
-                        Raison_sociale = model.Raison_sociale,
-                        Adresse = model.Adresse,
-                        Site_internet = model.Site_internet,
-                        Secteur_activite = model.Secteur_activite,
+                        Raison_sociale = model.Raison_sociale.Trim(),
+                        Adresse = model.Adresse.Trim(),
+                        Site_internet = model.Site_internet.Trim(),
+                        Secteur_activite = model.Secteur_activite.Trim(),
                         Id_localite = model.Id_localite
                     };
                     _context.SiegeSociales.Add(siege);
@@ -152,10 +159,13 @@ namespace EcoLogistics.Controllers
             var siege = await _context.SiegeSociales.FindAsync(id);
             if (siege == null) return NotFound();
 
+            var client = clientId.HasValue ? await _context.Clients.FindAsync(clientId.Value) : await _context.Clients.FirstOrDefaultAsync(c => c.Id_siege == id);
+
             var model = new SiegeSocialeViewModel
             {
                 Id_siege = siege.Id_siege,
                 Id_client = clientId,
+                Nom_entreprise = client?.Nom_entreprise,
                 Raison_sociale = siege.Raison_sociale,
                 Adresse = siege.Adresse,
                 Site_internet = siege.Site_internet,
