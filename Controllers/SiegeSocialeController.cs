@@ -31,6 +31,7 @@ namespace EcoLogistics.Controllers
                 .Include(s => s.Localite)
                     .ThenInclude(l => l!.Pays)
                 .AsQueryable();
+
             // 1. Appliquer le filtrage par chaîne de recherche
             if (!string.IsNullOrWhiteSpace(searchString))
             {
@@ -44,9 +45,8 @@ namespace EcoLogistics.Controllers
             }
 
             // 2. Nous appliquons le tri APRÈS le filtrage
-            query = query.OrderBy(s => s.Client != null ? s.Client.Nom_entreprise : s.Raison_sociale);
 
-            var siegeList = await query.Select(c  => new SiegeSocialeViewModel
+            var rawList = await query.Select(c  => new SiegeSocialeViewModel
             {
                 Id_siege = c.Id_siege,
                 Nom_entreprise = c.Client != null ? c.Client.Nom_entreprise : null,
@@ -57,7 +57,13 @@ namespace EcoLogistics.Controllers
                 Siege_Code_postal = c.Localite != null ? c.Localite.Code_postal : null,
                 Siege_Nom_commune = c.Localite != null && c.Localite.CommuneBXL != null ? c.Localite.CommuneBXL.Commune_principale : null,
                 Siege_Pays = c.Localite != null && c.Localite.Pays != null ? c.Localite.Pays.Nom_pays : null
-            }).ToListAsync();
+            }).Distinct()
+                .ToListAsync();
+
+
+            var siegeList = rawList
+                .OrderBy(x => !string.IsNullOrWhiteSpace(x.Nom_entreprise) ? x.Nom_entreprise.Trim() : (x.Raison_sociale ?? "" ).Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
             ViewData["CurrentFilter"] = searchString;
             return View(siegeList);
@@ -120,10 +126,10 @@ namespace EcoLogistics.Controllers
                 {
                     var siege = new SiegeSociale
                     {
-                        Raison_sociale = model.Raison_sociale.Trim(),
-                        Adresse = model.Adresse.Trim(),
-                        Site_internet = model.Site_internet.Trim(),
-                        Secteur_activite = model.Secteur_activite.Trim(),
+                        Raison_sociale = model.Raison_sociale?.Trim(),
+                        Adresse = model.Adresse?.Trim(),
+                        Site_internet = model.Site_internet?.Trim(),
+                        Secteur_activite = model.Secteur_activite?.Trim(),
                         Id_localite = model.Id_localite
                     };
                     _context.SiegeSociales.Add(siege);

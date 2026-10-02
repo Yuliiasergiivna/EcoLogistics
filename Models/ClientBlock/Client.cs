@@ -12,6 +12,9 @@ namespace EcoLogistics.Models.ClientBlock
         [Key]
         [ScaffoldColumn(false)]
         public Guid Id_client { get; set; } = Guid.NewGuid();
+        [DisplayName("N° Client")]
+        [MaxLength(100)]
+        public string? Numero_client { get; set; }
         [DisplayName( "Nom d'entreprise: ")]
         [MaxLength(255, ErrorMessage ="Le nom d'entreprise ne peut pas dépasser 255 caractères")]
         [Required(ErrorMessage ="Le nom d'entreprise est obligatoire")]

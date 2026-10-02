@@ -19,8 +19,8 @@
 <!--Filtrer et rechercher -->
 <div class="card cf2d-card shadow-sm mb-4">
     <div class="card-body p-3">
-        <form asp-controller="SiegeSociale" asp-action="Index" method="get" class="row g-3">
-            <div class="col-md-10">
+        <form asp-controller="SiegeSociale" asp-action="Index" method="get" class="row g-2 align-items-center">
+            <div class="col">
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0 text-muted">
                         <i class="bi bi-search"></i>
@@ -28,10 +28,17 @@
                     <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"
                            class="form-control border-start-0"
                            placeholder="Rechercher par raison sociale, adresse ou site web..." />
+                    @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
+                    {
+                        <a asp-action="Index" class="btn btn-outline-secondary" title="Réinitialiser">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    }
                 </div>
             </div>
-            <div class="col-md-2 d-grid">
-                <button type="submit" class="btn btn-outline-cf2d">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-cf2d">
+                    <i class="bi bi-search me-1"></i>
                     Rechercher
                 </button>
             </div>
@@ -45,6 +52,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="bg-cf2d-header">
                 <tr>
+                    <th>Nom de l'entreprise</th>
                     <th>Raison sociale</th>
                     <th>Secteur d'activité</th>
                     <th>Adresse</th>
@@ -68,6 +76,9 @@
                     @foreach (var item in Model)
                     {
                         <tr>
+                            <td class="fw-bold text-dark">
+                                 @(string.IsNullOrEmpty(item.Nom_entreprise) ? "-" : item.Nom_entreprise)
+                            </td>
                             <td class="fw-bold text-cf2d">@item.Raison_sociale</td>
                             <td>@(item.Secteur_activite ?? "-")</td>
                             <td>@(item.Adresse ?? "-")</td>
@@ -95,15 +106,26 @@
                                 }
                             </td>
                             <td class="text-end">
-                                <div class="btn-group btn-group-sm">
-                                    <a asp-controller="SiegeSociale" asp-action="Details" asp-route-id="@item.Id_siege" class="btn btn-outline-cf2d" title="Détails">
+                                @* // --Icônes d'action--// *@
+
+                               @*  <div class="btn-group btn-group-sm"> *@
+                                   <div class="d-inline-flex gap-1" role="group" >
+                                    <a asp-controller="SiegeSociale" asp-action="Details" asp-route-id="@item.Id_siege" 
+                                    class="btn btn-outline-info" title="Détails">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
                                     {
-                                        <a asp-controller="SiegeSociale" asp-action="Edit" asp-route-id="@item.Id_siege" class="btn btn-outline-cf2d" title="Modifier">
+                                        <a asp-controller="SiegeSociale" asp-action="Edit" asp-route-id="@item.Id_siege" 
+                                        class="btn btn-outline-warning" title="Modifier">
                                             <i class="bi bi-pencil"></i>
                                         </a>
+                                        <button type="button" class="btn btn-outline-danger"
+                                                title="Supprimer"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                data-id="@item.Id_siege" data-name="@item.Raison_sociale">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     }
                                 </div>
                             </td>
@@ -114,3 +136,80 @@
         </table>
     </div>
 </div>
+<div class="scroll-nav-buttons">
+    <button type="button" class="btn-scroll-nav" id="btnScrollTop" title="Haut de page">
+        <i class="bi bi-arrow-up fs-5"></i>
+    </button>
+    <button type="button" class="btn-scroll-nav" id="btnScrollBottom" title="Bas de page">
+        <i class="bi bi-arrow-down fs-5"></i>
+    </button>
+</div>
+@*  //--Fenêtre modale de confirmation de suppression--// *@ 
+@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+{
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Confirmation de suppression</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer le siège social <strong id="deleteModalName"></strong> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form id="deleteForm" asp-controller="SiegeSociale" asp-action="Delete" method="post" class="d-inline">
+                        <input type="hidden" name="id" id="deleteModalId" value="" />
+                        <button type="submit" class="btn btn-danger">Supprimer définitivement</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @section Scripts
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function(){
+                var deleteModal = document.getElementById('deleteModal');
+                if(deleteModal) {
+                    deleteModal.addEventListener('show.bs.modal', function (event){
+                        var button = event.relatedTarget;
+                        var id = button.getAttribute('data-id');
+                        var name = button.getAttribute('data-name');
+
+                        document.getElementById('deleteModalId').value = id;
+                        document.getElementById('deleteModalName').textContent = name || '';
+                    });
+                }
+                 // --- 2. Flech en bas/ en haut ---
+            document.getElementById('btnScrollTop').addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            document.getElementById('btnScrollBottom').addEventListener('click', function() {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            });
+            const searchInput = document.querySelector('input[name="searchString"]');
+            const tableRows = document.querySelectorAll("tbody tr");
+
+            searchInput.addEventListener("input", function () {
+                const query = this.value.toLowerCase().trim();
+
+                tableRows.forEach(row => {
+                    //Si client n'était pas trouvé
+                    if (row.cells.length === 1) return;
+
+                    const text = row.textContent.toLowerCase();
+                    
+                    if (text.includes(query)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+            });
+        </script>
+    }
+}

@@ -8,8 +8,10 @@ namespace EcoLogistics.ViewModels.ClientBlock
         // 1. INFORMATIONS GÉNÉRALES DU CLIENT
         [ScaffoldColumn(false)]
         public Guid Id_client { get; set; }
+        [DisplayName("N° Client : ")]
+        public string? Numero_client { get; set; }
         [DisplayName("Nom d'entreprise : ")]
-        public string Nom_entreprise { get; set; } = string.Empty;
+        public string? Nom_entreprise { get; set; }
         [DisplayName("Numéro d'entreprise (BCE) : ")]
         public string? Numero_entreprise { get; set; }
         [DisplayName("N° BE d'entreprise : ")]
@@ -19,7 +21,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [DisplayName("Téléphone général : ")]
         public string? Telephone { get; set; }
         [DisplayName("Adresse électronique (Email) : ")]
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
         [DisplayName("Numéro d'enregistrement BE : ")]
         public string? Enregistrement_BE { get; set; }
         [DisplayName("Numéro d'agrément BE : ")]

@@ -6,6 +6,8 @@ namespace EcoLogistics.ViewModels.ClientBlock
     {
         // --- 1. Données principales du Client (Client) ---
         public Guid Id_client { get; set; }
+        [DisplayName("N° Client")]
+        public string? Numero_client { get; set; }
         [DisplayName("N° d'entreprise : ")]
         public string? Numero_entreprise { get; set; }
         [DisplayName("Nom du producteur / Entreprise : ")]
