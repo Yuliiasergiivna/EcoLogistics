@@ -115,7 +115,7 @@ namespace EcoLogistics.ExcelImportService
                             Id_client = client.Id_client,
                             Nom = contactName
                         };
-                        //!!!!!!!client.PersonnesContact ?? new List<PersonneContact>();
+                        //client.PersonnesContact ?? new List<PersonneContact>();
                         client.PersonnesContact.Add(contact);
                         if (!_context.PersonneContacts.Local.Contains(contact))
                         {
@@ -137,7 +137,8 @@ namespace EcoLogistics.ExcelImportService
                 // 4.Création (AdresseExploitation)
                 if (!string.IsNullOrWhiteSpace(prodRue))
                 {
-                    var adresseExp = client.AdressesExploitation.FirstOrDefault(a => a.Rue == prodRue && a.Numero == prodNum);
+                    var adresseExp = client.AdressesExploitation?.FirstOrDefault(a => a.Rue == prodRue && a.Numero == prodNum)
+                        ?? client.AdressesExploitation?.FirstOrDefault();
                     if (adresseExp == null)
                     {
                         adresseExp = new AdresseExploitation
@@ -146,7 +147,9 @@ namespace EcoLogistics.ExcelImportService
                             Id_client = client.Id_client,
                             Nom_site = "Site Principal"
                         };
+                        client.AdressesExploitation ??= new List<AdresseExploitation>();
                         client.AdressesExploitation.Add(adresseExp);
+
                         if (!_context.AdressesExploitation.Local.Contains(adresseExp))
                         {
                             _context.AdressesExploitation.Add(adresseExp);

@@ -80,5 +80,6 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public string? Site_internet { get; set; }
         [DisplayName("Secteur d'activité : ")]
         public string? Secteur_activite { get; set; }
+        public List<PersonneContactItemViewModel> Contacts { get; set; } = new();
     }
 }

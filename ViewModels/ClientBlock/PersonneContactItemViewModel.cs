@@ -8,6 +8,8 @@ namespace EcoLogistics.ViewModels.ClientBlock
         [ScaffoldColumn(false)]
         public int Id_p_contact { get; set; }
         public Guid Id_client { get; set; }
+        [DisplayName("N° Client")]
+        public string? Numero_client { get;  set; }
         [DisplayName("Client / Entreprise :")]
         public string? Nom_client { get; set; }
 

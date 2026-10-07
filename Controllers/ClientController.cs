@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Drawing;
-using DocumentFormat.OpenXml.Office2016.Drawing.Command;
+﻿
 using EcoLogistics.Data;
 using EcoLogistics.Models.ClientBlock;
 using EcoLogistics.ViewModels.ClientBlock;
@@ -26,7 +25,6 @@ namespace EcoLogistics.Controllers
             {
                 var query = _context.Clients
                     .AsNoTracking()
-                    .OrderBy(c => c.Nom_entreprise)
                     .AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(searchString))
@@ -34,46 +32,82 @@ namespace EcoLogistics.Controllers
                     searchString = searchString.Trim();
                     query = query.Where(c =>
                         c.Nom_entreprise.Contains(searchString) ||
+                        (c.Numero_client != null && c.Numero_client.Contains(searchString)) ||
                         (c.Numero_entreprise != null && c.Numero_entreprise.Contains(searchString)) ||
                         (c.Email != null && c.Email.Contains(searchString))
                     );
                 }
-
-            var clientsList = await query.Select(c => new ClientListViewModel
+                //1
+            var rawClients = await query
+                .OrderBy(c => string.IsNullOrEmpty(c.Numero_client))
+                .ThenBy(c => c.Numero_client!.Length)
+                .ThenBy(c => c.Numero_client)
+                .ThenBy(c => c.Nom_entreprise)
+                .Select(c => new
+                {
+                    Client = c,
+                    Localite = c.Localite,
+                    CommuneBXL = c.Localite != null ? c.Localite.CommuneBXL : null,
+                    Pays = c.Localite != null ? c.Localite.Pays : null,
+                    RawContacts = c.PersonnesContact.ToList(),
+                    AdressesExploitation = c.AdressesExploitation.ToList(),
+                    SiegeSociale = c.SiegeSociale,
+                    SiegeLocalite = c.SiegeSociale != null ? c.SiegeSociale.Localite : null,
+                    SiegeCommune = c.SiegeSociale != null && c.SiegeSociale.Localite != null ? c.SiegeSociale.Localite.CommuneBXL : null,
+                    SiegePays = c.SiegeSociale != null && c.SiegeSociale.Localite != null ? c.SiegeSociale.Localite.Pays : null
+                })
+        .ToListAsync();
+            //2
+            var clientsList = rawClients.Select( x => new ClientListViewModel
             {
-                Id_client = c.Id_client,
-                Numero_entreprise = c.Numero_entreprise,
-                Nom_entreprise = c.Nom_entreprise,
-                BE_entreprise = c.BE_entreprise,
-                Remarques = c.Remarques,
-                Presentation = c.Presentation,
-                Is_deleted = c.Is_deleted,
+                Id_client = x.Client.Id_client,
+                Numero_client = x.Client.Numero_client,
+                Numero_entreprise = x.Client.Numero_entreprise,
+                Nom_entreprise = x.Client.Nom_entreprise,
+                BE_entreprise = x.Client.BE_entreprise,
+                Remarques = x.Client.Remarques,
+                Presentation = x.Client.Presentation,
+                Is_deleted = x.Client.Is_deleted,
 
-                Client_code_postal = c.Localite != null ? c.Localite.Code_postal : null,
-                Client_commune = c.Localite != null && c.Localite.CommuneBXL != null ? c.Localite.CommuneBXL.Commune_principale : null,
-                Client_pays = c.Localite != null && c.Localite.Pays != null ? c.Localite.Pays.Nom_pays : null,
+                Client_code_postal = x.Localite != null ? x.Localite.Code_postal : null,
+                Client_commune = x.Localite != null && x.Localite.CommuneBXL != null ? x.Localite.CommuneBXL.Commune_principale : null,
+                Client_pays = x.Localite != null && x.Localite.Pays != null ? x.Localite.Pays.Nom_pays : null,
 
-                Contact_nom = c.PersonnesContact.Select(p => p.Nom).FirstOrDefault(),
-                Contact_telephone = c.PersonnesContact.Select(p =>p.Telephone).FirstOrDefault(),
-                Contact_gsm = c.PersonnesContact.Select(p => p.Gsm).FirstOrDefault(),
-                Contact_email = c.PersonnesContact.Select(p => p.Email).FirstOrDefault(),
+                Contacts = x.RawContacts
+                .GroupBy(p => new {p.Nom, p.Email, p.Telephone, p.Gsm})
+                .Select(g => g.First())
+                .Select(p => new PersonneContactItemViewModel
+                {
+                    Id_p_contact = p.Id_contact,
+                    Nom = p.Nom,
+                    Telephone = p.Telephone,
+                    Gsm = p.Gsm,
+                    Email = p.Email,
+                }).ToList(),
 
-                Production_nom_site = c.AdressesExploitation.Select(a => a.Nom_site).FirstOrDefault(),
-                Production_rue = c.AdressesExploitation.Select( a => a.Rue ).FirstOrDefault(),
-                Production_numero = c.AdressesExploitation.Select( a => a.Numero).FirstOrDefault(),
-                Production_code_postal = c.AdressesExploitation.Select( a => a.Localite != null ? a.Localite.Code_postal : null).FirstOrDefault(),
-                Production_commune = c.AdressesExploitation.Select( a => a.Localite != null && a.Localite.CommuneBXL != null ? a.Localite.CommuneBXL.Commune_principale : null).FirstOrDefault(),
-                Production_pays = c.AdressesExploitation.Select( a => a.Localite != null && a.Localite.Pays != null ? a.Localite.Pays.Nom_pays : null).FirstOrDefault(),
+                Contact_nom = x.RawContacts.Select(p => p.Nom).FirstOrDefault(),
+                Contact_telephone = x.RawContacts.Select(p => p.Telephone).FirstOrDefault(),
+                Contact_gsm = x.RawContacts.Select(p => p.Gsm).FirstOrDefault(),
+                Contact_email = x.RawContacts.Select(p => p.Email).FirstOrDefault(),
 
-                Id_siege = c.SiegeSociale != null ? c.SiegeSociale.Id_siege : null,
-                Raison_sociale = c.SiegeSociale != null ? c.SiegeSociale.Raison_sociale : null,
-                Siege_adresse = c.SiegeSociale != null ? c.SiegeSociale.Adresse : null,
-                Siege_code_postal = c.SiegeSociale != null && c.SiegeSociale.Localite != null ? c.SiegeSociale.Localite.Code_postal : null,
-                Siege_commune = c.SiegeSociale != null && c.SiegeSociale.Localite != null && c.SiegeSociale.Localite.CommuneBXL != null ? c.SiegeSociale.Localite.CommuneBXL.Commune_principale : null,
-                Siege_pays = c.SiegeSociale != null && c.SiegeSociale.Localite != null && c.SiegeSociale.Localite.Pays != null ? c.SiegeSociale.Localite.Pays.Nom_pays : null,
-                Site_internet = c.SiegeSociale != null ? c.SiegeSociale.Site_internet : null,
-                Secteur_activite = c.SiegeSociale != null ? c.SiegeSociale.Secteur_activite : null
-            }).ToListAsync();
+                Production_nom_site = x.AdressesExploitation.Select(a => a.Nom_site).FirstOrDefault(),
+                Production_rue = x.AdressesExploitation.Select( a => a.Rue ).FirstOrDefault(),
+                Production_numero = x.AdressesExploitation.Select( a => a.Numero).FirstOrDefault(),
+                Production_code_postal = x.AdressesExploitation.Select( a => a.Localite != null ? a.Localite.Code_postal : null).FirstOrDefault(),
+                Production_commune = x.AdressesExploitation.Select( a => a.Localite != null && a.Localite.CommuneBXL != null ? a.Localite.CommuneBXL.Commune_principale : null).FirstOrDefault(),
+                Production_pays = x.AdressesExploitation.Select( a => a.Localite != null && a.Localite.Pays != null ? a.Localite.Pays.Nom_pays : null).FirstOrDefault(),
+
+                Id_siege = x.SiegeSociale != null ? x.SiegeSociale.Id_siege : null,
+                Raison_sociale = x.SiegeSociale != null ? x.SiegeSociale.Raison_sociale : null,
+                Siege_adresse = x.SiegeSociale != null ? x.SiegeSociale.Adresse : null,
+                Siege_code_postal = x.SiegeSociale != null && x.SiegeSociale.Localite != null ? x.SiegeSociale.Localite.Code_postal : null,
+                Siege_commune = x.SiegeSociale != null && x.SiegeSociale.Localite != null && x.SiegeSociale.Localite.CommuneBXL != null ? x.SiegeSociale.Localite.CommuneBXL.Commune_principale : null,
+                Siege_pays = x.SiegeSociale != null && x.SiegeSociale.Localite != null && x.SiegeSociale.Localite.Pays != null ? x.SiegeSociale.Localite.Pays.Nom_pays : null,
+                Site_internet = x.SiegeSociale != null ? x.SiegeSociale.Site_internet : null,
+                Secteur_activite = x.SiegeSociale != null ? x.SiegeSociale.Secteur_activite : null
+            }).ToList();
+
+                //var clientsList = rawClients.DistinctBy(c => c.Id_client).ToList();
 
                 ViewData["CurrentFilter"] = searchString;
                 return View(clientsList);
@@ -120,16 +154,18 @@ namespace EcoLogistics.Controllers
 
             var siege = client.SiegeSociale
                  ?? await _context.SiegeSociales
+                    .AsNoTracking()
                     .Include(s => s.Localite).ThenInclude(l => l!.CommuneBXL)
                     .Include(s => s.Localite).ThenInclude(l => l!.Pays)
                     .FirstOrDefaultAsync(s => s.Raison_sociale == client.Nom_entreprise);
 
-            var primaryContact = client.PersonnesContact.FirstOrDefault();
-            var primaryExploitation = client.AdressesExploitation.FirstOrDefault();
+            //var primaryContact = client.PersonnesContact.FirstOrDefault();
+            //var primaryExploitation = client.AdressesExploitation.FirstOrDefault();
 
             var viewModel = new ClientDetailViewModel
                 {
                     Id_client = client.Id_client,
+                    Numero_client = client.Numero_client,
                     Nom_entreprise = client.Nom_entreprise,
                     Numero_entreprise = client.Numero_entreprise,
                     BE_entreprise = client.BE_entreprise,
@@ -170,11 +206,11 @@ namespace EcoLogistics.Controllers
                     {
                         Id_p_contact = p.Id_contact,
                         Nom = p.Nom,
-                        //Prenom = p.Prenom,
                         Telephone = p.Telephone,
                         Gsm = p.Gsm,
                         Email = p.Email,
                         Id_client = p.Id_client,
+                        Numero_client = client.Numero_client,
                         Nom_client = client.Nom_entreprise,
                         Localite_Info = p.Localite != null ? $"{p.Localite.Code_postal} {p.Localite.CommuneBXL?.Commune_principale}".Trim() : null
                     }).ToList(),
@@ -213,9 +249,9 @@ namespace EcoLogistics.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                //using var transaction = await _context.Database.BeginTransactionAsync();
+                using var transaction = await _context.Database.BeginTransactionAsync();
                 try
-                    {
+                {
                         SiegeSociale? siege = null;
                     if (!string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse))
                     {
@@ -234,6 +270,7 @@ namespace EcoLogistics.Controllers
                         var client = new Client
                         {
                             Id_client = Guid.NewGuid(),
+                            Numero_client = model.Numero_client,
                             Nom_entreprise = model.Nom_entreprise,
                             Numero_entreprise = model.Numero_entreprise,
                             BE_entreprise = model.BE_entreprise,
@@ -254,11 +291,13 @@ namespace EcoLogistics.Controllers
                         _context.Clients.Add(client);
 
                         await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
 
-                        return RedirectToAction(nameof(Details), new { id = client.Id_client });
+                    return RedirectToAction(nameof(Details), new { id = client.Id_client });
                     }
                     catch (Exception)
                     {
+                        await transaction.RollbackAsync();
                         ModelState.AddModelError("", "Une erreur est survenue lors de la création du client.");
                     }
                 }
@@ -286,6 +325,7 @@ namespace EcoLogistics.Controllers
             var model = new ClientEditViewModel
                 {
                     Id_client = client.Id_client,
+                    Numero_client = client.Numero_client,
                     Nom_entreprise = client.Nom_entreprise,
                     Numero_entreprise = client.Numero_entreprise,
                     BE_entreprise = client.BE_entreprise,
@@ -342,7 +382,7 @@ namespace EcoLogistics.Controllers
                         .FirstOrDefaultAsync(c => c.Id_client == id);
 
                     if (client == null) return NotFound();
-
+                    client.Numero_client = model.Numero_client;
                     client.Nom_entreprise = model.Nom_entreprise;
                     client.Numero_entreprise = model.Numero_entreprise;
                     client.BE_entreprise = model.BE_entreprise;
@@ -478,7 +518,7 @@ namespace EcoLogistics.Controllers
             }
 
         // 5. SOFT DELETE
-        [Authorize(Roles = "Admin, Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleSoftDelete(Guid id)
