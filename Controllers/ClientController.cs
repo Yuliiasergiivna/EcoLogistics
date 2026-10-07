@@ -65,7 +65,7 @@ namespace EcoLogistics.Controllers
                 Numero_entreprise = x.Client.Numero_entreprise,
                 Nom_entreprise = x.Client.Nom_entreprise,
                 BE_entreprise = x.Client.BE_entreprise,
-                Remarques = x.Client.Remarques,
+                Remarques = x.Client.Remarques, 
                 Presentation = x.Client.Presentation,
                 Is_deleted = x.Client.Is_deleted,
 
