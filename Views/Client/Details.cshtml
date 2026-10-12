@@ -123,11 +123,32 @@
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-cf2d-header fw-bold d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-people me-2"></i>Personnes de Contact</span>
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        @if (Model.PersonnesContact.Any(c => !string.IsNullOrEmpty(c.Email)))
+                        {
+                            <button type="button" id="sendEmailBtn" class="btn btn-sm btn-light text-dark fw-bold" disabled>
+                                <i class="bi bi-envelope-at me-1"></i> Envoyer aux sélectionnés
+                            </button>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {
+                            <a asp-controller="PersonneContact" asp-action="Create" asp-route-clientId="@Model.Id_client" 
+                               class="btn btn-sm btn-light text-dark fw-bold" title="Ajouter un contact">
+                                <i class="bi bi-plus-lg"></i> Ajouter
+                            </a>
+                        }
+
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
+                                <th style="width: 40px;" class="text-center">
+                                    <input type="checkbox" id="selectAllContacts" class="form-check-input" title="Tout sélectionner" />
+                                </th>
                                 <th>Nom et Prénom</th>
                                 <th>Téléphone</th>
                                 <th>GSM</th>
@@ -145,6 +166,12 @@
                                 @foreach (var c in Model.PersonnesContact)
                                 {
                                     <tr>
+                                        <td class="text-center">
+                                            @if (!string.IsNullOrEmpty(c.Email))
+                                            {
+                                                <input type="checkbox" class="form-check-input contact-checkbox" value="@c.Email" />
+                                            }
+                                        </td>
                                         <td class="fw-bold">@c.Nom</td>
                                         <td>@(c.Telephone ?? "-")</td>
                                         <td>@(c.Gsm ?? "-")</td>
@@ -201,3 +228,58 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const selectAllCheckbox = document.getElementById("selectAllContacts");
+            const contactCheckboxes = document.querySelectorAll(".contact-checkbox");
+            const sendEmailBtn = document.getElementById("sendEmailBtn");
+
+            function updateButtonState() {
+                const checkedCount = document.querySelectorAll(".contact-checkbox:checked").length;
+                if (sendEmailBtn) {
+                    sendEmailBtn.disabled = checkedCount === 0;
+                }
+            }
+
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener("change", function () {
+                    contactCheckboxes.forEach(cb => {
+                        cb.checked = selectAllCheckbox.checked;
+                    });
+                    updateButtonState();
+                });
+            }
+
+            contactCheckboxes.forEach(cb => {
+                cb.addEventListener("change", function () {
+                    updateButtonState();
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = document.querySelectorAll(".contact-checkbox:checked").length === contactCheckboxes.length;
+                    }
+                });
+            });
+
+            if (sendEmailBtn) {
+                sendEmailBtn.addEventListener("click", function () {
+                    const selectedEmails = Array.from(document.querySelectorAll(".contact-checkbox:checked"))
+                        .map(cb => cb.value)
+                        .filter(email => email);
+
+                    if (selectedEmails.length > 0) {
+                       
+                        const primaryEmail = selectedEmails[0];
+                        const ccEmails = selectedEmails.slice(1).join(",");
+                        
+                        let mailtoLink = `mailto:${primaryEmail}`;
+                        if (ccEmails) {
+                            mailtoLink += `?cc=${encodeURIComponent(ccEmails)}`;
+                        }
+
+                        window.location.href = mailtoLink;
+                    }
+                });
+            }
+        });
+    </script>
+}

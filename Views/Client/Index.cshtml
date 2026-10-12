@@ -67,7 +67,9 @@
                                         @(item.Numero_client ?? "-")
                                     </td>
                                     <td class="fw-bold">
-                                        <div>@item.Nom_entreprise</div>
+                                        <a asp-action="Details" asp-route-id="@item.Id_client" class="text-decoration-none text-dark">
+                                            <div>@item.Nom_entreprise</div>
+                                        </a>
                                         @if (!string.IsNullOrEmpty(item.Raison_sociale))
                                         {
                                             <small class="text-muted fw-normal">(@item.Raison_sociale)</small>
@@ -116,10 +118,10 @@
                                     <td class="text-center">
                                         <div class="d-inline-flex gap-1" role="group">
                                        @*  <div class="btn-group btn-group-sm" role="group"> *@
-                                            <a asp-action="Details" asp-route-id="@item.Id_client"
+         @*                                    <a asp-action="Details" asp-route-id="@item.Id_client"
                                                class="btn btn-sm btn-outline-info" title="Détails">
                                                 <i class="bi bi-eye"></i>
-                                            </a>
+                                            </a> *@
                                             @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
                                             {
                                                 <a asp-action="Edit" asp-route-id="@item.Id_client"
