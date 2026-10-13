@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Fiche Client - " + Model.Nom_entreprise;
+    bool isAdminOrManager = User.IsInRole("Admin") || User.IsInRole("Manager");
 }
 
 <div class="container-fluid py-4">
@@ -12,7 +13,7 @@
         </div>
         <div>
             <a asp-action="Index" class="btn btn-secondary me-1"><i class="bi bi-arrow-left me-1"></i> Retour</a>
-            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            @if (isAdminOrManager)
             {
                 <a asp-action="Edit" asp-route-id="@Model.Id_client" class="btn btn-warning"><i class="bi bi-pencil me-1"></i> Modifier</a>
             }
@@ -35,7 +36,15 @@
                         <dd class="col-sm-7">@(Model.BE_entreprise ?? "-")</dd>
 
                         <dt class="col-sm-5">Email général :</dt>
-                        <dd class="col-sm-7"><a href="mailto:@Model.Email">@Model.Email</a></dd>
+                        <dd class="col-sm-7">
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                 <a href="mailto:@Model.Email">@Model.Email</a>
+                            }else
+                            {
+                                <span>-</span>
+                            }
+                        </dd>
 
                         <dt class="col-sm-5">Téléphone :</dt>
                         <dd class="col-sm-7">@(Model.Telephone ?? "-")</dd>
@@ -132,7 +141,7 @@
                                 <i class="bi bi-envelope-at me-1"></i> Envoyer aux sélectionnés
                             </button>
                         }
-                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        @if (isAdminOrManager)
                         {
                             <a asp-controller="PersonneContact" asp-action="Create" asp-route-clientId="@Model.Id_client" 
                                class="btn btn-sm btn-light text-dark fw-bold" title="Ajouter un contact">
@@ -143,17 +152,22 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0 align-middle">
                         <thead>
                             <tr>
                                 <th style="width: 40px;" class="text-center">
-                                    <input type="checkbox" id="selectAllContacts" class="form-check-input" title="Tout sélectionner" />
+                                    <input type="checkbox" id="selectAllContacts" class="form-check-input border-cfd2 shadow-none" 
+                                            title="Tout sélectionner" style="border-color: var(--cf2d-blue, #0d6efd);border-width: 2px; border-style: solid; cursor: pointer"/>
                                 </th>
                                 <th>Nom et Prénom</th>
                                 <th>Téléphone</th>
                                 <th>GSM</th>
                                 <th>Email</th>
                                 <th>Localité</th>
+                                @if (isAdminOrManager)
+                                {
+                                    <th class="text-center" style="width: 100px;">Actions</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
@@ -173,10 +187,54 @@
                                             }
                                         </td>
                                         <td class="fw-bold">@c.Nom</td>
-                                        <td>@(c.Telephone ?? "-")</td>
-                                        <td>@(c.Gsm ?? "-")</td>
-                                        <td>@(c.Email ?? "-")</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(c.Telephone))
+                                            {
+                                                <a href="tel:@c.Telephone" class="text-decoration-none text-dark">@c.Telephone</a>
+                                            }else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(c.Gsm))
+                                            {
+                                                <a href="tel:@c.Gsm" class="text-decoration-none text-dark">@c.Gsm</a>
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(c.Email))
+                                            {
+                                                <a href="mailto:@c.Email">@c.Email</a>
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
                                         <td>@(c.Localite_Info ?? "-")</td>
+                                        @if (isAdminOrManager)
+                                        {
+                                            <td class="text-center">
+                                                <div class="d-inline-flex gap-1" role="group">
+                                                    <a asp-controller="PersonneContact" asp-action="Edit" asp-route-id="@c.Id_p_contact" 
+                                                       class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form asp-controller="PersonneContact" asp-action="Delete" asp-route-id="@c.Id_p_contact" 
+                                                          method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce contact ?');">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        }
                                     </tr>
                                 }
                             }
