@@ -6,7 +6,9 @@
 }
 
 <div class="container-fluid py-4">
+
     <!-- Header Page -->
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h2 class="fw-bold text-cf2d mb-0">@Model.Nom_entreprise</h2>
@@ -21,7 +23,9 @@
     </div>
 
     <div class="row g-3">
+
         <!-- Informations Générales -->
+
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-cf2d-header fw-bold">
@@ -72,6 +76,7 @@
         </div>
 
         <!-- Siège Social -->
+
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-header bg-cf2d-header fw-bold">
@@ -128,6 +133,7 @@
         </div>
 
         <!-- Personnes de Contact -->
+
         <div class="col-md-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-cf2d-header fw-bold d-flex justify-content-between align-items-center">
@@ -245,10 +251,18 @@
         </div>
 
         <!-- Adresses d'Exploitation -->
+
         <div class="col-md-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-cf2d-header fw-bold d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-geo-alt me-2"></i>Sites d'Exploitation</span>
+                    @if (isAdminOrManager)
+                    {
+                        <a asp-controller="AdresseExploitation" asp-action="Create" asp-route-clientId="@Model.Id_client"
+                           class="btn btn-sm btn-light text-dark fw-bold" title="Ajouter un site">
+                            <i class="bi bi-plus-lg"></i> Ajouter
+                        </a>
+                    }
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
@@ -259,12 +273,16 @@
                                 <th>Code Postal</th>
                                 <th>Commune</th>
                                 <th>Pays</th>
+                                @if (isAdminOrManager)
+                                {
+                                    <th class="text-center" style="width: 100px;">Actions</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
                             @if (!Model.AdressesExploitation.Any())
                             {
-                                <tr><td colspan="5" class="text-center py-3 text-muted"><em>Aucun site d'exploitation enregistré.</em></td></tr>
+                                <tr><td colspan="@(isAdminOrManager ? 6:5)" class="text-center py-3 text-muted"><em>Aucun site d'exploitation enregistré.</em></td></tr>
                             }
                             else
                             {
@@ -276,6 +294,25 @@
                                         <td>@(s.Adresse_Code_postal ?? "-")</td>
                                         <td>@(s.Adresse_Commune ?? "-")</td>
                                         <td>@(s.Adresse_Pays ?? "-")</td>
+                                        @if (isAdminOrManager)
+                                        {
+                                            <td class="text-center">
+                                                <div class="d-inline-flex gap-1" role="group">
+
+                                                    <a asp-controller="AdresseExploitation" asp-action="Edit" asp-route-id="@s.Id_adresse_exp" asp-route-clientId="@Model.Id_client"
+                                                       class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                       <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form asp-controller="AdresseExploitation" asp-action="Delete" asp-route-id="@s.Id_adresse_exp" asp-route-clientId="@Model.Id_client"
+                                                            metod="post" class="d-inline" onsubmit="return confirm ('Êtes-vous sûr de vouloir supprimer ce site ?');">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        }
                                     </tr>
                                 }
                             }

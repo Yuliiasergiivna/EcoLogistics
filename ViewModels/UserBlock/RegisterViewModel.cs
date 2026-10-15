@@ -43,6 +43,12 @@ namespace EcoLogistics.ViewModels.UserBlock
         [MaxLength(64, ErrorMessage = "Le poste ne peut pas dépasser 64 caractères.")]
         public string? Poste { get; set; }
 
+        [DisplayName("Rôle : ")]
+        public string Role { get; set; } = "User";
+
+        [DisplayName("Compte Actif : ")]
+        public bool IsActive { get; set; } = true;
+
         [DisplayName("Adresse : ")]
         [MaxLength(100, ErrorMessage = "L'adresse ne peut pas dépasser 100 caractères.")]
         public string? Adresse { get; set; }

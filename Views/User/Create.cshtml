@@ -1,0 +1,109 @@
+﻿@model EcoLogistics.ViewModels.UserBlock.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Ajouter un utilisateur";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0 cf2d-card mb-4">
+        <div class="card-header bg-cf2d-header text-white d-flex justify-content-between align-items-center py-3">
+            <h4 class="mb-0 fw-bold">
+                <i class="bi bi-person-plus-fill me-2"></i>Ajouter un nouvel employé
+            </h4>
+            <a asp-action="Profile" class="btn btn-light text-dark btn-sm fw-bold">
+                <i class="bi bi-arrow-left me-1"></i> Retour
+            </a>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <!-- 1. Compte Utilisateur -->
+                <h5 class="fw-bold text-cf2d mb-3">Compte Utilisateur</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="Nickname" class="form-label fw-bold"></label>
+                        <input asp-for="Nickname" class="form-control" />
+                        <span asp-validation-for="Nickname" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label fw-bold"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label fw-bold"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmPassword" class="form-label fw-bold"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Role" class="form-label fw-bold"></label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="User">User</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center mt-4">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" id="activeSwitch" checked />
+                            <label class="form-check-label fw-bold ms-2" for="activeSwitch">Compte Actif</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Données Personnelles -->
+                <h5 class="fw-bold text-cf2d mb-3">Données Personnelles</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="Nom" class="form-label fw-bold"></label>
+                        <input asp-for="Nom" class="form-control" />
+                        <span asp-validation-for="Nom" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Prenom" class="form-label fw-bold"></label>
+                        <input asp-for="Prenom" class="form-control" />
+                        <span asp-validation-for="Prenom" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Poste" class="form-label fw-bold"></label>
+                        <input asp-for="Poste" class="form-control" />
+                        <span asp-validation-for="Poste" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- 3. Localisation -->
+                <h5 class="fw-bold text-cf2d mb-3">Localisation</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="Adresse" class="form-label fw-bold"></label>
+                        <input asp-for="Adresse" class="form-control" />
+                        <span asp-validation-for="Adresse" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Id_localite" class="form-label fw-bold"></label>
+                        <select asp-for="Id_localite" asp-items="ViewBag.Localites" class="form-select">
+                            <option value="">-- Sélectionner une localité --</option>
+                        </select>
+                        <span asp-validation-for="Id_localite" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Profile" class="btn btn-secondary px-4">Annuler</a>
+                    <button type="submit" class="btn btn-cf2d px-5 fw-bold">
+                        <i class="bi bi-check-circle me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

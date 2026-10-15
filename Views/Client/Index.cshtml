@@ -2,12 +2,13 @@
 
 @{
     ViewData["Title"] = "Répertoire des Clients";
+    bool isAdminOrManager = User.IsInRole("Admin") || User.IsInRole("Manager");
 }
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold text-cf2d"><i class="bi bi-building me-2"></i>Répertoire des Clients</h2>
-        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        @if (isAdminOrManager)
         {
             <a asp-action="Create" class="btn btn-cf2d fw-bold shadow-sm">
                 <i class="bi bi-plus-lg me-1"></i> Nouveau Client
@@ -62,12 +63,13 @@
                         {
                             @foreach (var item in Model)
                             {
-                                <tr class="@(item.Is_deleted ? "table-secondary text-muted" : "")">
+                                <tr class="@(item.Is_deleted ? "table-secondary text-muted" : "") shadow-hover" style="transition: all 0.2s ease;">
                                     <td class="text-center fw-bold">
                                         @(item.Numero_client ?? "-")
                                     </td>
                                     <td class="fw-bold">
-                                        <a asp-action="Details" asp-route-id="@item.Id_client" class="text-decoration-none text-dark">
+                                        <a asp-action="Details" asp-route-id="@item.Id_client" class="text-decoration-none fw-bold" 
+                                                style="color:var(--cf2d-blue, #0d6efd;)">
                                             <div>@item.Nom_entreprise</div>
                                         </a>
                                         @if (!string.IsNullOrEmpty(item.Raison_sociale))
@@ -163,6 +165,25 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+          
+            const rows = document.querySelectorAll("#clientsTable tbody tr");
+            rows.forEach(row => {
+               
+                if (row.cells.length <= 1) return;
+
+                row.style.cursor = "pointer";
+                row.addEventListener("click", function(e) {
+                  
+                    if (e.target.closest("a") || e.target.closest("button") || e.target.closest("form")) {
+                        return;
+                    }
+                   
+                    const detailsLink = row.querySelector("a[href*='Details']");
+                    if (detailsLink) {
+                        window.location.href = detailsLink.href;
+                    }
+                });
+            });
             const topWrapper = document.querySelector('.top-scroll-wrapper');
             const topContent = document.querySelector('.top-scroll-content');
             const tableWrapper = document.querySelector('.table-responsive');
