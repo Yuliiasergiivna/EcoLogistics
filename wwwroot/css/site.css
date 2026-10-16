@@ -114,6 +114,9 @@ body {
         background-color: var(--cf2d-blue);
         color: #fff;
     }
+.cf2d-hover-link:hover {
+    color: var(--cf2d-blue) !important;
+}
 
 /* En-têtes de tableau et de carte */
 .bg-cf2d-header,

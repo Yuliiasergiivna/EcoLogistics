@@ -45,16 +45,20 @@
                     {
                         @foreach (var item in actifs)
                         {
-                            <tr>
-                                <td class="fw-bold">@item.Nom @item.Prenom</td>
+                            <tr class="shadow-hover" style="transition: all 0.2s ease">
+                                <td class="fw-bold">
+                                    <a asp-action="Details" asp-route-id="@item.Id_perso" class="text-decoration-none fw-bold link-dark cf2d-hover-link">
+                                       @item.Nom @item.Prenom
+                                    </a>
+                                </td>
                                 <td>@(item.Poste ?? "—")</td>
                                 <td>@item.Nom_localite</td>
                                 <td><span class="badge bg-success">@item.Statut</span></td>
-                                <td class="text-end px-4">
+                                <td class="text-end px-4 onclick="event.stopPropagation();">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-cf2d" title="Voir détails">
+              @*                           <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-cf2d" title="Voir détails">
                                             <i class="bi bi-eye"></i>
-                                        </a>
+                                        </a> *@
                                         <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-outline-warning" title="Modifier">
                                             <i class="bi bi-pencil"></i>
                                         </a>
@@ -115,17 +119,21 @@
                         {
                             @foreach (var item in inactifs)
                             {
-                                <tr>
-                                    <td class="fw-bold">@item.Nom @item.Prenom</td>
+                                <tr class="shadow-hover" style="transition: all 0.2s ease;">
+                                    <td class="fw-bold">
+                                         <a asp-action="Details" asp-route-id="@item.Id_perso" class="text-decoration-none fw-bold link-dark cf2d-hover-link">
+                                            @item.Nom @item.Prenom
+                                          </a>
+                                    </td>
                                     <td>@(item.Poste ?? "—")</td>
                                     <td>@item.Nom_localite</td>
                                     <td><span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">@(item.IsActive ? (string.IsNullOrEmpty(item.Statut) ? "Actif" : item.Statut) : "Inactif")</span>
                                     </td>
-                                    <td class="text-end px-4">
+                                    <td class="text-end px-4 onclick="event.stopPropagation(); ">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-secondary" title="Voir détails">
+@*                                             <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-secondary" title="Voir détails">
                                                 <i class="bi bi-eye"></i>
-                                            </a>
+                                            </a> *@
                                             <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-outline-warning" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
@@ -149,3 +157,26 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rows = document.querySelectorAll("table.table tbody tr");
+            rows.forEach(row => {
+              
+                if (row.cells.length <= 1) return;
+
+                row.style.cursor = "pointer";
+                row.addEventListener("click", function (e) {
+              
+                    if (e.target.closest("a") || e.target.closest("button") || e.target.closest("form")) {
+                        return;
+                    }
+                    const detailsLink = row.querySelector("a[href*='Details']");
+                    if (detailsLink) {
+                        window.location.href = detailsLink.href;
+                    }
+                });
+            });
+        });
+    </script>
+}
