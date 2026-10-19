@@ -69,7 +69,7 @@
                                     </td>
                                     <td class="fw-bold">
                                         <a asp-action="Details" asp-route-id="@item.Id_client" class="text-decoration-none fw-bold" 
-                                                style="color:var(--cf2d-blue, #0d6efd;)">
+                                                style="color:var(--cf2d-blue, #0d6efd);">
                                             <div>@item.Nom_entreprise</div>
                                         </a>
                                         @if (!string.IsNullOrEmpty(item.Raison_sociale))
@@ -166,7 +166,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
           
-            const rows = document.querySelectorAll("#clientsTable tbody tr");
+            const rows = document.querySelectorAll("table.table tbody tr");
             rows.forEach(row => {
                
                 if (row.cells.length <= 1) return;

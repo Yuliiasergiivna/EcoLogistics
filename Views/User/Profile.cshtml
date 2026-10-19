@@ -54,18 +54,18 @@
                                 <td>@(item.Poste ?? "—")</td>
                                 <td>@item.Nom_localite</td>
                                 <td><span class="badge bg-success">@item.Statut</span></td>
-                                <td class="text-end px-4 onclick="event.stopPropagation();">
-                                    <div class="btn-group btn-group-sm" role="group">
-              @*                           <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-cf2d" title="Voir détails">
+                                <td class="text-end px-4"onclick="event.stopPropagation();">
+                                    <div class="d-inline-flex gap-1" role="group">
+              @*                           <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-cf2d" title="Voir détails">
                                             <i class="bi bi-eye"></i>
                                         </a> *@
-                                        <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-outline-warning" title="Modifier">
+                                        <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-warning" title="Modifier">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <form asp-action="ToggleStatus" asp-route-id="@item.Id_perso" method="post" class="d-inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-outline-danger" title="Désactiver / Licencier" onclick="return confirm('Voulez-vous vraiment désactiver cet utilisateur ?');">
-                                                <i class="bi bi-person-x"></i>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Désactiver / Licencier" onclick="return confirm('Voulez-vous vraiment désactiver cet utilisateur ?');">
+                                                <i class="bi bi-person-x-fill"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -129,18 +129,18 @@
                                     <td>@item.Nom_localite</td>
                                     <td><span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">@(item.IsActive ? (string.IsNullOrEmpty(item.Statut) ? "Actif" : item.Statut) : "Inactif")</span>
                                     </td>
-                                    <td class="text-end px-4 onclick="event.stopPropagation(); ">
-                                        <div class="btn-group btn-group-sm" role="group">
+                                    <td class="text-end px-4" onclick="event.stopPropagation(); ">
+                                        <div class="d-inline-flex gap-1" role="group">
 @*                                             <a asp-action="Details" asp-route-id="@item.Id_perso" class="btn btn-outline-secondary" title="Voir détails">
                                                 <i class="bi bi-eye"></i>
                                             </a> *@
-                                            <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-outline-warning" title="Modifier">
+                                            <a asp-action="Edit" asp-route-id="@item.Id_perso" class="btn btn-sm btn-outline-warning" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             <form asp-action="ToggleStatus" asp-route-id="@item.Id_perso" method="post" class="d-inline">
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-outline-success" title="Réactiver le compte" onclick="return confirm('Voulez-vous réactiver cet utilisateur ?');">
-                                                    <i class="bi bi-person-check"></i>
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Réactiver le compte" onclick="return confirm('Voulez-vous réactiver cet utilisateur ?');">
+                                                    <i class="bi bi-person-check-fill"></i>
                                                 </button>
                                             </form>
                                         </div>

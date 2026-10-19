@@ -1,5 +1,7 @@
 html {
     font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -12,14 +14,6 @@ html {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
-}
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
@@ -41,6 +35,12 @@ body {
 body {
     min-height: 100vh;
     background-color: var(--cf2d-bg);
+    margin-bottom: 0;
+    display: flex;
+    flex-direction : column;
+}
+.container-fluid{
+    flex: 1;
 }
 
 .navbar-cf2d {
@@ -235,4 +235,36 @@ body {
     background-color: rgba(30, 115, 190, 0.05) !important;
     cursor: pointer;
     box-shadow: inset 0 1px 0 rgba(0,0,0,.04), inset 0 -1px 0 rgba(0,0,0,.04);
+}
+/* Footer style CF2D */
+/*.footer-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: var(--cf2d-blue);
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+    .footer-contact-btn:hover {
+        background-color: #f4f6f8;
+        border-color: var(--cf2d-blue);
+        color: var(--cf2d-blue-dark);
+        box-shadow: 0 2px 4px rgba(30, 115, 190, 0.2);
+    }
+
+    .footer-contact-btn .bi-envelope-fill {
+        color: var(--cf2d-blue);
+        font-size: 0.95rem;
+        filter: drop-shadow(0px 1px 1px rgba(30, 115, 190, 0.3));
+    }*/
+.footer {
+    background-color: var(--cf2d-bg);
+    font-size: 0.9rem;
 }
