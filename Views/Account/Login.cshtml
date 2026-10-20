@@ -1,87 +1,84 @@
 ﻿@model EcoLogistics.ViewModels.UserBlock.LoginViewModel
 
 @{
-    ViewData["Title"] = "Connexion";
+    ViewData["Title"] = "Connexion et Inscription";
     Layout = "_LayoutLogin";
+    bool showRegister = ViewData["ShowRegister"] != null && (bool)ViewData["ShowRegister"];
 }
-
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-8 col-lg-6">
             <div class="card shadow-lg cf2d-card">
-                <div class="card-body p-4 p-md-5">
-                    <!-- Header avec badge et titre -->
-                    <div class="text-center mb-4">
-                        <span class="cf2d-badge mb-2">
-                            <i class="bi bi-recycle me-1"></i> Économie sociale & circulaire
-                        </span>
-                        <h2 class="h3 cf2d-title mt-2">Connexion</h2>
-                        <p class="text-muted small">Plateforme de gestion EcoLogistics</p>
+
+                <!-- BLOC 1 : FORMULAIRE DE CONNEXION -->
+                <div id="loginSection" class="collapse @(showRegister ? "" : "show")">
+                    <div class="card-body p-4 p-md-5">
+                        <!-- Header avec badge et titre -->
+                        <div class="text-center mb-4">
+                            <span class="cf2d-badge mb-2">
+                                <i class="bi bi-recycle me-1"></i> Économie sociale & circulaire
+                            </span>
+                            <h2 class="h3 cf2d-title mt-2">Connexion</h2>
+                            <p class="text-muted small">Plateforme de gestion EcoLogistics</p>
+                        </div>
+
+                        <form asp-controller="Account" asp-action="Login" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="LoginInput" class="form-label"></label>
+                                <input asp-for="LoginInput" class="form-control" placeholder="Entrez votre pseudo ou email" />
+                                <span asp-validation-for="LoginInput" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label fw-bold text-secondary"></label>
+                                <input asp-for="Password" class="form-control form-control-lg" type="password" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe" class="form-check-label text-muted"></label>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-cf2d btn-lg">Se connecter</button>
+                            </div>
+                        </form>
                     </div>
+                    <div class="card-footer text-center py-3 bg-light border-0 rounded-bottom-4">
+                        <span class="text-muted">Vous n'avez pas encore de compte ?</span>
+                        <a href="javascript:void(0);" onclick="toggleForms()" class="cf2d-link text-decoration-none fw-bold ms-1">S'inscrire</a>
+                    </div>
+                </div> 
+                <!-- Fin loginSection -->
+                <!-- BLOC 2 : FORMULAIRE D'INSCRIPTION -->
+                <div id="registerSection" class="collapse @(showRegister ? "show" : "")">
+                    <div class="card-header bg-cf2d-header text-center py-3">
+                        <h3 class="h4 mb-0">Créer un compte</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        @if (TempData["WarningMessage"] != null)
+                        {
+                            <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["WarningMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+                        @{
+                            // Nous renvoyons le modèle d'inscription en cas d'erreur de validation, afin de ne pas effacer les données saisies.
+                            var regModel = ViewData["RegisterModel"] as EcoLogistics.ViewModels.UserBlock.RegisterViewModel ?? new EcoLogistics.ViewModels.UserBlock.RegisterViewModel();
+                        }
+                        <partial name="_RegisterPartial" model="regModel" />
+                    </div>
+                    <div class="card-footer text-center py-3 bg-light">
+                        <span class="text-muted">Vous avez déjà un compte ?</span>
+                        <a href="javascript:void(0);" onclick="toggleForms()" class="cf2d-link text-decoration-none fw-bold ms-1">Se connecter</a>
+                    </div>
+                </div> <!-- Fin registerSection -->
 
-                    <form asp-controller="Account" asp-action="Login" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <div class="mb-3">
-                            <label asp-for="LoginInput" class="form-label"></label>
-                            <input asp-for="LoginInput" class="form-control" placeholder="Entrez votre pseudo ou email" />
-                            <span asp-validation-for="LoginInput" class="text-danger"></span>
-@*                             <label asp-for="Email" class="form-label fw-bold text-secondary"></label>
-                            <input asp-for="Email" class="form-control form-control-lg" placeholder="exemple@ecologistics.be" autofocus />
-                            <span asp-validation-for="Email" class="text-danger small"></span> *@
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-bold text-secondary"></label>
-                            <input asp-for="Password" class="form-control form-control-lg" />
-                            <span asp-validation-for="Password" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-4 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label text-muted"></label>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-cf2d btn-lg">Se connecter</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card-footer text-center py-3 bg-light border-0 rounded-bottom-4">
-                   @*  <h3 class="h4 mb-0">Se connecter</h3>
-                </div>
-                <div class="card-body p-4">
-                    <form asp-controller="Account" asp-action="Login" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-bold"></label>
-                            <input asp-for="Email" class="form-control" placeholder="exemple@ecologistics.be" autofocus />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-bold"></label>
-                            <input asp-for="Password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label"></label>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Connexion</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="card-footer text-center py-3"> *@
-                    <span class="text-muted">Vous n'avez pas encore de compte ?</span>
-                    <a asp-controller="Account" asp-action="Register" class="cf2d-link text-decoration-none fw-bold ms-1">S'inscrire</a>
-                </div>
             </div>
         </div>
     </div>
@@ -89,4 +86,21 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleForms() {
+            var loginEl = document.getElementById('loginSection');
+            var registerEl = document.getElementById('registerSection');
+
+            var bsLogin = bootstrap.Collapse.getInstance(loginEl) || new bootstrap.Collapse(loginEl, { toggle: false });
+            var bsRegister = bootstrap.Collapse.getInstance(registerEl) || new bootstrap.Collapse(registerEl, { toggle: false });
+
+            if (loginEl.classList.contains('show')) {
+                bsLogin.hide();
+                bsRegister.show();
+            } else {
+                bsRegister.hide();
+                bsLogin.show();
+            }
+        }
+    </script>
 }

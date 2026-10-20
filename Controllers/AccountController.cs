@@ -27,13 +27,12 @@ namespace EcoLogistics.Controllers
         [HttpGet]
         public async Task<IActionResult> Register()
         {
-            //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
             ViewBag.Localites = new SelectList(
                 await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
                 "Id_localite",
                 "Nom_localite"
 );
-            return View();
+            return View("Login");
         }
 
         // POST: Account/Register
@@ -43,21 +42,29 @@ namespace EcoLogistics.Controllers
         {
             if (ModelState.IsValid)
             {
-                //if (await _context.Users.AnyAsync(u => u.Email == model.Email))
-                //                {
-                //                    ModelState.AddModelError("Email", "L'adresse électronique est déjà utilisée.");
-                //                    //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
-                //                    ViewBag.Localites = new SelectList(
-                //                        await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
-                //                        "Id_localite",
-                //                        "Nom_localite"
-                //);
-                //                    return View(model);
-                //                }
+                if (!string.IsNullOrEmpty(model.Email) && await _context.Users.AnyAsync(u => u.Email == model.Email))
+                {
+                    ModelState.AddModelError("Email", "L'adresse électronique est déjà utilisée.");
+                    ViewBag.Localites = new SelectList(
+                        await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                        "Id_localite",
+                        "Nom_localite",
+                        model.Id_localite);
+                    ViewData["ShowRegister"] = true;
+                    ViewData["RegisterModel"] = model;
+
+                    return View("Login", new LoginViewModel());
+                }
                 if (await _context.Users.AnyAsync(u => u.Nickname == model.Nickname))
                 {
                     ModelState.AddModelError("Nickname", "Ce pseudo est déjà utilisé.");
-                    return View(model);
+                    ViewBag.Localites = new SelectList(await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                        "Id_localite",
+                        "Nom_localite",
+                        model.Id_localite);
+                    ViewData["ShowRegister"] = true;
+                    ViewData["RegisterModel"] = model;
+                    return View("Login", new LoginViewModel());
                 }
 
                 var perso = new Donnees_perso
@@ -98,6 +105,7 @@ namespace EcoLogistics.Controllers
                 {
                     return RedirectToAction("Profile", "User");
                 }
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id_user.ToString()),
@@ -111,19 +119,26 @@ namespace EcoLogistics.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            //ViewBag.Localites = new SelectList(_context.Localites.OrderBy(l => l.Nom_localite), "Id_localite", "Nom_localite");
             ViewBag.Localites = new SelectList(
                 await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
                 "Id_localite",
-                "Nom_localite"
+                "Nom_localite", 
+                model.Id_localite
             );
-            return View(model);
+            ViewData["ShowRegister"] = true;
+            ViewData["RegisterModel"] = model;
+            return View("Login", new LoginViewModel());
         }
 
         // GET: Account/Login
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
+            ViewBag.Localites = new SelectList(
+                await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                "Id_localite",
+                "Nom_localite"
+                );
             return View();
         }
 
@@ -141,13 +156,17 @@ namespace EcoLogistics.Controllers
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Identifiant ou mot de passe incorrect.");
+                    ViewBag.Localites = new SelectList(await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
+                        "Id_localite",
+                        "Nom_localite");
                     return View(model);
-                    //TempData["WarningMessage"] = "Cet utilisateur n'existe pas. Veuillez vous inscrire d'abord.";
-                    //return RedirectToAction(nameof(Register));
                 }
                 if (!user.IsActive || (user.Donnees_perso != null && !user.Donnees_perso.IsActive))
                 {
                     ModelState.AddModelError(string.Empty, "Votre compte a été désactivé.");
+                    ViewBag.Localites = new SelectList(await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(), 
+                        "Id_localite", 
+                        "Nom_localite");
                     return View(model);
                 }
 
@@ -183,9 +202,9 @@ namespace EcoLogistics.Controllers
                 }
                 
 
-                ModelState.AddModelError(string.Empty, "Adresse électronique ou mot de passe incorrect.");
+                ModelState.AddModelError(string.Empty, "Identifiant ou mot de passe incorrect.");
             }
-
+            ViewBag.Localites = new SelectList(await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(), "Id_localite", "Nom_localite");
             return View(model);
         }
 
