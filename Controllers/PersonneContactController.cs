@@ -25,8 +25,6 @@ namespace EcoLogistics.Controllers
             var query = _context.PersonneContacts
                 .AsNoTracking()
                 .Include(p => p.Client)
-                .OrderBy(p => p.Client.Nom_entreprise)
-                .ThenBy(p =>p.Nom)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchString))
@@ -34,16 +32,17 @@ namespace EcoLogistics.Controllers
                 searchString = searchString.Trim();
                 query = query.Where(p =>
                     p.Nom.Contains(searchString) ||
-                    //(p.Prenom != null && p.Prenom.Contains(searchString)) ||
                     (p.Email != null && p.Email.Contains(searchString)) ||
                     (p.Client != null && p.Client.Nom_entreprise.Contains(searchString))
                 );
             }
-            var rawContacts = await query.Select(p => new
+            var rawContacts = await query
+                //.OrderBy(p => p.Client != null ? p.Client.Nom_entreprise : string.Empty)
+                //.ThenBy(p => p.Nom)
+                .Select(p => new
             {
                 Id_p_contact = p.Id_contact,
                 p.Nom,
-                //p.Prenom,
                 p.Telephone,
                 p.Gsm,
                 p.Email,
@@ -54,11 +53,16 @@ namespace EcoLogistics.Controllers
                 NomLocalite = p.Localite != null ? p.Localite.Nom_localite : null
             }).ToListAsync();
 
-            var contactsList = rawContacts.Select(p => new PersonneContactItemViewModel
+            var contactsList = rawContacts
+                .GroupBy(p =>new
+                {
+                    KeyGroup = !string.IsNullOrEmpty(p.Email) ? p.Email : p.Nom.ToLower()
+                })
+                .Select(g => g.First())
+                .Select(p => new PersonneContactItemViewModel
             {
                 Id_p_contact = p.Id_p_contact,
                 Nom = p.Nom ,
-                //Prenom = p.Prenom,
                 Telephone = p.Telephone,
                 Gsm = p.Gsm,
                 Email = p.Email,
@@ -67,7 +71,8 @@ namespace EcoLogistics.Controllers
                 Localite_Info = p.CodePostal != null 
                     ? $"{p.CodePostal} {(!string.IsNullOrEmpty(p.CommuneBXl) ? p.CommuneBXl : p.NomLocalite)}"
                     : null
-            }).ToList();
+            }).OrderBy(p =>p.Nom)
+              .ToList();
 
             ViewData["CurrentFilter"] = searchString;
             return View(contactsList);

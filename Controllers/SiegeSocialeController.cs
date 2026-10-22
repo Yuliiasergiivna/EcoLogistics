@@ -75,6 +75,7 @@ namespace EcoLogistics.Controllers
         {
             var siege = await _context.SiegeSociales
                 .AsNoTracking()
+                .Include(s => s.Client)
                 .Include(c => c.Localite)
                     .ThenInclude(l => l!.CommuneBXL)
                 .Include(c => c.Localite)
@@ -85,6 +86,7 @@ namespace EcoLogistics.Controllers
             var viewModel = new SiegeSocialeViewModel
             {
                 Id_siege = siege.Id_siege,
+                Nom_entreprise = siege.Client?.Nom_entreprise,
                 Raison_sociale = siege.Raison_sociale,
                 Adresse = siege.Adresse,
                 Site_internet = siege.Site_internet,

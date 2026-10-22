@@ -90,7 +90,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
         // 4. PREMIÈRE ADRESSE D'EXPLOITATION (Site)
 
         [DisplayName("Nom du site d'exploitation : ")]
-        public string? Site_Nom_site { get; set; }
+        public string? Site_Nom { get; set; }
 
         [DisplayName("Rue du site : ")]
         public string? Site_Rue { get; set; }

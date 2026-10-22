@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Security.Claims;
 
 namespace EcoLogistics.Controllers
@@ -31,7 +32,7 @@ namespace EcoLogistics.Controllers
                 await _context.Localites.OrderBy(l => l.Nom_localite).ToListAsync(),
                 "Id_localite",
                 "Nom_localite"
-);
+            );
             return View("Login");
         }
 
@@ -216,6 +217,52 @@ namespace EcoLogistics.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction(nameof(Login));
+        }
+
+        //AJAX
+        [HttpGet]
+
+        public async Task<IActionResult> CheckAccountType(string input)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Nickname == input || u.Email == input);
+
+            if (user == null)
+            {
+                return Json(new{exists = false});
+            }
+
+            bool hasEmail = !string.IsNullOrWhiteSpace(user.Email) && user.Email.Contains("@");
+            return Json(new {exists = true, hasEmail = hasEmail});
+        }
+
+        //Post: Réinitialisation du mot de passe
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid) 
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Nickname == model.Input || u.Email == model.Input);
+
+                if(user != null && !string.IsNullOrWhiteSpace(user.Email) && user.Email.Contains("@"))
+                {
+                    if(!string.IsNullOrEmpty(model.NewPassword) && model.NewPassword == model.ConfirmNewPassword)
+                    {
+                        user.Password = _passwordHasher.HashPassword(user, model.NewPassword);
+                        _context.Users.Update(user);
+                        await _context.SaveChangesAsync();
+
+                        TempData["WarningMessage"] = "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter.";
+                        return RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        TempData["WarningMessage"] = "Les mots de passe ne correspondent pas.";
+                    }
+                }
+            }
+            TempData["WarningMessage"] = "Une erreur est survenue lors de la réinitialisation.";
+            return RedirectToAction("Login");
         }
     }
 }

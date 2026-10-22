@@ -31,13 +31,14 @@
                                 <input asp-for="LoginInput" class="form-control" placeholder="Entrez votre pseudo ou email" />
                                 <span asp-validation-for="LoginInput" class="text-danger"></span>
                             </div>
-
                             <div class="mb-3">
-                                <label asp-for="Password" class="form-label fw-bold text-secondary"></label>
+                                <div class="d-flex justify-content-between align-items-center">
+                                        <label asp-for="Password" class="form-label fw-bold text-secondary"></label>
+                                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" class="small text-decoration-none cf2d-link">Mot de passe oublié ?</a>
+                                </div>
                                 <input asp-for="Password" class="form-control form-control-lg" type="password" />
                                 <span asp-validation-for="Password" class="text-danger small"></span>
                             </div>
-
                             <div class="mb-4 form-check">
                                 <input asp-for="RememberMe" class="form-check-input" />
                                 <label asp-for="RememberMe" class="form-check-label text-muted"></label>
@@ -53,6 +54,47 @@
                         <a href="javascript:void(0);" onclick="toggleForms()" class="cf2d-link text-decoration-none fw-bold ms-1">S'inscrire</a>
                     </div>
                 </div> 
+                <!-- MODAL : FORGOT PASSWORD -->
+                <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content cf2d-card">
+                            <div class="modal-header bg-cf2d-header text-white">
+                                <h5 class="modal-title" id="forgotPasswordModalLabel"><i class="bi bi-key me-2"></i>Réinitialisation du mot de passe</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+
+                                <div id="noEmailAlert" class="alert alert-warning d-none" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    Vous ne pouvez pas modifier votre mot de passe directement. Veuillez contacter l'administrateur.
+                                </div>
+
+                                <form id="forgotPasswordForm" asp-controller="Account" asp-action="ForgotPassword" method="post">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Entrez votre Email ou Pseudo :</label>
+                                        <input type="text" id="forgotInput" name="Input" class="form-control" placeholder="exemple@ecologistics.be ou Pseudo" required />
+                                    </div>
+
+                                    <div id="passwordFields" class="d-none">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Nouveau mot de passe :</label>
+                                            <input type="password" name="NewPassword" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Confirmer le nouveau mot de passe :</label>
+                                            <input type="password" name="ConfirmNewPassword" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid mt-4">
+                                        <button type="button" id="btnCheckUser" class="btn btn-cf2d" onclick="checkUserAccount()">Vérifier</button>
+                                        <button type="submit" id="btnSubmitReset" class="btn btn-cf2d d-none">Mettre à jour le mot de passe</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Fin loginSection -->
                 <!-- BLOC 2 : FORMULAIRE D'INSCRIPTION -->
                 <div id="registerSection" class="collapse @(showRegister ? "show" : "")">
@@ -87,6 +129,53 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+            function checkUserAccount() {
+                var inputVal = document.getElementById('forgotInput').value;
+            if (!inputVal) return;
+
+            // AJAX requête auprès du contrôleur pour vérifier la présence Email
+            fetch('/Account/CheckAccountType?input=' + encodeURIComponent(inputVal))
+                    .then(response => response.json())
+                    .then(data => {
+                        var alertBox = document.getElementById('noEmailAlert');
+            var passFields = document.getElementById('passwordFields');
+            var btnCheck = document.getElementById('btnCheckUser');
+            var btnSubmit = document.getElementById('btnSubmitReset');
+
+            if (!data.exists) {
+                alertBox.className = "alert alert-danger";
+            alertBox.innerText = "Utilisateur introuvable.";
+            alertBox.classList.remove('d-none');
+            passFields.classList.add('d-none');
+            btnSubmit.classList.add('d-none');
+                        } else if (!data.hasEmail) {
+                        // L'utilisateur n'a PAS Email ( Pseudo)
+                alertBox.className = "alert alert-warning";
+            alertBox.innerText = "Vous ne pouvez pas modifier votre mot de passe, veuillez contacter l'administrateur.";
+            alertBox.classList.remove('d-none');
+            passFields.classList.add('d-none');
+            btnSubmit.classList.add('d-none');
+                        } else {
+                        // L'utilisateur a Email — autorisons le changement
+                alertBox.classList.add('d-none');
+            passFields.classList.remove('d-none');
+            btnCheck.classList.add('d-none');
+            btnSubmit.classList.remove('d-none');
+                        }
+                    });
+            }
+            var forgotModal = document.getElementById('forgotPasswordModal');
+            if (forgotModal) {
+                forgotModal.addEventListener('hidden.bs.modal', function() {
+               
+                    document.getElementById('forgotPasswordForm').reset();
+                    document.getElementById('noEmailAlert').classList.add('d-none');
+                    document.getElementById('passwordFields').classList.add('d-none');
+                    document.getElementById('btnCheckUser').classList.remove('d-none');
+                    document.getElementById('btnSubmitReset').classList.add('d-none');
+                });
+            }
+
         function toggleForms() {
             var loginEl = document.getElementById('loginSection');
             var registerEl = document.getElementById('registerSection');
