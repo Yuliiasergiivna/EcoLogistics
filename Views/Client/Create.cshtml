@@ -16,7 +16,7 @@
 
         <!-- Block 1: Entreprise -->
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-cf2d-header fw-bold">1. Informations générales de l'entreprise</div>
+            <div class="card-header bg-cf2d-header fw-bold"> Informations générales de l'entreprise</div>
             <div class="card-body row g-3">
                 <div class="col-md-6">
                     <label asp-for="Nom_entreprise" class="form-label fw-bold"></label>
@@ -88,6 +88,60 @@
             </div>
         </div>
 
+        <!-- Block 3: Personne de contact principale -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-cf2d-header fw-bold">3. Personne de contact principale</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Contact_Nom" class="form-label"></label>
+                    <input asp-for="Contact_Nom" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Contact_Email" class="form-label"></label>
+                    <input asp-for="Contact_Email" class="form-control" />
+                    <span asp-validation-for="Contact_Email" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Contact_Telephone" class="form-label"></label>
+                    <input asp-for="Contact_Telephone" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Contact_Gsm" class="form-label"></label>
+                    <input asp-for="Contact_Gsm" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Contact_Id_localite" class="form-label"></label>
+                    <select asp-for="Contact_Id_localite" asp-items="Model.LocaliteList" class="form-select">
+                        <option value="">-- Sélectionner une localité --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Block 4: Première adresse d'exploitation (Site) -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-cf2d-header fw-bold">4. Première adresse d'exploitation (Site)</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Site_Nom" class="form-label"></label>
+                    <input asp-for="Site_Nom" class="form-control" /> <!-- Вот здесь находится Site_Nom -->
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Site_Rue" class="form-label"></label>
+                    <input asp-for="Site_Rue" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Site_Numero" class="form-label"></label>
+                    <input asp-for="Site_Numero" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Site_Id_localite" class="form-label"></label>
+                    <select asp-for="Site_Id_localite" asp-items="Model.LocaliteList" class="form-select">
+                        <option value="">-- Sélectionner une localité --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div class="d-grid mb-5">
             <button type="submit" class="btn btn-cf2d btn-lg fw-bold"><i class="bi bi-check-circle me-2"></i>Enregistrer le Client</button>
         </div>

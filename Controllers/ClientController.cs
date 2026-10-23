@@ -21,11 +21,20 @@ namespace EcoLogistics.Controllers
 
             // 1. REPERTOIRE DES CLIENTS (INDEX)
             [HttpGet]
-            public async Task<IActionResult> Index(string? searchString)
+            public async Task<IActionResult> Index(string? searchString, string? statusFilter = "actif")
             {
                 var query = _context.Clients
                     .AsNoTracking()
                     .AsQueryable();
+
+                if(statusFilter == "actif")
+                {
+                    query = query.Where(c => !c.Is_deleted);
+                }
+                else if(statusFilter == "inactif")
+                {
+                    query = query.Where(c => c.Is_deleted);
+                }
 
                 if (!string.IsNullOrWhiteSpace(searchString))
                 {
@@ -110,6 +119,7 @@ namespace EcoLogistics.Controllers
                 //var clientsList = rawClients.DistinctBy(c => c.Id_client).ToList();
 
                 ViewData["CurrentFilter"] = searchString;
+                ViewData["StatusFilter"] = statusFilter;
                 return View(clientsList);
             }
 
@@ -288,8 +298,35 @@ namespace EcoLogistics.Controllers
                             Created_at = DateTime.Now
                         };
 
-                        _context.Clients.Add(client);
+                    if (!string.IsNullOrWhiteSpace(model.Contact_Nom) || !string.IsNullOrWhiteSpace(model.Contact_Email))
+                    {
+                        var contact = new PersonneContact
+                        {
+                            Nom = model.Contact_Nom!,
+                            Email = model.Contact_Email,
+                            Telephone = model.Contact_Telephone,
+                            Gsm = model.Contact_Gsm,
+                            Id_localite = model.Contact_Id_localite,
+                            Id_client = client.Id_client
+                        };
+                        _context.PersonneContacts.Add(contact);
+                    }
 
+                    if (!string.IsNullOrWhiteSpace(model.Site_Nom) || !string.IsNullOrWhiteSpace(model.Site_Rue))
+                    {
+                        var exploitation = new AdresseExploitation
+                        {
+                            Nom_site = model.Site_Nom,
+                            Rue = model.Site_Rue,
+                            Numero = model.Site_Numero,
+                            Id_localite = model.Site_Id_localite,
+                            Id_client = client.Id_client
+                        };
+                        _context.AdressesExploitation.Add(exploitation);
+                    }
+
+
+                    _context.Clients.Add(client);
                         await _context.SaveChangesAsync();
                         await transaction.CommitAsync();
 
@@ -554,8 +591,8 @@ namespace EcoLogistics.Controllers
                 {
                     Value = l.Id_localite.ToString(),
                     Text = l.Code_postal + " - " +
-                       (l.CommuneBXL.Commune_principale ?? l.Nom_localite) +
-                       " (" + (l.Pays.Nom_pays ?? "") + ")"
+                       (l.CommuneBXL != null ? l.CommuneBXL.Commune_principale : l.Nom_localite) +
+                       " (" + (l.Pays != null ? l.Pays.Nom_pays : "") + ")"
                 })
                 .OrderBy(item =>item.Text)
                 .ToListAsync();
@@ -570,8 +607,8 @@ namespace EcoLogistics.Controllers
                     u.Id_user,
                     u.Nickname,
                     u.Email,
-                    Nom = u.Donnees_perso.Nom,
-                    Prenom = u.Donnees_perso.Prenom
+                    Nom = u.Donnees_perso != null ?  u.Donnees_perso.Nom : null,
+                    Prenom = u.Donnees_perso != null ? u.Donnees_perso.Prenom : null
                 })
                 .ToListAsync();
             return rawUsers

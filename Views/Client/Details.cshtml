@@ -18,6 +18,13 @@
             @if (isAdminOrManager)
             {
                 <a asp-action="Edit" asp-route-id="@Model.Id_client" class="btn btn-warning"><i class="bi bi-pencil me-1"></i> Modifier</a>
+                <form asp-action="ToggleSoftDelete" asp-route-id="@Model.Id_client" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer / désactiver ce client ?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-@(Model.Is_deleted ? "outline-success" : "outline-danger")">
+                        <i class="bi bi-@(Model.Is_deleted ? "arrow-counterclockwise" : "trash") me-1"></i>
+                        @(Model.Is_deleted ? "Restaurer" : "Supprimer")
+                    </button>
+                </form>
             }
         </div>
     </div>
