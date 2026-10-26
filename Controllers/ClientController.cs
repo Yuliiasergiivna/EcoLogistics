@@ -27,11 +27,11 @@ namespace EcoLogistics.Controllers
                     .AsNoTracking()
                     .AsQueryable();
 
-                if(statusFilter == "actif")
+                if(statusFilter == "actifs")
                 {
                     query = query.Where(c => !c.Is_deleted);
                 }
-                else if(statusFilter == "inactif")
+                else if(statusFilter == "inactifs")
                 {
                     query = query.Where(c => c.Is_deleted);
                 }

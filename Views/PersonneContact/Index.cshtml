@@ -39,14 +39,14 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table id="contactsTable" class="table table-hover align-middle mb-0"style="table-layout: fixed; width: 100%;">
                 <thead class="bg-cf2d-header text-white">
                     <tr>
-                        <th class="ps-3" style="width: 20%">@Html.DisplayNameFor(model => model.Nom_client)</th>
-                        <th style="width: 20%">@Html.DisplayNameFor(model => model.Nom)</th>
-                        <th style="width: 20%">@Html.DisplayNameFor(model => model.Email)</th>
-                        <th style="width: 20%">@Html.DisplayNameFor(model => model.Telephone) / @Html.DisplayNameFor(model => model.Gsm)</th>
-                        <th style="width: 10%">@Html.DisplayNameFor(model => model.Localite_Info)</th>
+                        <th class="ps-3" style="width: 25%">@Html.DisplayNameFor(model => model.Nom_client)</th>
+                        <th style="width: 25%">@Html.DisplayNameFor(model => model.Nom)</th>
+                        <th style="width: 12%">@Html.DisplayNameFor(model => model.Email)</th>
+                        <th style="width: 12%">@Html.DisplayNameFor(model => model.Telephone) / @Html.DisplayNameFor(model => model.Gsm)</th>
+                        <th style="width: 16%">@Html.DisplayNameFor(model => model.Localite_Info)</th>
                         @if (isAdminOrManager)
                         {
                             <th class="text-center" style="width: 10%">Actions</th>
@@ -66,11 +66,14 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr>
-                                <td class="ps-4">
+                                    
+                            <tr style="cursor: pointer;" data-edit-url="@Url.Action("Edit", new { id=item.Id_p_contact})">
+
+                                <td class="ps-4 text-truncate">
                                     @if (!string.IsNullOrEmpty(item.Nom_client))
                                     {
-                                        <a asp-controller="Client" asp-action="Details" asp-route-id="@item.Id_client" class="fw-semibold text-decoration-none text-dark">
+                                        <a asp-controller="Client" asp-action="Details" asp-route-id="@item.Id_client" class="fw-semibold text-decoration-none text-cf2d text-truncate d-block" 
+                                            title="@item.Nom_client">
                                             <i class="bi bi-building me-1 text-muted"></i>@item.Nom_client
                                         </a>
                                     }
@@ -85,7 +88,7 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.Email))
                                     {
-                                        <a href="mailto:@item.Email" class="text-decoration-none text-dark">
+                                        <a href="mailto:@item.Email" class="text-decoration-none text-dark text-truncate d-block" title="@item.Email">
                                             <i class="bi bi-envelope me-1 text-muted"></i>@item.Email
                                         </a>
                                     }
@@ -124,11 +127,6 @@
                                 {
                                     <td class="text-center">
                                         <div class="d-inline-flex gap-1" role="group">
-                                            <a asp-controller="PersonneContact" asp-action="Edit"
-                                                 asp-route-id="@item.Id_p_contact" 
-                                                 class="btn btn-sm btn-outline-warning" title="Modifier"> 
-                                                <i class="bi bi-pencil"> </i>
-                                            </a>
                                             <form asp-controller="PersonneContact" asp-action="Delete"
                                                   asp-route-id="@item.Id_p_contact" method="post"
                                                   onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette personne de contact ?');" class="d-inline">
@@ -159,7 +157,22 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // --- 1.  ---
+            const rows = document.querySelectorAll("table.table tbody tr");
+            rows.forEach(row => {
+                if (row.cells.length <= 1) return;
+
+                row.addEventListener("click", function(e) {
+                    // Verifications
+                    if (e.target.closest("a") || e.target.closest("button") || e.target.closest("form")) {
+                        return;
+                    }
+                    const editUrl = row.getAttribute("data-edit-url");
+                    if (editUrl) {
+                        window.location.href = editUrl;
+                    }
+                });
+            });
+            // --- 1.Synchronisation du scroll horizontal supérieur  ---
             const topWrapper = document.querySelector('.top-scroll-wrapper');
             const topContent = document.querySelector('.top-scroll-content');
             const tableWrapper = document.querySelector('.table-responsive');
@@ -220,7 +233,7 @@
                     const query = this.value.toLowerCase().trim();
 
                     tableRows.forEach(row => {
-                        // 4
+                        // 4 Ignore l'avis "Aucune personne..."
                         if (row.cells.length === 1) return;
 
                         const text = row.textContent.toLowerCase();

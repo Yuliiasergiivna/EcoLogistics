@@ -71,7 +71,8 @@ namespace EcoLogistics.Controllers
                 Localite_Info = p.CodePostal != null 
                     ? $"{p.CodePostal} {(!string.IsNullOrEmpty(p.CommuneBXl) ? p.CommuneBXl : p.NomLocalite)}"
                     : null
-            }).OrderBy(p =>p.Nom)
+            }).OrderBy(p => string.IsNullOrEmpty(p.Nom) || char.IsDigit(p.Nom[0]) ? 1 : 0)
+              .ThenBy(p =>p.Nom)
               .ToList();
 
             ViewData["CurrentFilter"] = searchString;
