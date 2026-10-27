@@ -69,36 +69,36 @@ namespace EcoLogistics.Controllers
             return View(siegeList);
         }
 
-        // 2.Details
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var siege = await _context.SiegeSociales
-                .AsNoTracking()
-                .Include(s => s.Client)
-                .Include(c => c.Localite)
-                    .ThenInclude(l => l!.CommuneBXL)
-                .Include(c => c.Localite)
-                    .ThenInclude(l => l!.Pays)
-                .FirstOrDefaultAsync( c => c.Id_siege == id);
-            if (siege == null) return NotFound();
+        //// 2.Details
+        //[HttpGet]
+        //public async Task<IActionResult> Details(int id)
+        //{
+        //    var siege = await _context.SiegeSociales
+        //        .AsNoTracking()
+        //        .Include(s => s.Client)
+        //        .Include(c => c.Localite)
+        //            .ThenInclude(l => l!.CommuneBXL)
+        //        .Include(c => c.Localite)
+        //            .ThenInclude(l => l!.Pays)
+        //        .FirstOrDefaultAsync( c => c.Id_siege == id);
+        //    if (siege == null) return NotFound();
 
-            var viewModel = new SiegeSocialeViewModel
-            {
-                Id_siege = siege.Id_siege,
-                Nom_entreprise = siege.Client?.Nom_entreprise,
-                Raison_sociale = siege.Raison_sociale,
-                Adresse = siege.Adresse,
-                Site_internet = siege.Site_internet,
-                Secteur_activite = siege.Secteur_activite,
+        //    var viewModel = new SiegeSocialeViewModel
+        //    {
+        //        Id_siege = siege.Id_siege,
+        //        Nom_entreprise = siege.Client?.Nom_entreprise,
+        //        Raison_sociale = siege.Raison_sociale,
+        //        Adresse = siege.Adresse,
+        //        Site_internet = siege.Site_internet,
+        //        Secteur_activite = siege.Secteur_activite,
 
-                Siege_Code_postal = siege.Localite?.Code_postal,
-                Siege_Nom_commune = siege.Localite?.CommuneBXL?.Commune_principale,
-                Siege_Pays = siege?.Localite?.Pays?.Nom_pays,
+        //        Siege_Code_postal = siege.Localite?.Code_postal,
+        //        Siege_Nom_commune = siege.Localite?.CommuneBXL?.Commune_principale,
+        //        Siege_Pays = siege?.Localite?.Pays?.Nom_pays,
 
-            };
-            return View(viewModel);
-        }
+        //    };
+        //    return View(viewModel);
+        //}
 
         // 3. GET: Create
  
@@ -148,7 +148,7 @@ namespace EcoLogistics.Controllers
                         return RedirectToAction("Details", "Client", new { id = model.Id_client.Value });
                     }
 
-                    return RedirectToAction(nameof(Details), new { id = siege.Id_siege });
+                    return RedirectToAction(nameof(Index), new { id = siege.Id_siege });
                 }
                 catch (Exception)
                 {
@@ -213,7 +213,7 @@ namespace EcoLogistics.Controllers
                             return RedirectToAction("Details", "Client", new { id = model.Id_client.Value });
                         }
                     }
-                    return RedirectToAction(nameof(Details), new { id = model.Id_siege});
+                    return RedirectToAction(nameof(Index), new { id = model.Id_siege});
                 }
                 catch(Exception) 
                 {
