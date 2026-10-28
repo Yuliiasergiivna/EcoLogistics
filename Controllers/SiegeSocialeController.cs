@@ -38,7 +38,8 @@ namespace EcoLogistics.Controllers
                 searchString = searchString.Trim();
                 query = query.Where(c =>
                     c.Raison_sociale != null && c.Raison_sociale.Contains(searchString) ||
-                    (c.Adresse != null && c.Adresse.Contains(searchString)) ||
+                    (c.Rue != null && c.Rue.Contains(searchString)) ||
+                    (c.Numero != null && c.Numero.Contains(searchString)) ||
                     (c.Site_internet != null && c.Site_internet.Contains(searchString)) ||
                     (c.Client != null && c.Client.Nom_entreprise != null && c.Client.Nom_entreprise.Contains(searchString))
                 );
@@ -51,7 +52,8 @@ namespace EcoLogistics.Controllers
                 Id_siege = c.Id_siege,
                 Nom_entreprise = c.Client != null ? c.Client.Nom_entreprise : null,
                 Raison_sociale = c.Raison_sociale,
-                Adresse = c.Adresse,
+                Siege_Rue = c.Rue,
+                Siege_Num = c.Numero,
                 Site_internet = c.Site_internet,
                 Secteur_activite = c.Secteur_activite,
                 Siege_Code_postal = c.Localite != null ? c.Localite.Code_postal : null,
@@ -129,7 +131,8 @@ namespace EcoLogistics.Controllers
                     var siege = new SiegeSociale
                     {
                         Raison_sociale = model.Raison_sociale?.Trim(),
-                        Adresse = model.Adresse?.Trim(),
+                        Rue = model.Siege_Rue?.Trim(),
+                        Numero = model.Siege_Num?.Trim(),
                         Site_internet = model.Site_internet?.Trim(),
                         Secteur_activite = model.Secteur_activite?.Trim(),
                         Id_localite = model.Id_localite
@@ -175,7 +178,8 @@ namespace EcoLogistics.Controllers
                 Id_client = clientId,
                 Nom_entreprise = client?.Nom_entreprise,
                 Raison_sociale = siege.Raison_sociale,
-                Adresse = siege.Adresse,
+                Siege_Rue = siege.Rue,
+                Siege_Num = siege.Numero,
                 Site_internet = siege.Site_internet,
                 Secteur_activite = siege.Secteur_activite,
                 Id_localite = siege.Id_localite,
@@ -201,7 +205,8 @@ namespace EcoLogistics.Controllers
                     if (siege != null)
                     {
                         siege.Raison_sociale = model.Raison_sociale;
-                        siege.Adresse = model.Adresse;
+                        siege.Rue = model.Siege_Rue;
+                        siege.Numero = model.Siege_Num;
                         siege.Site_internet = model.Site_internet;
                         siege.Secteur_activite = model.Secteur_activite;
                         siege.Id_localite = model.Id_localite;

@@ -28,7 +28,7 @@
                     <div class="col-md-12">
                         <label class="text-muted small d-block"><i class="bi bi-geo-alt me-1"></i>Adresse complète</label>
                         <p class="mb-0 fs-6">
-                            @(Model.Adresse ?? "Adresse non renseignée")<br />
+                           @*  @(Model.Adresse ?? "Adresse non renseignée")<br /> *@
                             @if (!string.IsNullOrEmpty(Model.Siege_Code_postal))
                             {
                                 <strong>@Model.Siege_Code_postal @Model.Siege_Nom_commune</strong>

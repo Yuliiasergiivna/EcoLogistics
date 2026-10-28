@@ -173,6 +173,7 @@ namespace EcoLogistics.ExcelImportService
                 var siegeRue = GetCellValue(worksheet, row, 15);    // O (15) Siège Social Rue
                 var siegeNum = GetCellValue(worksheet, row, 16);    // P (16) Siège Social Numero
                 var siegeCp = GetCellValue(worksheet, row, 17);     // Q (17) Siège Social CP
+                
 
                 if (!string.IsNullOrWhiteSpace(siegeRaison) || !string.IsNullOrWhiteSpace(siegeRue))
                 {
@@ -181,7 +182,8 @@ namespace EcoLogistics.ExcelImportService
                         Id_client = client.Id_client
                     };
                     siege.Raison_sociale = string.IsNullOrWhiteSpace(siegeRaison) ? nomEntreprise : siegeRaison;
-                    siege.Adresse = $"{siegeRue} {siegeNum}".Trim();           // Rue + N°
+                    siege.Rue = siegeRue;           // Rue
+                    siege.Numero = siegeNum;                                // N°
                     siege.Site_internet = GetCellValue(worksheet, row, 20);    // T (20) Site internet
                     siege.Secteur_activite = GetCellValue(worksheet, row, 21); // U (21) Secteur d'Activité
                     siege.Id_localite = FindLocaliteId(localites, siegeCp);

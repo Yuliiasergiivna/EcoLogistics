@@ -16,9 +16,12 @@ namespace EcoLogistics.Models.ClientBlock
         [DisplayName("Raison sociale: ")]
         [MaxLength(255, ErrorMessage = "La raison sociale ne peut pas dépasser 255 caractères")]
         public string? Raison_sociale { get; set; }
-        [DisplayName("Adresse: ")]
-        [MaxLength(255, ErrorMessage = "L'adresse ne peut pas dépasser 255 caractères")]
-        public string? Adresse { get; set; }
+        [DisplayName("Rue: ")]
+        [MaxLength(255, ErrorMessage = "Nom de rue ne peut pas dépasser 255 caractères")]
+        public string? Rue { get; set; }
+        [DisplayName("N°: ")]
+        [MaxLength(100, ErrorMessage = "Le numero de rue ne peut pas dépasser 255 caractères")]
+        public string? Numero { get; set; }
         [DisplayName("Site internet: ")]
         [MaxLength(255)]
         public string? Site_internet { get; set; }

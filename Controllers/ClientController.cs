@@ -108,7 +108,8 @@ namespace EcoLogistics.Controllers
 
                 Id_siege = x.SiegeSociale != null ? x.SiegeSociale.Id_siege : null,
                 Raison_sociale = x.SiegeSociale != null ? x.SiegeSociale.Raison_sociale : null,
-                Siege_adresse = x.SiegeSociale != null ? x.SiegeSociale.Adresse : null,
+                Siege_rue = x.SiegeSociale != null ? x.SiegeSociale.Rue : null,
+                Siege_num = x.SiegeSociale != null ? x.SiegeSociale.Numero : null,
                 Siege_code_postal = x.SiegeSociale != null && x.SiegeSociale.Localite != null ? x.SiegeSociale.Localite.Code_postal : null,
                 Siege_commune = x.SiegeSociale != null && x.SiegeSociale.Localite != null && x.SiegeSociale.Localite.CommuneBXL != null ? x.SiegeSociale.Localite.CommuneBXL.Commune_principale : null,
                 Siege_pays = x.SiegeSociale != null && x.SiegeSociale.Localite != null && x.SiegeSociale.Localite.Pays != null ? x.SiegeSociale.Localite.Pays.Nom_pays : null,
@@ -205,7 +206,8 @@ namespace EcoLogistics.Controllers
 
                     Id_siege = siege?.Id_siege,
                     Siege_Raison_sociale = siege?.Raison_sociale,
-                    Siege_Adresse = siege?.Adresse,
+                    Siege_Rue = siege?.Rue,
+                    Siege_Num = siege?.Numero,
                     Siege_Site_internet = siege?.Site_internet,
                     Siege_Secteur_activite = siege?.Secteur_activite,
                     Siege_Nom_localite = siege?.Localite?.CommuneBXL?.Commune_principale,
@@ -263,12 +265,13 @@ namespace EcoLogistics.Controllers
                 try
                 {
                         SiegeSociale? siege = null;
-                    if (!string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse))
+                    if (!string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Rue) || !string.IsNullOrWhiteSpace(model.Siege_Num))
                     {
                         siege = new SiegeSociale
                         {
                             Raison_sociale = model.Siege_Raison_sociale,
-                            Adresse = model.Siege_Adresse,
+                            Rue = model.Siege_Rue,
+                            Numero = model.Siege_Num,
                             Site_internet = model.Siege_Site_internet,
                             Secteur_activite = model.Siege_Secteur_activite,
                             Id_localite = model.Siege_Id_localite
@@ -379,7 +382,8 @@ namespace EcoLogistics.Controllers
                     Id_localite = client.Id_localite,
 
                     Siege_Raison_sociale = client.SiegeSociale?.Raison_sociale,
-                    Siege_Adresse = client.SiegeSociale?.Adresse,
+                    Siege_Rue = client.SiegeSociale?.Rue,
+                    Siege_Num = client.SiegeSociale?.Numero,
                     Siege_Site_internet = client.SiegeSociale?.Site_internet,
                     Siege_Secteur_activite = client.SiegeSociale?.Secteur_activite,
                     Siege_Id_localite = client.SiegeSociale?.Id_localite,
@@ -439,14 +443,15 @@ namespace EcoLogistics.Controllers
                     // 1. Siege Sociale
 
                     //Logique de mise à jour/création d'un siège social
-                    bool hasSiegeInput = !string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Adresse);
+                    bool hasSiegeInput = !string.IsNullOrWhiteSpace(model.Siege_Raison_sociale) || !string.IsNullOrWhiteSpace(model.Siege_Rue) || !string.IsNullOrWhiteSpace(model.Siege_Num);
 
                     if (client.SiegeSociale != null)
                     {
                         if (hasSiegeInput)
                         {
                             client.SiegeSociale.Raison_sociale = model.Siege_Raison_sociale;
-                            client.SiegeSociale.Adresse = model.Siege_Adresse;
+                            client.SiegeSociale.Rue = model.Siege_Rue;
+                            client.SiegeSociale.Numero = model.Siege_Num;
                             client.SiegeSociale.Site_internet = model.Siege_Site_internet;
                             client.SiegeSociale.Secteur_activite = model.Siege_Secteur_activite;
                             client.SiegeSociale.Id_localite = model.Siege_Id_localite;
@@ -463,7 +468,8 @@ namespace EcoLogistics.Controllers
                         var newSiege = new SiegeSociale
                         {
                             Raison_sociale = model.Siege_Raison_sociale,
-                            Adresse = model.Siege_Adresse,
+                            Rue = model.Siege_Rue,
+                            Numero = model.Siege_Num,
                             Site_internet = model.Siege_Site_internet,
                             Secteur_activite = model.Siege_Secteur_activite,
                             Id_localite = model.Siege_Id_localite

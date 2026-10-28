@@ -12,8 +12,10 @@ namespace EcoLogistics.ViewModels.ClientBlock
         public int? Id_localite { get; set; }
         [DisplayName("Raison sociale: ")]
         public string? Raison_sociale { get; set; }
-        [DisplayName("Adresse: ")]
-        public string? Adresse {  get; set; }
+        [DisplayName("Rue: ")]
+        public string? Siege_Rue {  get; set; }
+        [DisplayName("N°: ")]
+        public string? Siege_Num { get; set; }
         [DisplayName("Site internet: ")]
         public string? Site_internet { get; set; }
         [DisplayName("Secteur d'activité: ")]
