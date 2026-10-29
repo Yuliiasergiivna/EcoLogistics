@@ -74,6 +74,13 @@ namespace EcoLogistics.ExcelImportService
                 if (client == null)
                 {
                     isNew = true;
+                    //if (isNew)
+                    //{
+                    //    client.Created_at = DateTime.Now;
+                    //    _context.Clients.Add(client);
+                    //    existingClients.Add(client);
+                    //    await _context.SaveChangesAsync();
+                    //}
                     client = new Client
                     {
                         Id_client = Guid.NewGuid(),
@@ -97,9 +104,10 @@ namespace EcoLogistics.ExcelImportService
 
                 if (isNew)
                 {
-                    client.Created_at = DateTime.Now;
+                    //client.Created_at = DateTime.Now;
                     _context.Clients.Add(client);
                     existingClients.Add(client);
+                    await _context.SaveChangesAsync();
                 };
 
                 // 3. Créer une personne de contact (PersonneContact)
@@ -117,10 +125,10 @@ namespace EcoLogistics.ExcelImportService
                         };
                         //client.PersonnesContact ?? new List<PersonneContact>();
                         client.PersonnesContact.Add(contact);
-                        if (!_context.PersonneContacts.Local.Contains(contact))
-                        {
-                            _context.PersonneContacts.Add(contact);
-                        }
+                         _context.PersonneContacts.Add(contact);
+                        //if (!_context.PersonneContacts.Local.Contains(contact))
+                        //{
+                        //}
                     }
                     //contact.Nom = contactName;
                     contact.Telephone = GetCellValue(worksheet, row, 4); // Téléphones
@@ -177,10 +185,10 @@ namespace EcoLogistics.ExcelImportService
 
                 if (!string.IsNullOrWhiteSpace(siegeRaison) || !string.IsNullOrWhiteSpace(siegeRue))
                 {
-                    var siege = client.SiegeSociale ?? new SiegeSociale
-                    {
-                        Id_client = client.Id_client
-                    };
+                    var siege = client.SiegeSociale ?? new SiegeSociale();
+                    //{
+                    //    Id_client = client.Id_client
+                    //};
                     siege.Raison_sociale = string.IsNullOrWhiteSpace(siegeRaison) ? nomEntreprise : siegeRaison;
                     siege.Rue = siegeRue;           // Rue
                     siege.Numero = siegeNum;                                // N°
@@ -188,11 +196,17 @@ namespace EcoLogistics.ExcelImportService
                     siege.Secteur_activite = GetCellValue(worksheet, row, 21); // U (21) Secteur d'Activité
                     siege.Id_localite = FindLocaliteId(localites, siegeCp);
 
-                    if( !_context.SiegeSociales.Local.Contains(siege) && siege.Id_siege == 0)
+                    if(client.SiegeSociale == null) //siege.Id_siege == 0 && 
                     {
-                        _context.SiegeSociales.Add(siege);
+                        siege.Id_client = client.Id_client;
+
+                        //if (!_context.SiegeSociales.Local.Contains(siege))
+                        //{
+                        //}
                         client.SiegeSociale = siege;
+                        _context.SiegeSociales.Add(siege);
                     }
+
                 }
 
                 importedCount++;
