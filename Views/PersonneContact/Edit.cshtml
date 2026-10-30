@@ -64,7 +64,43 @@
                         </select>
                         <span asp-validation-for="Id_localite" class="text-danger"></span>
                     </div>
-
+                    @if (Model.OtherWorkplaces != null && Model.OtherWorkplaces.Any())
+                    {
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-cf2d-header fw-bold">
+                                <i class="bi bi-building me-2"></i>Autres lieux de travail de ce contact (@Model.OtherWorkplaces.Count)
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4">Entreprise / Client / Site</th>
+                                            <th class="text-end pe-4">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var place in Model.OtherWorkplaces)
+                                        {
+                                            <tr>
+                                                <td class="ps-4 fw-bold">@place.Nom_entreprise</td>
+                                                <td class="text-end pe-4">
+                                                    <a asp-controller="Client" asp-action="Details" asp-route-id="@place.Id_client" class="btn btn-sm btn-outline-primary" title="Otryt kartichku klienta">
+                                                        <i class="bi bi-eye me-1"></i>Voir client
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-3 text-muted text-center">
+                            <em>Aucun autre lieu de travail trouvé pour ce contact. (Count: @Model.OtherWorkplaces.Count)</em>
+                        </div>
+                    }
                     <div class="d-flex justify-content-between align-items-center pt-2 border-top">
                         <a asp-action="Index" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Retour

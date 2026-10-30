@@ -314,7 +314,7 @@
                                                        <i class="bi bi-pencil"></i>
                                                     </a>
                                                     <form asp-controller="AdresseExploitation" asp-action="Delete" asp-route-id="@s.Id_adresse_exp" asp-route-clientId="@Model.Id_client"
-                                                            metod="post" class="d-inline" onsubmit="return confirm ('Êtes-vous sûr de vouloir supprimer ce site ?');">
+                                                            method="post" class="d-inline" onsubmit="return confirm ('Êtes-vous sûr de vouloir supprimer ce site ?');">
                                                             @Html.AntiForgeryToken()
                                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
                                                                 <i class="bi bi-trash"></i>

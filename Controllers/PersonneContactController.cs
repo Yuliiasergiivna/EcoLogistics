@@ -56,7 +56,7 @@ namespace EcoLogistics.Controllers
             var contactsList = rawContacts
                 .GroupBy(p =>new
                 {
-                    KeyGroup = !string.IsNullOrEmpty(p.Email) ? p.Email : p.Nom.ToLower()
+                    KeyGroup = !string.IsNullOrEmpty(p.Email) ? p.Email.ToLower() : p.Nom.ToLower()
                 })
                 .Select(g => g.First())
                 .Select(p => new PersonneContactItemViewModel
@@ -130,11 +130,22 @@ namespace EcoLogistics.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var contact = await _context.PersonneContacts.FindAsync(id);
+            var contact = await _context.PersonneContacts
+                .Include(p =>p.Client)
+                .FirstOrDefaultAsync(p => p.Id_contact  == id);
             if (contact == null)
             {
                 return NotFound();
             }
+            string contactNom = contact.Nom.Trim().ToLower();
+            string? contactEmail = string.IsNullOrWhiteSpace(contact.Email) ? null : contact.Email.Trim().ToLower();
+
+            var samePersonContacts = await _context.PersonneContacts
+                .Include(p => p.Client)
+                .Where(p => p.Id_contact != id &&
+                            (p.Nom.ToLower() == contactNom ||
+                             (contactEmail != null && p.Email != null && p.Email.ToLower() == contactEmail)))
+                .ToListAsync();
 
             var model = new PersonneContactFormViewModel
             {
@@ -145,7 +156,14 @@ namespace EcoLogistics.Controllers
                 Gsm = contact.Gsm,
                 Email = contact.Email,
                 Id_client = contact.Id_client,
-                Id_localite = contact.Id_localite
+                Id_localite = contact.Id_localite,
+
+                OtherWorkplaces = samePersonContacts.Select(p => new AssociatedWorkplaceViewModel
+                {
+                    Id_client = p.Id_client,
+                    Nom_entreprise = p.Client?.Nom_entreprise ?? "-",
+                    Telephone = p.Telephone
+                }).ToList()
             };
 
             await PopulateDropdownsAsync(model);
@@ -184,6 +202,22 @@ namespace EcoLogistics.Controllers
 
                 return RedirectToAction("Details", "Client", new { id = model.Id_client });
             }
+            string modelNom = model.Nom.Trim().ToLower();
+            string? modelEmail = string.IsNullOrWhiteSpace(model.Email) ? null : model.Email.Trim().ToLower();
+
+            var samePersonContacts = await _context.PersonneContacts
+                .Include(p => p.Client)
+                .Where(p => p.Id_contact != id &&
+                            (p.Nom.ToLower() == modelNom ||
+                             (modelEmail != null  && p.Email != null && p.Email.ToLower() == modelEmail)))
+                .ToListAsync();
+
+             model.OtherWorkplaces = samePersonContacts.Select(p => new AssociatedWorkplaceViewModel
+             {
+                 Id_client = p.Id_client,
+                 Nom_entreprise = p.Client?.Nom_entreprise ?? "-",
+                 Telephone = p.Telephone
+             }).ToList();
 
             await PopulateDropdownsAsync(model);
             return View(model);

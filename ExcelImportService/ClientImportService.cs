@@ -45,13 +45,14 @@ namespace EcoLogistics.ExcelImportService
             {
                 //Secteurs d'activité de l'entreprise(Client / Producteur)
                 var numClientVal = GetCellValue(worksheet, row, 1);
-                var nomEntreprise = GetCellValue(worksheet, row, 2 ); // Producteur
-
-                // Si le nom de l'entreprise est vide, passez à la ligne suivante.
-                if (string.IsNullOrWhiteSpace(nomEntreprise)) continue;
-
+                var producteurName = GetCellValue(worksheet, row, 2 ); // Producteur
+                var siegeRaison = GetCellValue(worksheet, row, 14);       // Col N: Raison Sociale
                 var beNumero = GetCellValue(worksheet, row, 12);     // BE N° d'entreprise
                 var numEntreprise = GetCellValue(worksheet, row, 13); // N° d'entreprise
+                // Si le nom de l'entreprise est vide, passez à la ligne suivante.
+                if (string.IsNullOrWhiteSpace(producteurName) && string.IsNullOrWhiteSpace(siegeRaison)) continue;
+                string clientName = !string.IsNullOrWhiteSpace(siegeRaison) ? siegeRaison : producteurName!;
+
                 var prodCp = GetCellValue(worksheet, row, 9);
                 int? prodLocalitedId = FindLocaliteId(localites, prodCp);
                 var prodRue = GetCellValue(worksheet, row, 7);
@@ -68,19 +69,13 @@ namespace EcoLogistics.ExcelImportService
                 }
                 if (client == null)
                 {
-                    client = existingClients.FirstOrDefault(c => c.Nom_entreprise.Equals(nomEntreprise, StringComparison.OrdinalIgnoreCase));
+                    client = existingClients.FirstOrDefault(c => c.Nom_entreprise.Equals(clientName, StringComparison.OrdinalIgnoreCase));
                 }
                 bool isNew = false;
                 if (client == null)
                 {
                     isNew = true;
-                    //if (isNew)
-                    //{
-                    //    client.Created_at = DateTime.Now;
-                    //    _context.Clients.Add(client);
-                    //    existingClients.Add(client);
-                    //    await _context.SaveChangesAsync();
-                    //}
+           
                     client = new Client
                     {
                         Id_client = Guid.NewGuid(),
@@ -90,7 +85,7 @@ namespace EcoLogistics.ExcelImportService
                 }
 
                 client.Numero_client = numClientVal ?? client.Numero_client;
-                client.Nom_entreprise = nomEntreprise;
+                client.Nom_entreprise = clientName;
                 client.BE_entreprise = beNumero;
                 client.Numero_entreprise = numEntreprise;
                 client.Adresse = $"{prodRue} {prodNum}".Trim(); // Production Rue + N°
@@ -126,9 +121,7 @@ namespace EcoLogistics.ExcelImportService
                         //client.PersonnesContact ?? new List<PersonneContact>();
                         client.PersonnesContact.Add(contact);
                          _context.PersonneContacts.Add(contact);
-                        //if (!_context.PersonneContacts.Local.Contains(contact))
-                        //{
-                        //}
+  
                     }
                     //contact.Nom = contactName;
                     contact.Telephone = GetCellValue(worksheet, row, 4); // Téléphones
@@ -145,29 +138,32 @@ namespace EcoLogistics.ExcelImportService
                 // 4.Création (AdresseExploitation)
                 if (!string.IsNullOrWhiteSpace(prodRue))
                 {
-                    var adresseExp = client.AdressesExploitation?.FirstOrDefault(a => a.Rue == prodRue && a.Numero == prodNum)
-                        ?? client.AdressesExploitation?.FirstOrDefault();
+                    var adresseExp = client.AdressesExploitation?
+                        .FirstOrDefault(a => a.Rue == prodRue && a.Numero == prodNum);
+
                     if (adresseExp == null)
                     {
                         adresseExp = new AdresseExploitation
                         {
 
                             Id_client = client.Id_client,
-                            Nom_site = "Site Principal"
+                            Nom_site = producteurName ?? "Site Principal",
+                            Rue = prodRue,
+                            Numero = prodNum,
+                            Id_localite = prodLocalitedId
                         };
                         client.AdressesExploitation ??= new List<AdresseExploitation>();
                         client.AdressesExploitation.Add(adresseExp);
-
-                        if (!_context.AdressesExploitation.Local.Contains(adresseExp))
-                        {
-                            _context.AdressesExploitation.Add(adresseExp);
-                        }
+                        _context.AdressesExploitation.Add(adresseExp);
                     }
+                    else { 
 
-                    adresseExp.Rue = prodRue;
-                    adresseExp.Numero = prodNum; // Production N°
-                    //adresseExp.Nom_site = "Site Principal";
-                    adresseExp.Id_localite = prodLocalitedId;
+                        if ((adresseExp.Nom_site == "Site Principal" || string.IsNullOrEmpty(adresseExp.Nom_site)) && !string.IsNullOrWhiteSpace(producteurName))
+                        {
+                            adresseExp.Nom_site = producteurName;
+                        }
+                        adresseExp.Id_localite = prodLocalitedId;
+                    }
 
                     if (!_context.AdressesExploitation.Local.Contains(adresseExp) && adresseExp.Id_adresse_exp == 0)
                     {
@@ -177,7 +173,6 @@ namespace EcoLogistics.ExcelImportService
                 }
 
                 // 5. Créer une adresse légale (SiegeSocial)
-                var siegeRaison = GetCellValue(worksheet, row, 14); // N (14) Raison Sociale
                 var siegeRue = GetCellValue(worksheet, row, 15);    // O (15) Siège Social Rue
                 var siegeNum = GetCellValue(worksheet, row, 16);    // P (16) Siège Social Numero
                 var siegeCp = GetCellValue(worksheet, row, 17);     // Q (17) Siège Social CP
@@ -186,10 +181,8 @@ namespace EcoLogistics.ExcelImportService
                 if (!string.IsNullOrWhiteSpace(siegeRaison) || !string.IsNullOrWhiteSpace(siegeRue))
                 {
                     var siege = client.SiegeSociale ?? new SiegeSociale();
-                    //{
-                    //    Id_client = client.Id_client
-                    //};
-                    siege.Raison_sociale = string.IsNullOrWhiteSpace(siegeRaison) ? nomEntreprise : siegeRaison;
+         
+                    siege.Raison_sociale = string.IsNullOrWhiteSpace(siegeRaison) ? clientName : siegeRaison;
                     siege.Rue = siegeRue;           // Rue
                     siege.Numero = siegeNum;                                // N°
                     siege.Site_internet = GetCellValue(worksheet, row, 20);    // T (20) Site internet
@@ -200,9 +193,6 @@ namespace EcoLogistics.ExcelImportService
                     {
                         siege.Id_client = client.Id_client;
 
-                        //if (!_context.SiegeSociales.Local.Contains(siege))
-                        //{
-                        //}
                         client.SiegeSociale = siege;
                         _context.SiegeSociales.Add(siege);
                     }

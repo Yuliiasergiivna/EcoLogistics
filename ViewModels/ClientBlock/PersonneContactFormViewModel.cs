@@ -4,6 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EcoLogistics.ViewModels.ClientBlock
 {
+    public class AssociatedWorkplaceViewModel
+    {
+        public Guid Id_client { get; set; }
+        public string Nom_entreprise { get; set; } = string.Empty;
+        public string? Telephone { get; set; }
+    }
     public class PersonneContactFormViewModel
     {
         public int Id_p_contact { get; set; }
@@ -41,5 +47,7 @@ namespace EcoLogistics.ViewModels.ClientBlock
        
         public SelectList? ClientList { get; set; }
         public SelectList? LocaliteList { get; set; }
+
+        public List<AssociatedWorkplaceViewModel> OtherWorkplaces { get; set; } = new();
     }
 }

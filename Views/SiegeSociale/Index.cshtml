@@ -57,13 +57,14 @@
             <table id="siegesTable" class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%;">
                 <thead class="bg-cf2d-header text-white">
                     <tr>
-                        <th class="ps-3" style="width: 18%">Nom de l'entreprise</th>
-                        <th style="width: 18%">Raison sociale</th>
+                        <th class="ps-3" style="width: 16%">Nom de l'entreprise</th>
+                        <th style="width: 16%">Raison sociale</th>
                         <th style="width: 14%">Secteur d'activité</th>
-                        <th style="width: 14%">Adresse</th>
+                        <th style="width: 12%">Rue</th>
+                        <th style="width: 6%">N°</th>
                         <th style="width: 14%">Localité</th>
-                        <th style="width: 10%">Pays</th>
-                        <th style="width: 12%">Site Internet</th>
+                        <th style="width: 8%">Pays</th>
+                        <th style="width: 10%">Site Internet</th>
                         @if (isAdminOrManager)
                         {
                             <th class="text-end" style="width: 10%">Actions</th>
@@ -78,7 +79,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="8" class="text-center py-4 text-muted">
+                            <td colspan="9" class="text-center py-4 text-muted">
                                 Aucun siège social trouvé.
                             </td>
                         </tr>
