@@ -109,29 +109,39 @@ namespace EcoLogistics.ExcelImportService
                 var contactName = GetCellValue(worksheet, row, 3); // Personne de contact
                 if (!string.IsNullOrWhiteSpace(contactName))
                 {
-                    var contact = client.PersonnesContact.FirstOrDefault(p => p.Nom.Equals(contactName, StringComparison.OrdinalIgnoreCase));
-                    if(contact ==  null)
+                    var individualNames = contactName.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var rawName in individualNames)
                     {
-                        contact = new PersonneContact
+                        var contactRawName = rawName.Trim();
+                        if (string.IsNullOrWhiteSpace(contactRawName)) continue;
+
+                        var contact = client.PersonnesContact
+                            .FirstOrDefault(p => p.Id_client == client.Id_client && p.Nom.ToLower() == contactRawName.ToLower());
+
+                        if(contact ==  null)
                         {
+                            contact = new PersonneContact
+                            {
 
-                            Id_client = client.Id_client,
-                            Nom = contactName
-                        };
-                        //client.PersonnesContact ?? new List<PersonneContact>();
-                        client.PersonnesContact.Add(contact);
-                         _context.PersonneContacts.Add(contact);
+                                Id_client = client.Id_client,
+                                Nom = contactName
+                            };
+                            //client.PersonnesContact ?? new List<PersonneContact>();
+                            client.PersonnesContact.Add(contact);
+                             _context.PersonneContacts.Add(contact);
   
-                    }
-                    //contact.Nom = contactName;
-                    contact.Telephone = GetCellValue(worksheet, row, 4); // Téléphones
-                    contact.Gsm = GetCellValue(worksheet, row, 5);       // Gsm2
-                    contact.Email = GetCellValue(worksheet, row, 6);
-                    contact.Id_localite = prodLocalitedId;
+                        }
+                        //contact.Nom = contactName;
+                        contact.Telephone = GetCellValue(worksheet, row, 4); // Téléphones
+                        contact.Gsm = GetCellValue(worksheet, row, 5);       // Gsm2
+                        contact.Email = GetCellValue(worksheet, row, 6);
+                        contact.Id_localite = prodLocalitedId;
 
-                    if (!_context.PersonneContacts.Local.Contains(contact) && contact.Id_contact == 0)
-                    {
-                    _context.PersonneContacts.Add(contact);
+                        if (!_context.PersonneContacts.Local.Contains(contact) && contact.Id_contact == 0)
+                        {
+                        _context.PersonneContacts.Add(contact);
+                        }
                     }
                 }
 

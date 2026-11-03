@@ -142,9 +142,10 @@ namespace EcoLogistics.Controllers
 
             var samePersonContacts = await _context.PersonneContacts
                 .Include(p => p.Client)
-                .Where(p => p.Id_contact != id &&
-                            (p.Nom.ToLower() == contactNom ||
-                             (contactEmail != null && p.Email != null && p.Email.ToLower() == contactEmail)))
+                .Where(p => p.Id_contact != id &&(
+                             (contactEmail != null && p.Email != null && p.Email.ToLower().Trim() == contactEmail)||
+                            (p.Nom.ToLower().Trim().Contains(contactNom)|| contactNom.Contains(p.Nom.ToLower().Trim()))
+                            ))
                 .ToListAsync();
 
             var model = new PersonneContactFormViewModel
@@ -207,9 +208,9 @@ namespace EcoLogistics.Controllers
 
             var samePersonContacts = await _context.PersonneContacts
                 .Include(p => p.Client)
-                .Where(p => p.Id_contact != id &&
-                            (p.Nom.ToLower() == modelNom ||
-                             (modelEmail != null  && p.Email != null && p.Email.ToLower() == modelEmail)))
+                .Where(p => p.Id_contact != id &&(
+                             (modelEmail != null  && p.Email != null && p.Email.ToLower() == modelEmail)||
+                            (p.Nom.ToLower().Trim().Contains(modelNom)|| modelNom.ToLower().Trim().Contains(modelEmail))))
                 .ToListAsync();
 
              model.OtherWorkplaces = samePersonContacts.Select(p => new AssociatedWorkplaceViewModel
