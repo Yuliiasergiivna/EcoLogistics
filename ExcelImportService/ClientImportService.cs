@@ -63,7 +63,14 @@ namespace EcoLogistics.ExcelImportService
 
                 // 2. Création d'un client (Client)
                 Client? client = null;
-                if (!string.IsNullOrWhiteSpace(numClientVal))
+
+                if (!string.IsNullOrWhiteSpace(numClientVal) && !string.IsNullOrWhiteSpace(producteurName))
+                {
+                    client = existingClients
+                        .FirstOrDefault(c => c.Numero_client == numClientVal &&
+                        c.Numero_entreprise.Equals(clientName, StringComparison.OrdinalIgnoreCase));
+                }
+                if (client == null && !string.IsNullOrWhiteSpace(numClientVal))
                 {
                     client = existingClients.FirstOrDefault(c => c.Numero_client == numClientVal);
                 }
@@ -85,7 +92,7 @@ namespace EcoLogistics.ExcelImportService
                 }
 
                 client.Numero_client = numClientVal ?? client.Numero_client;
-                client.Nom_entreprise = clientName;
+                client.Nom_entreprise = !string.IsNullOrWhiteSpace(producteurName) ? producteurName : clientName;
                 client.BE_entreprise = beNumero;
                 client.Numero_entreprise = numEntreprise;
                 client.Adresse = $"{prodRue} {prodNum}".Trim(); // Production Rue + N°
@@ -127,12 +134,11 @@ namespace EcoLogistics.ExcelImportService
                                 Id_client = client.Id_client,
                                 Nom = contactName
                             };
-                            //client.PersonnesContact ?? new List<PersonneContact>();
+
                             client.PersonnesContact.Add(contact);
                              _context.PersonneContacts.Add(contact);
   
                         }
-                        //contact.Nom = contactName;
                         contact.Telephone = GetCellValue(worksheet, row, 4); // Téléphones
                         contact.Gsm = GetCellValue(worksheet, row, 5);       // Gsm2
                         contact.Email = GetCellValue(worksheet, row, 6);
@@ -148,8 +154,9 @@ namespace EcoLogistics.ExcelImportService
                 // 4.Création (AdresseExploitation)
                 if (!string.IsNullOrWhiteSpace(prodRue))
                 {
+                    var siteName = producteurName ?? "Site Principal";
                     var adresseExp = client.AdressesExploitation?
-                        .FirstOrDefault(a => a.Rue == prodRue && a.Numero == prodNum);
+                        .FirstOrDefault(a => a.Rue == prodRue && a.Numero == prodNum && a.Nom_site == siteName);
 
                     if (adresseExp == null)
                     {
@@ -157,7 +164,7 @@ namespace EcoLogistics.ExcelImportService
                         {
 
                             Id_client = client.Id_client,
-                            Nom_site = producteurName ?? "Site Principal",
+                            Nom_site = siteName,
                             Rue = prodRue,
                             Numero = prodNum,
                             Id_localite = prodLocalitedId

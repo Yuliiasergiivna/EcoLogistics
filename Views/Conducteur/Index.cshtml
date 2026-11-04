@@ -26,17 +26,17 @@
                         <th class="ps-4">@Html.DisplayNameFor(model => model.N_plaque)</th>
                         <th>@Html.DisplayNameFor(model => model.NomConducteur)</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.Quantite_Npalette)</th>
-                        @if (isAdmin)
+@*                         @if (isAdmin)
                         {
                             <th class="text-end px-4">Actions</th>
-                        }
+                        } *@
                     </tr>
                 </thead>
                 <tbody>
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="@(isAdmin ? 4 : 3)" class="text-center py-4 text-muted">
+                            <td colspan="3" class="text-center py-4 text-muted">
                                 Aucun conducteur enregistré.
                             </td>
                         </tr>
@@ -45,7 +45,7 @@
                     {
                         @foreach (var item in Model)
                         {
-                            <tr>
+@*                             <tr>
                                 <td class="ps-4 fw-bold">
                                     <span class="badge bg-outline-dark border text-dark fs-6 px-3 py-2">
                                         @item.N_plaque
@@ -74,6 +74,22 @@
                                         </form>
                                     </td>
                                 }
+                            </tr> *@
+                            <tr style="cursor: pointer;" onclick="window.location='@Url.Action("Edit", new { id = item.Id_conducteur })';">
+                                <td class="ps-4 fw-bold">
+                                    <span class="badge bg-outline-dark border text-dark fs-6 px-3 py-2 font-monospace">
+                                        @item.N_plaque
+                                    </span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-person-circle me-2 text-secondary"></i>
+                                    @item.NomConducteur
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-cf2d  text-dark fs-6 px-3 py-2">
+                                        @item.Quantite_Npalette
+                                    </span>
+                                </td>
                             </tr>
                         }
                     }

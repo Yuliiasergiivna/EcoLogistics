@@ -41,6 +41,7 @@ namespace EcoLogistics.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            await PopulatePlaquesDropDownList();
             await PopulateEmployesDropDownList();
             return View(new ConducteurFormViewModel());
         }
@@ -64,7 +65,7 @@ namespace EcoLogistics.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            await PopulatePlaquesDropDownList(model.N_plaque);
             await PopulateEmployesDropDownList(model.Id_perso);
             return View(model);
         }
@@ -84,7 +85,7 @@ namespace EcoLogistics.Controllers
                 Quantite_Npalette = conducteur.Quantite_Npalette,
                 Id_perso = conducteur.Id_perso
             };
-
+            await PopulatePlaquesDropDownList();
             await PopulateEmployesDropDownList(conducteur.Id_perso);
             return View(viewModel);
         }
@@ -110,7 +111,7 @@ namespace EcoLogistics.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            await PopulatePlaquesDropDownList(model.N_plaque);
             await PopulateEmployesDropDownList(model.Id_perso);
             return View(model);
         }
@@ -145,12 +146,29 @@ namespace EcoLogistics.Controllers
                 .Select(d => new
                 {
                     Id_perso = d.Id_perso,
-                    FullName = $"{d.Nom}{d.Prenom}"
+                    FullName = $"{d.Nom} {d.Prenom}"
                 })
                 .OrderBy(d => d.FullName)
                 .ToList();
 
             ViewBag.Employes = new SelectList(employes, "Id_perso", "FullName", selectedEmploye);
+        }
+        private async Task PopulatePlaquesDropDownList(string? selectedPlaque = null)
+        {
+           
+            var defaultPlaques = new List<string> {"1-TVA 341", "1-VPM 677", "1-KXN 297", "Dépot" };
+
+            
+            var existingPlaques = await _context.Conducteurs
+                .Where(c => !string.IsNullOrEmpty(c.N_plaque))
+                .Select(c => c.N_plaque)
+                .Distinct()
+                .ToListAsync();
+
+            
+            var allPlaques = defaultPlaques.Union(existingPlaques).OrderBy(p => p).ToList();
+
+            ViewBag.PlaquesList = new SelectList(allPlaques, selectedPlaque);
         }
     }
 }

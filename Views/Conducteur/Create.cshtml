@@ -16,7 +16,16 @@
 
                 <div class="mb-3">
                     <label asp-for="N_plaque" class="form-label fw-bold"></label>
-                    <input asp-for="N_plaque" class="form-control" placeholder="Ex: 1-ABC-123" />
+                    <input asp-for="N_plaque" class="form-control" list="plaquesOptions" placeholder="Sélectionner ou entrer un N° de plaque" />
+                    <datalist id="plaquesOptions">
+                        @if (ViewBag.PlaquesList != null)
+                        {
+                            foreach (var item in (SelectList)ViewBag.PlaquesList)
+                            {
+                                <option value="@item.Text"></option>
+                            }
+                        }
+                    </datalist>
                     <span asp-validation-for="N_plaque" class="text-danger"></span>
                 </div>
 
