@@ -42,8 +42,8 @@ namespace EcoLogistics.Controllers
             }
 
             var localite = await _context.Localites
-                .Include(l => l.CommuneBXL)
                 .Include(l => l.Pays)
+                .Include(l => l.CommuneBXL)
                 .FirstOrDefaultAsync(m => m.Id_localite == id);
 
             if (localite == null)
@@ -58,6 +58,7 @@ namespace EcoLogistics.Controllers
                 Province = localite.Province,
 
                 // Pays
+                Id_pays = localite.Pays?.Id_pays,
                 Nom_pays = localite.Pays?.Nom_pays,
                 Code_ISO = localite.Pays?.Code_ISO,
 

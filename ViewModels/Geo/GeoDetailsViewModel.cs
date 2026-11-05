@@ -19,7 +19,7 @@ namespace EcoLogistics.ViewModels.Geo
             public string? Province { get; set; }
 
             // --- Pays ---
-            public int Id_pays { get; set; }
+            public int? Id_pays { get; set; }
 
             [DisplayName("Nom du pays : ")]
             public string? Nom_pays { get; set; }

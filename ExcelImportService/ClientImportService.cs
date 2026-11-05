@@ -20,6 +20,7 @@ namespace EcoLogistics.ExcelImportService
         {
             // 1. Chargement de toutes les adresses en mémoire pour une recherche rapide par code postal
             var localites = await _context.Localites.ToListAsync();
+            var paysList = await _context.Pays.ToListAsync();
 
             //Ignorez les commentaires pour éviter l'erreur « Impossible de charger le fichier de commentaires ».
             var loadOptions = new LoadOptions
@@ -54,11 +55,16 @@ namespace EcoLogistics.ExcelImportService
                 string clientName = !string.IsNullOrWhiteSpace(siegeRaison) ? siegeRaison : producteurName!;
 
                 var prodCp = GetCellValue(worksheet, row, 9);
-                int? prodLocalitedId = FindLocaliteId(localites, prodCp);
+                var prodVille = GetCellValue(worksheet, row, 10);
+                var prodPaysExcel = GetCellValue(worksheet, row, 11);
+
+                int? prodLocalitedId = await GetOrCreateLocaliteIdAsync(localites, paysList,  prodCp, prodVille, prodPaysExcel);
+
                 var prodRue = GetCellValue(worksheet, row, 7);
                 var prodNum = GetCellValue(worksheet, row, 8);
                 var remarques = GetCellValue(worksheet, row, 22);
                 var presentation = GetCellValue(worksheet, row, 23);
+
 
 
                 // 2. Création d'un client (Client)
@@ -192,7 +198,8 @@ namespace EcoLogistics.ExcelImportService
                 // 5. Créer une adresse légale (SiegeSocial)
                 var siegeRue = GetCellValue(worksheet, row, 15);    // O (15) Siège Social Rue
                 var siegeNum = GetCellValue(worksheet, row, 16);    // P (16) Siège Social Numero
-                var siegeCp = GetCellValue(worksheet, row, 17);     // Q (17) Siège Social CP
+                var siegeCpOrVille = GetCellValue(worksheet, row, 17);     // Q (17) Siège Social CP
+                var siegePays = GetCellValue(worksheet, row, 18);
                 
 
                 if (!string.IsNullOrWhiteSpace(siegeRaison) || !string.IsNullOrWhiteSpace(siegeRue))
@@ -204,7 +211,8 @@ namespace EcoLogistics.ExcelImportService
                     siege.Numero = siegeNum;                                // N°
                     siege.Site_internet = GetCellValue(worksheet, row, 20);    // T (20) Site internet
                     siege.Secteur_activite = GetCellValue(worksheet, row, 21); // U (21) Secteur d'Activité
-                    siege.Id_localite = FindLocaliteId(localites, siegeCp);
+
+                    siege.Id_localite = await GetOrCreateLocaliteIdAsync(localites, paysList, siegeCpOrVille, siegeCpOrVille, siegePays);
 
                     if(client.SiegeSociale == null) //siege.Id_siege == 0 && 
                     {
@@ -240,12 +248,64 @@ namespace EcoLogistics.ExcelImportService
         }
 
         // Méthode de recherche Id_localite par code postal
-        private int? FindLocaliteId(List<Localite> localites, string? codePostal)
-        {
-            if (string.IsNullOrWhiteSpace(codePostal)) return null;
+        //private int? FindLocaliteId(List<Localite> localites, string? codePostal)
+        //{
+        //    if (string.IsNullOrWhiteSpace(codePostal)) return null;
 
-            var loc = localites.FirstOrDefault(l => l.Code_postal == codePostal.Trim());
-            return loc?.Id_localite;
+        //    var loc = localites.FirstOrDefault(l => l.Code_postal == codePostal.Trim());
+        //    return loc?.Id_localite;
+        //}
+        private async Task<int?> GetOrCreateLocaliteIdAsync(
+            List<Localite> localites,
+            List<Pays> paysList,
+            string? codePostal,
+            string? nomVille,
+            string? nomPaysExcel
+            )
+        {
+            if (string.IsNullOrWhiteSpace(codePostal) && string.IsNullOrWhiteSpace(nomVille)) return null;
+
+            codePostal = codePostal?.Trim();
+            nomVille = nomVille?.Trim();
+
+            var existinLoc = localites.FirstOrDefault(l =>
+                (!string.IsNullOrEmpty(codePostal) && l.Code_postal == codePostal) ||
+                (!string.IsNullOrEmpty(nomVille) && l.Nom_localite != null && l.Nom_localite.Equals(nomVille, StringComparison.OrdinalIgnoreCase)));
+
+            if (existinLoc != null)
+            {
+                return existinLoc.Id_localite;
+            }
+
+            int? paysId = null;
+            if (!string.IsNullOrWhiteSpace(nomPaysExcel))
+            {
+                var pays = paysList.FirstOrDefault(p =>
+                p.Nom_pays.Equals(nomPaysExcel.Trim(), StringComparison.OrdinalIgnoreCase) ||
+                p.Code_ISO.Equals(nomPaysExcel.Trim(), StringComparison.OrdinalIgnoreCase)
+                );
+                paysId = pays?.Id_pays;
+            }
+
+            if (paysId == null)
+            {
+                var defaultPays = paysList.FirstOrDefault(p => p.Nom_pays == "Belgique" || p.Code_ISO == "BEL");
+                paysId = defaultPays?.Id_pays ?? 1;
+            }
+            var newLocalite = new Localite
+            {
+                Code_postal = codePostal ?? "0000",
+                Nom_localite = nomVille ?? "Inconu",
+                Province = nomPaysExcel ?? "International",
+                Id_pays = paysId.Value,
+                Id_commune = null
+
+            };
+
+            _context.Localites.Add(newLocalite);
+            await _context.SaveChangesAsync();
+            localites.Add(newLocalite);
+            return newLocalite.Id_localite;
         }
     }
 }
