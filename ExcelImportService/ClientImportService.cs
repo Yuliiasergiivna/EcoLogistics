@@ -74,6 +74,7 @@ namespace EcoLogistics.ExcelImportService
                 {
                     client = existingClients
                         .FirstOrDefault(c => c.Numero_client == numClientVal &&
+                        c.Numero_entreprise != null &&
                         c.Numero_entreprise.Equals(clientName, StringComparison.OrdinalIgnoreCase));
                 }
                 if (client == null && !string.IsNullOrWhiteSpace(numClientVal))
@@ -82,7 +83,9 @@ namespace EcoLogistics.ExcelImportService
                 }
                 if (client == null)
                 {
-                    client = existingClients.FirstOrDefault(c => c.Nom_entreprise.Equals(clientName, StringComparison.OrdinalIgnoreCase));
+                    client = existingClients.FirstOrDefault(c => 
+                    c.Nom_entreprise != null &&
+                    c.Nom_entreprise.Equals(clientName, StringComparison.OrdinalIgnoreCase));
                 }
                 bool isNew = false;
                 if (client == null)
@@ -295,7 +298,7 @@ namespace EcoLogistics.ExcelImportService
             var newLocalite = new Localite
             {
                 Code_postal = codePostal ?? "0000",
-                Nom_localite = nomVille ?? "Inconu",
+                Nom_localite = nomVille ?? "Inconnu",
                 Province = nomPaysExcel ?? "International",
                 Id_pays = paysId.Value,
                 Id_commune = null
