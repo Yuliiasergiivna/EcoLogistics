@@ -3,6 +3,7 @@ using EcoLogistics.Models.Geo;
 using EcoLogistics.ViewModels.Geo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcoLogistics.Controllers
@@ -72,6 +73,54 @@ namespace EcoLogistics.Controllers
             };
 
             return View(viewModel);
+        }
+        // GET: Geo/Edit/5
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var localite = await _context.Localites
+                .Include(l => l.Pays)
+                .Include(l => l.CommuneBXL)
+                .FirstOrDefaultAsync(l => l.Id_localite == id);
+
+            if (localite == null) return NotFound();
+
+            // Peredelyaem v ViewBag ili ViewModel spiski dlya vypadayuschih okon (Pays, Commune)
+            ViewBag.PaysList = new SelectList(await _context.Pays.ToListAsync(), "Id_pays", "Nom_pays", localite.Id_pays);
+            ViewBag.CommunesList = new SelectList(await _context.CommuneBXLs.ToListAsync(), "Id_commune", "Commune_principale", localite.Id_commune);
+
+            return View(localite);
+        }
+
+        // POST: Geo/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id_localite,Nom_localite,Code_postal,Province,Id_pays,Id_commune")] Localite localite)
+        {
+            if (id != localite.Id_localite) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(localite);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Localites.Any(e => e.Id_localite == localite.Id_localite))
+                        return NotFound();
+                    else
+                        throw;
+                }
+                return RedirectToAction(nameof(Details), new { id = localite.Id_localite });
+            }
+
+            ViewBag.PaysList = new SelectList(await _context.Pays.ToListAsync(), "Id_pays", "Nom_pays", localite.Id_pays);
+            ViewBag.CommunesList = new SelectList(await _context.CommuneBXLs.ToListAsync(), "Id_commune", "Commune_principale", localite.Id_commune);
+            return View(localite);
         }
     }
 }

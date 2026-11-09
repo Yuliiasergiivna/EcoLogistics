@@ -4,158 +4,397 @@
     ViewData["Title"] = "Gestion Géographique";
 }
 
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 fw-bold text-dark">
+        <i class="bi bi-geo-alt-fill text-cf2d me-2"></i>Liste des Localités & Pays
+    </h2>
+</div>
 
-<!-- Tab 1: Localités -->
-<div class="tab-pane fade show active" id="localites" role="tabpanel">
+<!-- Navigation Tabs -->
+<ul class="nav nav-tabs mb-4" id="geoTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold" id="localites-tab" data-bs-toggle="tab" data-bs-target="#localites" type="button" role="tab">
+            <i class="bi bi-building me-2"></i>Localités
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="communes-tab" data-bs-toggle="tab" data-bs-target="#communes" type="button" role="tab">
+            <i class="bi bi-map me-2"></i>Communes (BXL)
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="pays-tab" data-bs-toggle="tab" data-bs-target="#pays" type="button" role="tab">
+            <i class="bi bi-globe me-2"></i>Pays
+        </button>
+    </li>
+</ul>
 
-    <div class="card shadow-lg cf2d-card border-0 position-relative" style="height:calc(100vh - 220px);">
-        <div class="card-body p-0 d-flex fleh-column h-100 overflow-hidden" >
+<!-- Content Tabs -->
+<div class="tab-content" id="geoTabsContent">
 
-            <!-- Konteyner s fiksirovannoy shapkoy i skrollom tolko dlya tbody -->
-            <div class="table-responsive flex-grow-1 h-100" style=" overflow-y: auto;">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-cf2d-header text-white" style="position: sticky; top: 0; z-index: 10;">
-                        <tr>
-                            <th class="py-3 ps-4">
-                                Nom Localité
-                                <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
-
-                                </span>
-                            </th>
-                            <th class="py-3">
-                                Code Postal
-                                <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
-          
-                                </span>
-                            </th>
-                            <th class="py-3 pe-4">
-                                Pays
-                                <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
-                        
-                                </span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Localites)
-                        {
-                            <tr style="cursor: pointer;" onclick="window.location='@Url.Action("Details", new { id = item.Id_localite })'">
-                                <td class="fw-bold ps-4">@item.Nom_localite</td>
-                                <td>
-                                    <span class="badge bg-light text-dark border">@item.Code_postal</span>
-                                </td>
-                                <td class="pe-4">
-                                    <span class="badge" style="background-color: var(--cf2d-blue);">
-                                        @(item.Pays?.Nom_pays ?? "Non défini")
+    <!-- Tab 1: Localités -->
+    <div class="tab-pane fade show active" id="localites" role="tabpanel">
+        <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
+            <div class="card-body p-0 d-flex flex-column h-100 overflow-hidden">
+                <div class="table-responsive flex-grow-1 h-100" style="overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0" id="localitesTable">
+                        <thead class="bg-cf2d-header text-white" style="position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th class="py-3 ps-4">
+                                    Nom Localité
+                                    <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
+                                        <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
                                     </span>
-                                </td>
+                                </th>
+                                <th class="py-3">
+                                    Code Postal
+                                    <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
+                                        <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
+                                    </span>
+                                </th>
+                                <th class="py-3 pe-4">
+                                    Pays
+                                    <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
+                                        <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
+                                    </span>
+                                </th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Localites)
+                            {
+                                var nomPays = item.Pays?.Nom_pays ?? "Non défini";
+                                string badgeBgColor = "var(--cf2d-blue)";
+                                string textColor = "#fff";
+
+                                if (nomPays.Contains("Royaume-Uni") || nomPays.Contains("Angleterre") || nomPays.Contains("UK"))
+                                {
+                                    badgeBgColor = "#198754";
+                                }
+                                else if (nomPays.Contains("Pays-Bas") || nomPays.Contains("Niderlandi") || nomPays.Contains("Netherlands") || nomPays.Contains("NLD"))
+                                {
+                                    badgeBgColor = "#FB8B24";
+                                }
+                                else if (nomPays.Contains("France") || nomPays.Contains("FRA"))
+                                {
+                                    badgeBgColor = "#0F4C5C";
+                                }
+                                else if (nomPays.Contains("Japon") || nomPays.Contains("JPN"))
+                                {
+                                    badgeBgColor = "#5F0F40";
+                                }
+                                else if (nomPays.Contains("Suisse") || nomPays.Contains("CHE"))
+                                {
+                                    badgeBgColor = "#9A031E";
+                                }
+                                else if (nomPays.Contains("Luxembourg") || nomPays.Contains("LUX"))
+                                {
+                                    badgeBgColor = "#E36414";
+                                }
+                                else if (nomPays.Contains("Allemagne") || nomPays.Contains("Deutschland") || nomPays.Contains("DEU"))
+                                {
+                                    badgeBgColor = "#265C0F";
+                                }
+                                else if (nomPays.Contains("États-Unis") || nomPays.Contains("USA"))
+                                {
+                                    badgeBgColor = "#5C1E0F";
+                                }
+                                else if (nomPays.Contains("Italie") || nomPays.Contains("ITA"))
+                                {
+                                    badgeBgColor = "#19B387";
+                                }
+                                else if (nomPays.Contains("Espagne") || nomPays.Contains("ESP"))
+                                {
+                                    badgeBgColor = "#FE5901";
+                                }
+                                else if (nomPays.Contains("Inde") || nomPays.Contains("IND"))
+                                {
+                                    badgeBgColor = "#0D6D6B";
+                                }
+
+                                <tr style="cursor: pointer;" onclick="window.location='@Url.Action("Details", new { id = item.Id_localite })'">
+                                    <td class="fw-bold ps-4">@item.Nom_localite</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">@item.Code_postal</span>
+                                    </td>
+                                    <td class="pe-4">
+                                        <span class="badge px-3 py-2" style="background-color: @badgeBgColor; color: @textColor;">
+                                            @nomPays
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Boutons de défilement pour Localités -->
+                <div class="table-scroll-buttons">
+                    <button type="button" class="btn-scroll-top btn-scroll-nav" title="Faire défiler vers le haut">
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                    <button type="button" class="btn-scroll-bottom btn-scroll-nav" title="Faire défiler vers le bas">
+                        <i class="bi bi-arrow-down"></i>
+                    </button>
+                </div>
             </div>
-                            <div class="scroll-nav-buttons">
-                                <button type="button" id="btnScrollTop" class="btn-scroll-nav" title="Prokrutit vverkh">
-                                    <i class="bi bi-arrow-up"></i>
-                                </button>
-                                <button type="button" id="btnScrollBottom" class="btn-scroll-nav" title="Prokrutit vniz">
-                                    <i class="bi bi-arrow-down"></i>
-                                </button>
-                            </div>
         </div>
     </div>
+
+    <!-- Tab 2: Communes (BXL) -->
+    <div class="tab-pane fade" id="communes" role="tabpanel">
+        <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
+            <div class="card-body p-0 d-flex flex-column h-100 overflow-hidden">
+                <!-- Écran partagé : Carte à gauche, Tableau à droite -->
+                <div class="row g-0 h-100 flex-grow-1" style="min-height: 0;">
+
+                    <!-- Colonne de gauche : Carte interactive Leaflet -->
+                    <div class="col-md-5 h-100 position-relative bg-light border-end d-flex flex-column">
+                        <div id="brusselsMap" class="flex-grow-1 w-100" style="height: 100%; min-height: 400px;"></div>
+                    </div>
+
+                    <!-- Colonne de droite : Tableau des communes -->
+                    <div class="col-md-7 d-flex flex-column h-100 position-relative">
+                        <div class="table-responsive flex-grow-1 h-100" style="overflow-y: auto;">
+                            <table class="table table-hover align-middle mb-0" id="communesTable">
+                                <thead class="bg-cf2d-header text-white" style="position: sticky; top: 0; z-index: 10;">
+                                    <tr>
+                                        <th class="py-3 ps-4">
+                                            Commune principale
+                                            <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
+                                                <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
+                                            </span>
+                                        </th>
+                                        <th class="py-3">Nom FR</th>
+                                        <th class="py-3">Nom NL</th>
+                                        <th class="py-3 pe-4">Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var c in Model.Communes)
+                                    {
+                                        <!-- Добавлено data-commune для связи с картой -->
+                                        <tr class="commune-row" data-commune="@c.Commune_principale" style="cursor: pointer;">
+                                            <td class="fw-bold ps-4">@c.Commune_principale</td>
+                                            <td>@c.Nom_fr</td>
+                                            <td>@c.Nom_nl</td>
+                                            <td class="pe-4"><span class="badge bg-secondary">@c.Type</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Boutons de défilement pour Communes -->
+                        <div class="table-scroll-buttons">
+                            <button type="button" class="btn-scroll-top btn-scroll-nav" title="Faire défiler vers le haut">
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn-scroll-bottom btn-scroll-nav" title="Faire défiler vers le bas">
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: Pays -->
+    <div class="tab-pane fade" id="pays" role="tabpanel">
+        <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
+            <div class="card-body p-0 d-flex flex-column h-100 overflow-hidden">
+                <div class="table-responsive flex-grow-1 h-100" style="overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-cf2d-header text-white" style="position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th class="py-3 ps-4" style="width: 300px;">
+                                    Nom du Pays
+                                    <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
+                                        <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
+                                    </span>
+                                </th>
+                                <th class="py-3 pe-4">Code ISO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.PaysList)
+                            {
+                                <tr>
+                                    <td class="fw-bold ps-4">@p.Nom_pays</td>
+                                    <td class="pe-4"><span class="badge bg-light text-dark border fw-bold">@p.Code_ISO</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Boutons de défilement pour Pays -->
+                <div class="table-scroll-buttons">
+                    <button type="button" class="btn-scroll-top btn-scroll-nav" title="Faire défiler vers le haut">
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                    <button type="button" class="btn-scroll-bottom btn-scroll-nav" title="Faire défiler vers le bas">
+                        <i class="bi bi-arrow-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
-@* @section Scripts {
+
+@section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const topWrapper = document.querySelector('.top-scroll-wrapper');
-            const topContent = document.querySelector('.top-scroll-content');
-            const tableWrapper = document.querySelector('.table-responsive');
-            const table = document.querySelector('.table-hover');
+            // 1. Логика прокрутки для таблиц на всех вкладках
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                const tableWrapper = pane.querySelector('.table-responsive');
+                const btnTop = pane.querySelector('.btn-scroll-top');
+                const btnBottom = pane.querySelector('.btn-scroll-bottom');
 
-            // 1. Sinhronizatsiya shiriny verkhnego skrolla s tablitsey
-            function syncScrollWidth() {
-                if (table && topContent) {
-                    topContent.style.width = table.scrollWidth + 'px';
+                if (btnTop && tableWrapper) {
+                    btnTop.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        tableWrapper.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
                 }
-            }
 
-            syncScrollWidth();
-            window.addEventListener('resize', syncScrollWidth);
-
-            let isSyncingTop = false;
-            let isSyncingTable = false;
-
-            if (topWrapper && tableWrapper) {
-                topWrapper.addEventListener('scroll', function () {
-                    if (!isSyncingTop) {
-                        isSyncingTable = true;
-                        tableWrapper.scrollLeft = topWrapper.scrollLeft;
-                    }
-                    isSyncingTop = false;
-                });
-
-                tableWrapper.addEventListener('scroll', function () {
-                    if (!isSyncingTable) {
-                        isSyncingTop = true;
-                        topWrapper.scrollLeft = tableWrapper.scrollLeft;
-                    }
-                    isSyncingTable = false;
-                });
-            }
-
-            // 2. Knopki prokrutki vverkh / vniz
-            document.getElementById('btnScrollTop')?.addEventListener('click', function () {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (btnBottom && tableWrapper) {
+                    btnBottom.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        tableWrapper.scrollTo({ top: tableWrapper.scrollHeight, behavior: 'smooth' });
+                    });
+                }
             });
 
-            document.getElementById('btnScrollBottom')?.addEventListener('click', function () {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            });
+            // 2. Инициализация интерактивной карты Leaflet.js и связи с таблицей
+            let mapInstance = null;
+            let geojsonLayerGlobal = null;
+            const communesTabBtn = document.getElementById('communes-tab');
 
-            // 3. Dinamicheskiy lokalnyy poisk po tablitse
-            const searchInput = document.querySelector('input[name="searchString"]');
-            const tableRows = document.querySelectorAll("tbody tr");
+            if (communesTabBtn) {
+                communesTabBtn.addEventListener('shown.bs.tab', function () {
+                    let mapContainer = document.getElementById('brusselsMap');
 
-            if (searchInput) {
-                searchInput.addEventListener("input", function () {
-                    const query = this.value.toLowerCase().trim();
+                    if (mapContainer) {
+                        if (!mapInstance) {
+                            mapInstance = L.map('brusselsMap', {
+                                zoomControl: true
+                            }).setView([50.8503, 4.3517], 11);
 
-                    tableRows.forEach(row => {
-                        if (row.cells.length === 1) return;
+                            // Бесплатная подложка OpenStreetMap
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                maxZoom: 19,
+                                attribution: '&copy; OpenStreetMap contributors'
+                            }).addTo(mapInstance);
 
-                        const text = row.textContent.toLowerCase();
-                        if (text.includes(query)) {
-                            row.style.display = "";
+                            // Загрузка границ 19 коммун Брюсселя
+                            fetch('https://raw.githubusercontent.com/johan/world.geojson/master/countries/BEL/Brussels.geojson')
+                                .then(response => response.json())
+                                .then(data => {
+                                    // ОТЛАДКА: выводим первый объект GeoJSON в консоль, чтобы увидеть структуру свойств!
+                                    console.log("GeoJSON Sample Feature:", data.features[0]);
+
+                                    geojsonLayerGlobal = L.geoJson(data, {
+                                        style: function (feature) {
+                                            return {
+                                                fillColor: '#0d6efd',
+                                                weight: 2,
+                                                opacity: 1,
+                                                color: 'white',
+                                                fillOpacity: 0.4
+                                            };
+                                        },
+                                        onEachFeature: function (feature, layer) {
+                                            // Собираем все доступные текстовые свойства из features, чтобы не пропустить название
+                                            let props = feature.properties;
+                                            let communeName = props.name || props.NAME_2 || props.NAME_1 || props.NAME || props.Commune || '';
+
+                                            // Сохраняем имя прямо в слой для надежного поиска
+                                            layer.feature.properties._searchName = communeName.toLowerCase();
+
+                                            layer.bindPopup("<b>Commune : </b>" + communeName);
+
+                                            layer.on({
+                                                mouseover: function (e) {
+                                                    var l = e.target;
+                                                    l.setStyle({
+                                                        fillColor: '#198754',
+                                                        fillOpacity: 0.7
+                                                    });
+                                                },
+                                                mouseout: function (e) {
+                                                    geojsonLayerGlobal.resetStyle(e.target);
+                                                },
+                                                click: function (e) {
+                                                    mapInstance.fitBounds(e.target.getBounds());
+                                                }
+                                            });
+                                        }
+                                    }).addTo(mapInstance);
+
+                                    // Подключаем интерактив для строк таблицы
+                                    initTableCommunesInteraction();
+                                })
+                                .catch(error => console.log('Erreur chargement GeoJSON:', error));
                         } else {
-                            row.style.display = "none";
+                            mapInstance.invalidateSize();
+                        }
+                    }
+                });
+            }
+
+            // Функция связи строк таблицы с полигонами на карте
+            function initTableCommunesInteraction() {
+                const rows = document.querySelectorAll('#communesTable .commune-row');
+
+                rows.forEach(row => {
+                    const dbCommuneName = (row.getAttribute('data-commune') || '').trim().toLowerCase();
+
+                    row.addEventListener('mouseenter', function () {
+                        row.classList.add('table-active');
+                        if (geojsonLayerGlobal) {
+                            geojsonLayerGlobal.eachLayer(layer => {
+                                let searchName = layer.feature.properties._searchName || '';
+                                // Проверяем частичное или полное совпадение названий (например, "Bruxelles" и "Brussel")
+                                if (searchName.includes(dbCommuneName) || dbCommuneName.includes(searchName)) {
+                                    layer.setStyle({
+                                        fillColor: '#FB8B24',
+                                        fillOpacity: 0.8
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    row.addEventListener('mouseleave', function () {
+                        row.classList.remove('table-active');
+                        if (geojsonLayerGlobal) {
+                            geojsonLayerGlobal.eachLayer(layer => {
+                                let searchName = layer.feature.properties._searchName || '';
+                                if (searchName.includes(dbCommuneName) || dbCommuneName.includes(searchName)) {
+                                    geojsonLayerGlobal.resetStyle(layer);
+                                }
+                            });
+                        }
+                    });
+
+                    // Клик по строке приближает карту к выбранной коммуне
+                    row.addEventListener('click', function () {
+                        if (geojsonLayerGlobal && mapInstance) {
+                            geojsonLayerGlobal.eachLayer(layer => {
+                                let searchName = layer.feature.properties._searchName || '';
+                                if (searchName.includes(dbCommuneName) || dbCommuneName.includes(searchName)) {
+                                    mapInstance.fitBounds(layer.getBounds(), { padding: [20, 20] });
+                                    layer.openPopup();
+                                }
+                            });
                         }
                     });
                 });
             }
         });
-    </script> *@
-
-@section Scripts {
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tableWrapper = document.querySelector('.table-responsive');
-        const btnScrollTop = document.getElementById('btnScrollTop');
-        const btnScrollBottom = document.getElementById('btnScrollBottom');
-
-        if (btnScrollTop && tableWrapper) {
-            btnScrollTop.addEventListener('click', function (e) {
-                e.stopPropagation();
-                tableWrapper.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-
-        if (btnScrollBottom && tableWrapper) {
-            btnScrollBottom.addEventListener('click', function (e) {
-                e.stopPropagation();
-                tableWrapper.scrollTo({ top: tableWrapper.scrollHeight, behavior: 'smooth' });
-            });
-        }
-    });
     </script>
 }

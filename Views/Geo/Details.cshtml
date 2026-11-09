@@ -5,11 +5,11 @@
 }
 
 
-
+@* 
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="card shadow-lg cf2d-card mb-4">
+            <div class="card shadow-lg cf2d-card mb-4"> *@
 
                 <!-- Card Header -->@* 
                 <div class="card-header bg-cf2d-header py-3 px-4 d-flex justify-content-between align-items-center">
@@ -107,7 +107,7 @@
                 </div> *@
 
                 <!-- Footer / Actions -->
-                <div class="card-footer bg-light px-4 py-3 d-flex justify-content-between rounded-bottom-4">
+@*                 <div class="card-footer bg-light px-4 py-3 d-flex justify-content-between rounded-bottom-4">
                     <a asp-action="Index" class="btn btn-cf2d px-4">
                         <i class="bi bi-arrow-left me-1"></i>Retour à la liste
                     </a>
@@ -122,5 +122,105 @@
 
             </div>
         </div>
+    </div>
+</div>
+ *@
+
+<div class="card shadow-lg border-0 rounded-3 mb-4">
+    <div class="card-header bg-cf2d-header text-white py-3 d-flex justify-content-between align-items-center">
+        <h3 class="h5 m-0">
+            <i class="bi bi-geo-alt-fill me-2"></i>Détails géographiques
+        </h3>
+        <span class="badge bg-light text-dark fw-bold px-3 py-2">@Model.Nom_localite</span>
+    </div>
+    
+    <div class="card-body p-4">
+
+        <!-- Sektsiya 1: Localité -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-start border-4 border-primary py-2 px-3 fw-bold text-dark d-flex align-items-center">
+                <i class="bi bi-building text-primary me-2 fs-5"></i> Localité
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <span class="text-muted d-block small">Localité :</span>
+                        <span class="fw-bold fs-6">@Model.Nom_localite</span>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted d-block small">Code postal :</span>
+                        <span class="badge bg-light text-dark border px-2 py-1">@Model.Code_postal</span>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted d-block small">Province :</span>
+                        <span class="fw-semibold">@(Model.Province ?? "—")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sektsiya 2: Pays -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-start border-4 border-info py-2 px-3 fw-bold text-dark d-flex align-items-center">
+                <i class="bi bi-globe text-info me-2 fs-5"></i> Pays
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <span class="text-muted d-block small">Nom du pays :</span>
+                        <span class="fw-bold fs-6">@(Model.Nom_pays ?? "Non défini")</span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted d-block small">Code ISO :</span>
+                        <span class="badge bg-secondary px-2 py-1">@(Model.Code_ISO ?? "—")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Commune_principale != null)
+        {
+            <!-- Sektsiya 3: Informations Commune (Bruxelles) -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-start border-4 border-success py-2 px-3 fw-bold text-dark d-flex align-items-center">
+                    <i class="bi bi-map text-success me-2 fs-5"></i> Informations Commune (Bruxelles)
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <span class="text-muted d-block small">Commune principale :</span>
+                            <span class="fw-bold">@Model.Commune_principale</span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted d-block small">Type :</span>
+                            <span class="badge bg-secondary">@Model.Type</span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted d-block small">Nom en français :</span>
+                            <span class="fw-semibold">@Model.Nom_fr</span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted d-block small">Nom en néerlandais :</span>
+                            <span class="fw-semibold">@Model.Nom_nl</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Knopki upravleniya -->
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.Id_localite" class="btn btn-warning fw-bold text-dark px-4 me-2">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                </a>
+            </div>
+            <div>
+                <a asp-action="Index" class="btn btn-secondary px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Retour à la liste
+                </a>
+            </div>
+        </div>
+
     </div>
 </div>
