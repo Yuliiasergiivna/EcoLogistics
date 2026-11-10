@@ -173,7 +173,6 @@
                                 <tbody>
                                     @foreach (var c in Model.Communes)
                                     {
-                                        <!-- Добавлено data-commune для связи с картой -->
                                         <tr class="commune-row" data-commune="@c.Commune_principale" style="cursor: pointer;">
                                             <td class="fw-bold ps-4">@c.Commune_principale</td>
                                             <td>@c.Nom_fr</td>
@@ -248,7 +247,7 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // 1. Логика прокрутки для таблиц на всех вкладках
+            // 1. Prokrutka dlya tablic
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 const tableWrapper = pane.querySelector('.table-responsive');
                 const btnTop = pane.querySelector('.btn-scroll-top');
@@ -269,7 +268,7 @@
                 }
             });
 
-            // 2. Инициализация интерактивной карты Leaflet.js и связи с таблицей
+            // 2. Inicializaciya karty Leaflet s nastoyaschim GeoJSON Brusselya
             let mapInstance = null;
             let geojsonLayerGlobal = null;
             const communesTabBtn = document.getElementById('communes-tab');
@@ -278,119 +277,142 @@
                 communesTabBtn.addEventListener('shown.bs.tab', function () {
                     let mapContainer = document.getElementById('brusselsMap');
 
-                    if (mapContainer) {
-                        if (!mapInstance) {
-                            mapInstance = L.map('brusselsMap', {
-                                zoomControl: true
-                            }).setView([50.8503, 4.3517], 11);
+                    if (mapContainer && !mapInstance) {
+                        mapInstance = L.map('brusselsMap', {
+                            zoomControl: true
+                        }).setView([50.8503, 4.3517], 11);
 
-                            // Бесплатная подложка OpenStreetMap
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                maxZoom: 19,
-                                attribution: '&copy; OpenStreetMap contributors'
-                            }).addTo(mapInstance);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '&copy; OpenStreetMap contributors'
+                        }).addTo(mapInstance);
 
-                            // Загрузка границ 19 коммун Брюсселя
-                            fetch('https://raw.githubusercontent.com/johan/world.geojson/master/countries/BEL/Brussels.geojson')
-                                .then(response => response.json())
-                                .then(data => {
-                                    // ОТЛАДКА: выводим первый объект GeoJSON в консоль, чтобы увидеть структуру свойств!
-                                    console.log("GeoJSON Sample Feature:", data.features[0]);
+                        // Stabilnyy i korrektnyy CDN-istochnik dlya realnyh granits Brusselya
+                        const brusselsGeoJsonUrl = 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/brussels.geojson';
 
-                                    geojsonLayerGlobal = L.geoJson(data, {
-                                        style: function (feature) {
-                                            return {
-                                                fillColor: '#0d6efd',
-                                                weight: 2,
-                                                opacity: 1,
-                                                color: 'white',
-                                                fillOpacity: 0.4
-                                            };
-                                        },
-                                        onEachFeature: function (feature, layer) {
-                                            // Собираем все доступные текстовые свойства из features, чтобы не пропустить название
-                                            let props = feature.properties;
-                                            let communeName = props.name || props.NAME_2 || props.NAME_1 || props.NAME || props.Commune || '';
+                        fetch(brusselsGeoJsonUrl)
+                            .then(response => {
+                                if (!response.ok) throw new Error("HTTP error " + response.status);
+                                return response.json();
+                            })
+                            .then(data => {
+                                geojsonLayerGlobal = L.geoJson(data, {
+                                    style: function () {
+                                        return {
+                                            fillColor: '#0d6efd',
+                                            weight: 2,
+                                            opacity: 1,
+                                            color: 'white',
+                                            fillOpacity: 0.4
+                                        };
+                                    },
+                                    onEachFeature: function (feature, layer) {
+                                        let props = feature.properties;
+                                        let communeName = props.name || props.NAME_2 || props.NAME_1 || props.NAME || '';
+                                        layer.feature.properties._searchName = communeName.toLowerCase().trim();
 
-                                            // Сохраняем имя прямо в слой для надежного поиска
-                                            layer.feature.properties._searchName = communeName.toLowerCase();
+                                        layer.bindPopup("<b>Commune : </b>" + communeName);
 
-                                            layer.bindPopup("<b>Commune : </b>" + communeName);
+                                        layer.on({
+                                            mouseover: function (e) {
+                                                e.target.setStyle({
+                                                    fillColor: '#198754',
+                                                    fillOpacity: 0.7
+                                                });
+                                            },
+                                            mouseout: function (e) {
+                                                geojsonLayerGlobal.resetStyle(e.target);
+                                            },
+                                            click: function (e) {
+                                                mapInstance.fitBounds(e.target.getBounds());
+                                            }
+                                        });
+                                    }
+                                }).addTo(mapInstance);
+                            })
+                            .catch(error => {
+                                console.error('Erreur chargement GeoJSON:', error);
+                            });
 
-                                            layer.on({
-                                                mouseover: function (e) {
-                                                    var l = e.target;
-                                                    l.setStyle({
-                                                        fillColor: '#198754',
-                                                        fillOpacity: 0.7
-                                                    });
-                                                },
-                                                mouseout: function (e) {
-                                                    geojsonLayerGlobal.resetStyle(e.target);
-                                                },
-                                                click: function (e) {
-                                                    mapInstance.fitBounds(e.target.getBounds());
-                                                }
-                                            });
-                                        }
-                                    }).addTo(mapInstance);
-
-                                    // Подключаем интерактив для строк таблицы
-                                    initTableCommunesInteraction();
-                                })
-                                .catch(error => console.log('Erreur chargement GeoJSON:', error));
-                        } else {
-                            mapInstance.invalidateSize();
-                        }
+                    } else if (mapInstance) {
+                        mapInstance.invalidateSize();
                     }
                 });
             }
 
-            // Функция связи строк таблицы с полигонами на карте
-            function initTableCommunesInteraction() {
-                const rows = document.querySelectorAll('#communesTable .commune-row');
+            // 3. Interaktivnaya svyaz' tablicy s kartoy
+            const communesTable = document.getElementById('communesTable');
+            if (communesTable) {
+                const mapping = {
+                    "bruxelles": "brussel",
+                    "ixelles": "elsene",
+                    "saint-gilles": "sint-gillis",
+                    "anderlecht": "anderlecht",
+                    "molenbeek-saint-jean": "sint-jans-molenbeek",
+                    "koekelberg": "koekelberg",
+                    "berchem-sainte-agathe": "sint-agatha-berchem",
+                    "ganshoren": "ganshoren",
+                    "jette": "jette",
+                    "evere": "evere",
+                    "woluwe-saint-pierre": "sint-pieters-woluwe",
+                    "auderghem": "oudergem",
+                    "watermael-boitsfort": "watermaal-bosvoorde",
+                    "uccle": "ukkel",
+                    "forest": "vorst",
+                    "woluwe-saint-lambert": "sint-lambrechts-woluwe",
+                    "saint-josse-ten-noode": "sint-joost-ten-node",
+                    "schaerbeek": "schaerbeek",
+                    "etterbeek": "etterbeek"
+                };
 
-                rows.forEach(row => {
-                    const dbCommuneName = (row.getAttribute('data-commune') || '').trim().toLowerCase();
+                function matchLayer(layer, rawName) {
+                    let targetName = mapping[rawName] || rawName;
+                    let sName = (layer.feature.properties._searchName || '').toLowerCase();
+                    return sName === rawName || sName === targetName || sName.includes(rawName) || rawName.includes(sName);
+                }
 
-                    row.addEventListener('mouseenter', function () {
-                        row.classList.add('table-active');
-                        if (geojsonLayerGlobal) {
-                            geojsonLayerGlobal.eachLayer(layer => {
-                                let searchName = layer.feature.properties._searchName || '';
-                                // Проверяем частичное или полное совпадение названий (например, "Bruxelles" и "Brussel")
-                                if (searchName.includes(dbCommuneName) || dbCommuneName.includes(searchName)) {
-                                    layer.setStyle({
-                                        fillColor: '#FB8B24',
-                                        fillOpacity: 0.8
-                                    });
-                                }
+                communesTable.addEventListener('mouseover', function (e) {
+                    const row = e.target.closest('.commune-row');
+                    if (!row || !geojsonLayerGlobal) return;
+
+                    const rawName = (row.getAttribute('data-commune') || '').trim().toLowerCase();
+                    row.classList.add('table-active');
+
+                    geojsonLayerGlobal.eachLayer(layer => {
+                        if (matchLayer(layer, rawName)) {
+                            layer.setStyle({
+                                fillColor: '#FB8B24',
+                                fillOpacity: 0.85,
+                                weight: 3
                             });
                         }
                     });
+                });
 
-                    row.addEventListener('mouseleave', function () {
-                        row.classList.remove('table-active');
-                        if (geojsonLayerGlobal) {
-                            geojsonLayerGlobal.eachLayer(layer => {
-                                let searchName = layer.feature.properties._searchName || '';
-                                if (searchName.includes(dbCommuneName) || dbCommuneName.includes(searchName)) {
-                                    geojsonLayerGlobal.resetStyle(layer);
-                                }
-                            });
+                communesTable.addEventListener('mouseout', function (e) {
+                    const row = e.target.closest('.commune-row');
+                    if (!row || !geojsonLayerGlobal) return;
+
+                    const rawName = (row.getAttribute('data-commune') || '').trim().toLowerCase();
+                    row.classList.remove('table-active');
+
+                    geojsonLayerGlobal.eachLayer(layer => {
+                        if (matchLayer(layer, rawName)) {
+                            geojsonLayerGlobal.resetStyle(layer);
                         }
                     });
+                });
 
-                    // Клик по строке приближает карту к выбранной коммуне
-                    row.addEventListener('click', function () {
-                        if (geojsonLayerGlobal && mapInstance) {
-                            geojsonLayerGlobal.eachLayer(layer => {
-                                let searchName = layer.feature.properties._searchName || '';
-                                if (searchName.includes(dbCommuneName) || dbCommuneName.includes(searchName)) {
-                                    mapInstance.fitBounds(layer.getBounds(), { padding: [20, 20] });
-                                    layer.openPopup();
-                                }
-                            });
+                communesTable.addEventListener('click', function (e) {
+                    const row = e.target.closest('.commune-row');
+                    if (!row || !geojsonLayerGlobal || !mapInstance) return;
+
+                    const rawName = (row.getAttribute('data-commune') || '').trim().toLowerCase();
+
+                    geojsonLayerGlobal.eachLayer(layer => {
+                        if (matchLayer(layer, rawName)) {
+                            mapInstance.fitBounds(layer.getBounds(), { padding: [30, 30] });
+                            layer.openPopup();
                         }
                     });
                 });
