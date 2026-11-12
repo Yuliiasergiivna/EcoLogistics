@@ -1,4 +1,5 @@
-﻿using EcoLogistics.Models.ClientBlock;
+﻿using EcoLogistics.Models.Catalogues;
+using EcoLogistics.Models.ClientBlock;
 using EcoLogistics.Models.Geo;
 using EcoLogistics.Models.UserBlock;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,13 @@ namespace EcoLogistics.Data
         public DbSet<SiegeSociale> SiegeSociales { get; set; }
         public DbSet<PersonneContact> PersonneContacts { get; set; }
         public DbSet<AdresseExploitation> AdressesExploitation { get; set; }
+
+        // --Catalogues
+        public DbSet<CodeEURAL> CodeEURALs { get; set; }
+        public DbSet<CodeDR> CodeDRs { get; set; }
+        public DbSet<Marques> Marques { get; set; }
+        public DbSet<Divers> Divers { get; set; }
+        public DbSet<Poids> Poids { get; set; }
 
     }
 }

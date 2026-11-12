@@ -22,6 +22,111 @@ namespace EcoLogistics.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("EcoLogistics.Models.Catalogues.CodeDR", b =>
+                {
+                    b.Property<int>("Id_code_DR")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_code_DR"));
+
+                    b.Property<string>("Code_DR")
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id_code_DR");
+
+                    b.ToTable("CodeDRs");
+                });
+
+            modelBuilder.Entity("EcoLogistics.Models.Catalogues.CodeEURAL", b =>
+                {
+                    b.Property<int>("Id_code_EURAL")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_code_EURAL"));
+
+                    b.Property<string>("Code_EURAL")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<string>("Code_IBGE")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Directive_ref")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id_code_EURAL");
+
+                    b.ToTable("CodeEURALs");
+                });
+
+            modelBuilder.Entity("EcoLogistics.Models.Catalogues.Divers", b =>
+                {
+                    b.Property<int>("Id_divers")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_divers"));
+
+                    b.Property<string>("Nom")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id_divers");
+
+                    b.ToTable("Divers");
+                });
+
+            modelBuilder.Entity("EcoLogistics.Models.Catalogues.Marques", b =>
+                {
+                    b.Property<int>("Id_marque")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_marque"));
+
+                    b.Property<string>("Nom_marque")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id_marque");
+
+                    b.ToTable("Marques");
+                });
+
+            modelBuilder.Entity("EcoLogistics.Models.Catalogues.Poids", b =>
+                {
+                    b.Property<int>("Id_poids")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_poids"));
+
+                    b.Property<string>("Designation")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<decimal?>("Poids_valeur")
+                        .HasColumnType("decimal(8,2)")
+                        .HasColumnName("Poids");
+
+                    b.HasKey("Id_poids");
+
+                    b.ToTable("Poids");
+                });
+
             modelBuilder.Entity("EcoLogistics.Models.ClientBlock.AdresseExploitation", b =>
                 {
                     b.Property<int>("Id_adresse_exp")
@@ -188,17 +293,21 @@ namespace EcoLogistics.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_siege"));
 
-                    b.Property<string>("Adresse")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
                     b.Property<Guid>("Id_client")
                         .HasColumnType("char(36)");
 
                     b.Property<int?>("Id_localite")
                         .HasColumnType("int");
 
+                    b.Property<string>("Numero")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<string>("Raison_sociale")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Rue")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
