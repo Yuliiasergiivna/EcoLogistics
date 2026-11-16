@@ -10,16 +10,16 @@
     </h2>
 </div>
 
-<!-- Navigation Tabs -->
+<!-- Navigation Tabs (Communes теперь первая/главная вкладка) -->
 <ul class="nav nav-tabs mb-4" id="geoTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active fw-bold" id="localites-tab" data-bs-toggle="tab" data-bs-target="#localites" type="button" role="tab">
-            <i class="bi bi-building me-2"></i>Localités
+        <button class="nav-link active fw-bold" id="communes-tab" data-bs-toggle="tab" data-bs-target="#communes" type="button" role="tab">
+            <i class="bi bi-map me-2"></i>Communes (BXL)
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link fw-bold" id="communes-tab" data-bs-toggle="tab" data-bs-target="#communes" type="button" role="tab">
-            <i class="bi bi-map me-2"></i>Communes (BXL)
+        <button class="nav-link fw-bold" id="localites-tab" data-bs-toggle="tab" data-bs-target="#localites" type="button" role="tab">
+            <i class="bi bi-building me-2"></i>Localités
         </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -32,8 +32,72 @@
 <!-- Content Tabs -->
 <div class="tab-content" id="geoTabsContent">
 
-    <!-- Tab 1: Localités -->
-    <div class="tab-pane fade show active" id="localites" role="tabpanel">
+    <!-- Tab 1: Communes (BXL) - СДЕЛАНА ГЛАВНОЙ (ACTIVE) -->
+    <div class="tab-pane fade show active" id="communes" role="tabpanel">
+        <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
+            <div class="card-body p-0 d-flex flex-column h-100 overflow-hidden">
+                <!-- Écran partagé : Carte à gauche, Tableau à droite -->
+                <div class="row g-0 h-100 flex-grow-1" style="min-height: 0;">
+
+                    <!-- Colonne de gauche : Carte interactive Leaflet -->
+                    <div class="col-md-5 h-100 position-relative bg-light border-end d-flex flex-column">
+                        <div id="brusselsMap" class="flex-grow-1 w-100" style="height: 100%; min-height: 400px;"></div>
+                    </div>
+
+                    <!-- Colonne de droite : Tableau des communes -->
+                    <div class="col-md-7 d-flex flex-column h-100 position-relative">
+                        <div class="table-responsive flex-grow-1 h-100" style="overflow-y: auto;">
+                            <table class="table table-hover align-middle mb-0" id="communesTable">
+                                <thead class="bg-cf2d-header text-white" style="position: sticky; top: 0; z-index: 10;">
+                                    <tr>
+                                        <th class="py-3 ps-4">
+                                            Commune principale
+                                            <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
+                                                <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
+                                            </span>
+                                        </th>
+                                        <th class="py-3">Code postal</th> <!-- Новая колонка для кода коммуны -->
+                                        <th class="py-3">Nom FR</th>
+                                        <th class="py-3">Nom NL</th>
+                                        <th class="py-3 pe-4">Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var c in Model.Communes)
+                                    {
+                                        <tr class="commune-row" data-commune="@c.Commune_principale" style="cursor: pointer;">
+                                            <td class="fw-bold ps-4">@c.Commune_principale</td>
+                                            <td>
+                                                <!-- Отображение кода коммуны (проверьте название свойства, например c.Code или c.Code_commune) -->
+                                                <span class="badge bg-light text-dark border">@c.Code_postal</span>
+                                            </td>
+                                            <td>@c.Nom_fr</td>
+                                            <td>@c.Nom_nl</td>
+                                            <td class="pe-4"><span class="badge bg-secondary">@c.Type</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Boutons de défilement pour Communes -->
+                        <div class="table-scroll-buttons">
+                            <button type="button" class="btn-scroll-top btn-scroll-nav" title="Faire défiler vers le haut">
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn-scroll-bottom btn-scroll-nav" title="Faire défiler vers le bas">
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 2: Localités -->
+    <div class="tab-pane fade" id="localites" role="tabpanel">
         <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
             <div class="card-body p-0 d-flex flex-column h-100 overflow-hidden">
                 <div class="table-responsive flex-grow-1 h-100" style="overflow-y: auto;">
@@ -141,65 +205,6 @@
         </div>
     </div>
 
-    <!-- Tab 2: Communes (BXL) -->
-    <div class="tab-pane fade" id="communes" role="tabpanel">
-        <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
-            <div class="card-body p-0 d-flex flex-column h-100 overflow-hidden">
-                <!-- Écran partagé : Carte à gauche, Tableau à droite -->
-                <div class="row g-0 h-100 flex-grow-1" style="min-height: 0;">
-
-                    <!-- Colonne de gauche : Carte interactive Leaflet -->
-                    <div class="col-md-5 h-100 position-relative bg-light border-end d-flex flex-column">
-                        <div id="brusselsMap" class="flex-grow-1 w-100" style="height: 100%; min-height: 400px;"></div>
-                    </div>
-
-                    <!-- Colonne de droite : Tableau des communes -->
-                    <div class="col-md-7 d-flex flex-column h-100 position-relative">
-                        <div class="table-responsive flex-grow-1 h-100" style="overflow-y: auto;">
-                            <table class="table table-hover align-middle mb-0" id="communesTable">
-                                <thead class="bg-cf2d-header text-white" style="position: sticky; top: 0; z-index: 10;">
-                                    <tr>
-                                        <th class="py-3 ps-4">
-                                            Commune principale
-                                            <span class="ms-1 text-white-50" style="font-size: 0.8rem;">
-                                                <i class="bi bi-arrow-up"></i><i class="bi bi-arrow-down"></i>
-                                            </span>
-                                        </th>
-                                        <th class="py-3">Nom FR</th>
-                                        <th class="py-3">Nom NL</th>
-                                        <th class="py-3 pe-4">Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var c in Model.Communes)
-                                    {
-                                        <tr class="commune-row" data-commune="@c.Commune_principale" style="cursor: pointer;">
-                                            <td class="fw-bold ps-4">@c.Commune_principale</td>
-                                            <td>@c.Nom_fr</td>
-                                            <td>@c.Nom_nl</td>
-                                            <td class="pe-4"><span class="badge bg-secondary">@c.Type</span></td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Boutons de défilement pour Communes -->
-                        <div class="table-scroll-buttons">
-                            <button type="button" class="btn-scroll-top btn-scroll-nav" title="Faire défiler vers le haut">
-                                <i class="bi bi-arrow-up"></i>
-                            </button>
-                            <button type="button" class="btn-scroll-bottom btn-scroll-nav" title="Faire défiler vers le bas">
-                                <i class="bi bi-arrow-down"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Tab 3: Pays -->
     <div class="tab-pane fade" id="pays" role="tabpanel">
         <div class="card shadow-lg cf2d-card border-0 position-relative" style="height: calc(100vh - 200px);">
@@ -247,7 +252,7 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // 1. Prokrutka dlya tablic
+            // 1. Прокрутка таблиц
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 const tableWrapper = pane.querySelector('.table-responsive');
                 const btnTop = pane.querySelector('.btn-scroll-top');
@@ -268,79 +273,71 @@
                 }
             });
 
-            // 2. Inicializaciya karty Leaflet s nastoyaschim GeoJSON Brusselya
-            let mapInstance = null;
+            // 2. Инициализация карты сразу при загрузке (так как вкладка активна по умолчанию)
+            let mapInstance = L.map('brusselsMap', {
+                zoomControl: true
+            }).setView([50.8503, 4.3517], 11);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(mapInstance);
+
             let geojsonLayerGlobal = null;
-            const communesTabBtn = document.getElementById('communes-tab');
+            const brusselsGeoJsonUrl = 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/brussels.geojson';
 
-            if (communesTabBtn) {
-                communesTabBtn.addEventListener('shown.bs.tab', function () {
-                    let mapContainer = document.getElementById('brusselsMap');
+            fetch(brusselsGeoJsonUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error("HTTP error " + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    geojsonLayerGlobal = L.geoJson(data, {
+                        style: function () {
+                            return {
+                                fillColor: '#0d6efd',
+                                weight: 2,
+                                opacity: 1,
+                                color: 'white',
+                                fillOpacity: 0.4
+                            };
+                        },
+                        onEachFeature: function (feature, layer) {
+                            let props = feature.properties;
+                            let communeName = props.name || props.NAME_2 || props.NAME_1 || props.NAME || '';
+                            layer.feature.properties._searchName = communeName.toLowerCase().trim();
 
-                    if (mapContainer && !mapInstance) {
-                        mapInstance = L.map('brusselsMap', {
-                            zoomControl: true
-                        }).setView([50.8503, 4.3517], 11);
+                            layer.bindPopup("<b>Commune : </b>" + communeName);
 
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            maxZoom: 19,
-                            attribution: '&copy; OpenStreetMap contributors'
-                        }).addTo(mapInstance);
-
-                        // Stabilnyy i korrektnyy CDN-istochnik dlya realnyh granits Brusselya
-                        const brusselsGeoJsonUrl = 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/brussels.geojson';
-
-                        fetch(brusselsGeoJsonUrl)
-                            .then(response => {
-                                if (!response.ok) throw new Error("HTTP error " + response.status);
-                                return response.json();
-                            })
-                            .then(data => {
-                                geojsonLayerGlobal = L.geoJson(data, {
-                                    style: function () {
-                                        return {
-                                            fillColor: '#0d6efd',
-                                            weight: 2,
-                                            opacity: 1,
-                                            color: 'white',
-                                            fillOpacity: 0.4
-                                        };
-                                    },
-                                    onEachFeature: function (feature, layer) {
-                                        let props = feature.properties;
-                                        let communeName = props.name || props.NAME_2 || props.NAME_1 || props.NAME || '';
-                                        layer.feature.properties._searchName = communeName.toLowerCase().trim();
-
-                                        layer.bindPopup("<b>Commune : </b>" + communeName);
-
-                                        layer.on({
-                                            mouseover: function (e) {
-                                                e.target.setStyle({
-                                                    fillColor: '#198754',
-                                                    fillOpacity: 0.7
-                                                });
-                                            },
-                                            mouseout: function (e) {
-                                                geojsonLayerGlobal.resetStyle(e.target);
-                                            },
-                                            click: function (e) {
-                                                mapInstance.fitBounds(e.target.getBounds());
-                                            }
-                                        });
-                                    }
-                                }).addTo(mapInstance);
-                            })
-                            .catch(error => {
-                                console.error('Erreur chargement GeoJSON:', error);
+                            layer.on({
+                                mouseover: function (e) {
+                                    e.target.setStyle({
+                                        fillColor: '#198754',
+                                        fillOpacity: 0.7
+                                    });
+                                },
+                                mouseout: function (e) {
+                                    geojsonLayerGlobal.resetStyle(e.target);
+                                },
+                                click: function (e) {
+                                    mapInstance.fitBounds(e.target.getBounds());
+                                }
                             });
+                        }
+                    }).addTo(mapInstance);
+                })
+                .catch(error => console.error('Erreur chargement GeoJSON:', error));
 
-                    } else if (mapInstance) {
+            // Если пользователь переключается на другие вкладки и обратно, обновляем размер карты
+            document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function (e) {
+                    if (e.target.id === 'communes-tab' && mapInstance) {
                         mapInstance.invalidateSize();
                     }
                 });
-            }
+            });
 
-            // 3. Interaktivnaya svyaz' tablicy s kartoy
+            // 3. Интерактивная связь таблицы с картой
             const communesTable = document.getElementById('communesTable');
             if (communesTable) {
                 const mapping = {
@@ -403,7 +400,7 @@
                     });
                 });
 
-                communesTable.addEventListener('click', function (e) {
+                communesTable.dirname = communesTable.addEventListener('click', function (e) {
                     const row = e.target.closest('.commune-row');
                     if (!row || !geojsonLayerGlobal || !mapInstance) return;
 

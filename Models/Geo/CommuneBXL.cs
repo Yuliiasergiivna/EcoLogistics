@@ -13,6 +13,13 @@ namespace EcoLogistics.Models.Geo
         [MaxLength(64, ErrorMessage = "Le nom de la commune principale ne peut pas dépasser 64 caractères.")]
         [Required(ErrorMessage = "Le nom de la commune principale est obligatoire.")]
         public string Commune_principale { get; set; }= string.Empty;
+        [DisplayName("Code postal: ")]
+        [MaxLength(10, ErrorMessage = "Le code postal ne peut pas dépasser 10 caractères.")]
+        [Required(ErrorMessage = "Le code postal est obligatoire.")]
+        public string? Code_postal { get; set; }
+        [DisplayName("Région: ")]
+        [MaxLength(64)]
+        public string? Region { get; set; }
         [DisplayName("Sous-commune: ")]
         public bool Sous_commune { get; set; }
         [DisplayName("Nom en français: ")]

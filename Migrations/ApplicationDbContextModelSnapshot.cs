@@ -336,6 +336,11 @@ namespace EcoLogistics.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id_commune"));
 
+                    b.Property<string>("Code_postal")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
                     b.Property<string>("Commune_principale")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -346,6 +351,10 @@ namespace EcoLogistics.Migrations
                         .HasColumnType("varchar(64)");
 
                     b.Property<string>("Nom_nl")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("Region")
                         .HasMaxLength(64)
                         .HasColumnType("varchar(64)");
 

@@ -23,6 +23,10 @@ namespace EcoLogistics.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string type = "Marques", string? searchString = null)
         {
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                type = "Marques";
+            }
             var items = new List<CatalogueItemViewModel>();
 
             switch (type)
@@ -36,8 +40,8 @@ namespace EcoLogistics.Controllers
                     {
                         Id = x.Id_code_EURAL ?? 0,
                         CatalogType = "CodeEURAL",
-                        Name = $"{x.Code_EURAL} {(string.IsNullOrEmpty(x.Code_IBGE) ? "" : $"(IBGE: {x.Code_IBGE})")}",
-                        Description = $"{x.Description} {(string.IsNullOrEmpty(x.Directive_ref) ? "" : $"— [{x.Directive_ref}]")}"
+                        Name = $"{x.Code_EURAL ?? ""} {(string.IsNullOrEmpty(x.Code_IBGE) ? "" : $"(IBGE: {x.Code_IBGE})")}".Trim(),
+                        Description = $"{x.Description ?? ""} {(string.IsNullOrEmpty(x.Directive_ref) ? "" : $"— [{x.Directive_ref}]")}".Trim()
                     }).ToListAsync();
                     break;
 

@@ -28,7 +28,10 @@ namespace EcoLogistics.Controllers
                 .Include(l => l.CommuneBXL)
                 .Include(l => l.Pays)
                 .ToListAsync(),
-                Communes = await _context.CommuneBXLs.ToListAsync(),
+                Communes = await _context.CommuneBXLs
+                .OrderByDescending(c=> c.Region == "Bruxelles-Capitale")
+                .ThenBy(c => c.Commune_principale)
+                .ToListAsync(),
                 PaysList = await _context.Pays.ToListAsync()
             };
 
