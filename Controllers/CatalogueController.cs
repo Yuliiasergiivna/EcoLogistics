@@ -102,8 +102,17 @@ namespace EcoLogistics.Controllers
                     }).ToListAsync();
                     break;
             }
+            string catalogDisplayName = type switch
+            {
+                "CodeEURAL" => "Codes EURAL",
+                "CodeDR" => "Codes DR",
+                "Divers" => "Divers",
+                "Poids" => "Poids",
+                "Marques" or _ => "Marques"
+            };
 
             ViewData["CurrentType"] = type;
+            ViewData["CatalogDisplayName"] = catalogDisplayName;
             ViewData["IsEditable"] = _editableCatalogs.Contains(type);
             ViewData["CurrentFilter"] = searchString;
 
@@ -135,6 +144,7 @@ namespace EcoLogistics.Controllers
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index), new { type = model.CatalogType });
         }
         // 3. EDIT (GET)

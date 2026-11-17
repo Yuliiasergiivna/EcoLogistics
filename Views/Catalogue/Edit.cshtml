@@ -1,0 +1,56 @@
+﻿@model EcoLogistics.ViewModels.Catalogues.CatalogueItemViewModel
+
+@{
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = (isEdit ? "Modifier" : "Ajouter") + " - " + Model.CatalogType;
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Catalogue" asp-action="Index" asp-route-type="@Model.CatalogType">Catalogue (@Model.CatalogType)</a></li>
+        <li class="breadcrumb-item active">@(isEdit ? "Modification" : "Création")</li>
+    </ol>
+
+    <div class="card shadow-sm border-0 mb-4 col-md-8 mx-auto">
+        <div class="card-body p-4">
+            <form asp-action="@(isEdit ? "Edit" : "Create")" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="CatalogType" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Entrez la valeur..." />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                @if (Model.CatalogType == "Poids")
+                {
+                    <div class="mb-3">
+                        <label asp-for="PoidsValeur" class="form-label fw-bold"></label>
+                        <input asp-for="PoidsValeur" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                        <span asp-validation-for="PoidsValeur" class="text-danger"></span>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" asp-route-type="@Model.CatalogType" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Retour
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save me-1"></i> @(isEdit ? "Enregistrer les modifications" : "Créer l'élément")
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
