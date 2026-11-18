@@ -88,7 +88,16 @@
                         <div class="sub-menu">
                             <a asp-controller="Produit" asp-action="Index"><i class="bi bi-box me-1"></i> Produits</a>
                             <a asp-controller="Colis" asp-action="Index"><i class="bi bi-archive me-1"></i> Colis</a>
-                            <a asp-controller="Catalogue" asp-action="Index"><i class="bi bi-journal-text me-1"></i> Catalogues (EURAL / DR / Divers)</a>
+                            <div class="catalogues-sub-title text-dark px-3 pt-2 " style="font-size: 0.85rem;">
+                                <i class="bi bi-journal-text me-1"></i> Catalogues : 
+                            </div>
+                            <div class="ps-4">
+                                <a asp-controller="Catalogue" asp-action="Index" asp-route-type="Marques"><i class="bi bi-dot"></i>Marques</a>
+                                <a asp-controller="Catalogue" asp-action="Index" asp-route-type="Divers"><i class="bi bi-dot"></i>Divers</a>
+                                <a asp-controller="Catalogue" asp-action="Index" asp-route-type="Poids"><i class="bi bi-dot"></i>Poids</a>
+                                <a asp-controller="Catalogue" asp-action="Index" asp-route-type="CodeEURAL"><i class="bi bi-dot"></i>Code EURAL</a>
+                                <a asp-controller="Catalogue" asp-action="Index" asp-route-type="CodeDR"><i class="bi bi-dot"></i>CodeDR</a>
+                            </div>
                         </div>
 
                         <!-- LOGISTIQUE SECTION -->

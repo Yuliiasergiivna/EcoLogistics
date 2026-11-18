@@ -5,6 +5,7 @@
     var currentType = ViewData["CurrentType"]?.ToString() ?? "Marques";
     var isEditable = (bool)(ViewData["IsEditable"] ?? false);
     var currentFilter = ViewData["CurrentFilter"]?.ToString();
+    var catalogDisplayName = ViewData["CatalogDisplayName"]?.ToString() ?? "Marques";
 }
 
 <div class="container-fluid px-4">
@@ -12,9 +13,14 @@
         <div>
             <h1 class="h3 fw-bold text-dark mb-1">Gestion des Catalogues</h1>
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Accueil</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Catalogues</li>
+                <ol class="breadcrumb mb-0 bg-transparent p-0">
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">Accueil</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Catalogue" asp-action="Index" asp-route-type="Marques" class="text-decoration-none">Catalogues</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">@catalogDisplayName</li>
                 </ol>
             </nav>
         </div>

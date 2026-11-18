@@ -21,6 +21,7 @@ namespace EcoLogistics.Models.Catalogues
         [DisplayName("Directive réf. :")]
         [MaxLength(255, ErrorMessage = "La direcive ne peut pas dépasser 255 caractères")]
         public string? Directive_ref { get; set; }
+        public bool IsActive { get; set; } = false;
 
         //[ScaffoldColumn(false)]
         //public int? Id_produit { get; set; }

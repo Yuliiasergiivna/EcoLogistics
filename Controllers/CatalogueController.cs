@@ -4,6 +4,7 @@ using EcoLogistics.ViewModels.Catalogues;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using EcoLogistics.Models;
 
 namespace EcoLogistics.Controllers
 {
@@ -18,7 +19,7 @@ namespace EcoLogistics.Controllers
         }
         private readonly HashSet<string> _editableCatalogs = new(StringComparer.OrdinalIgnoreCase)
         {
-            "Marques", "Divers", "Poids"
+            "Marques", "Divers", "Poids", "CodeEURAL"
         };
         [HttpGet]
         public async Task<IActionResult> Index(string type = "Marques", string? searchString = null)
@@ -28,21 +29,31 @@ namespace EcoLogistics.Controllers
                 type = "Marques";
             }
             var items = new List<CatalogueItemViewModel>();
+            List<CodeEURAL> activeCodes = new();
+            List<CodeEURAL> allEuralCodes = new();
 
             switch (type)
             {
                 case "CodeEURAL":
                     var euralQuery = _context.CodeEURALs.AsNoTracking().AsQueryable();
-                    if (!string.IsNullOrWhiteSpace(searchString))
-                        euralQuery = euralQuery.Where(x => (x.Code_EURAL != null && x.Code_EURAL.Contains(searchString)) || (x.Description != null && x.Description.Contains(searchString)));
 
-                    items = await euralQuery.Select(x => new CatalogueItemViewModel
-                    {
-                        Id = x.Id_code_EURAL ?? 0,
-                        CatalogType = "CodeEURAL",
-                        Name = $"{x.Code_EURAL ?? ""} {(string.IsNullOrEmpty(x.Code_IBGE) ? "" : $"(IBGE: {x.Code_IBGE})")}".Trim(),
-                        Description = $"{x.Description ?? ""} {(string.IsNullOrEmpty(x.Directive_ref) ? "" : $"— [{x.Directive_ref}]")}".Trim()
-                    }).ToListAsync();
+                        if (!string.IsNullOrWhiteSpace(searchString))
+                        {
+                            euralQuery = euralQuery.Where(x =>
+                                x.Code_EURAL != null && x.Code_EURAL.Contains(searchString) ||
+                                (x.Code_IBGE != null && x.Code_IBGE.Contains(searchString)) ||
+                                (x.Description != null && x.Description.Contains(searchString)));
+                        }
+
+                        allEuralCodes = await euralQuery.OrderBy(c => c.Code_EURAL).ToListAsync();
+
+                       
+                        activeCodes = allEuralCodes
+                            .Where(c => c.IsActive)
+                            .ToList();
+                    var officialCode = allEuralCodes.Where(c => !c.IsActive).ToList();
+
+                    ViewData["ActiveCodes"] = activeCodes;
                     break;
 
                 case "CodeDR":
@@ -116,7 +127,66 @@ namespace EcoLogistics.Controllers
             ViewData["IsEditable"] = _editableCatalogs.Contains(type);
             ViewData["CurrentFilter"] = searchString;
 
+            if (type == "CodeEURAL")
+            {
+                return View("CodeEural", allEuralCodes);
+            }
+
             return View(items);
+        }
+        //POST CreateEURAL
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> CreateEural(string code_EURAL, string? code_IBGE, string? description, string? directive_ref)
+        {
+            if (string.IsNullOrWhiteSpace(code_EURAL))
+            {
+                TempData["Error"] = "Le code EURAL est obligatoire.";
+                return RedirectToAction(nameof(Index), new { type = "CodeEURAL" });
+            }
+
+            var newCode = new CodeEURAL
+            {
+                Code_EURAL = code_EURAL.Trim(),
+                Code_IBGE = code_IBGE?.Trim(),
+                Description = description?.Trim(),
+                Directive_ref = directive_ref?.Trim(),
+                IsActive = true
+            };
+
+            _context.CodeEURALs.Add(newCode);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { type = "CodeEURAL" });
+        }
+        //GET EditEURAL
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpGet]
+        public async Task<IActionResult> EditEural(int id)
+        {
+            var item = await _context.CodeEURALs.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item); // Sozdaem otdelnyy View EditEural.cshtml ili ispolzuem modalnuyu formu
+        }
+
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEural(int id, CodeEURAL model)
+        {
+            if (id != model.Id_code_EURAL) return BadRequest();
+
+            var item = await _context.CodeEURALs.FindAsync(id);
+            if (item == null) return NotFound();
+
+            item.Code_EURAL = model.Code_EURAL?.Trim();
+            item.Code_IBGE = model.Code_IBGE?.Trim();
+            item.Description = model.Description?.Trim();
+            item.Directive_ref = model.Directive_ref?.Trim();
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { type = "CodeEURAL" });
         }
         // 2. CREATE (POST)
         [Authorize(Roles = "Admin,Manager")]
@@ -233,6 +303,10 @@ namespace EcoLogistics.Controllers
                 case "Poids":
                     var p = await _context.Poids.FindAsync(id);
                     if (p != null) _context.Poids.Remove(p);
+                    break;
+                case "CodeEURAL":
+                    var euralItem = await _context.CodeEURALs.FindAsync(id);
+                    if (euralItem != null) _context.CodeEURALs.Remove(euralItem);
                     break;
             }
 
