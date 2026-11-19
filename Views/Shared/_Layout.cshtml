@@ -104,11 +104,17 @@
                         <div class="menu-header"><i class="bi bi-arrow-repeat me-1"></i> Logistique</div>
                         <div class="sub-menu">
                             <a asp-controller="Enlevement" asp-action="Index"><i class="bi bi-receipt-cutoff me-1"></i> Enlèvements</a>
+                        </div>
+
+                        <!--Excel Import-->
                             @if(User.IsInRole("Admin"))
                             {
-                                <a asp-controller="ClientImport" asp-action="Index"><i class="bi bi-file-excel me-1"></i> Import Excel </a>
+                            <div class="menu-header"><i class="bi-file-excel me-1"> </i>Import Excel</div>
+                                <div class="sub-menu">
+                                     <a asp-controller="ClientImport" asp-action="Index"><i class="bi bi-dot"></i> Client import </a>
+                                     <a asp-controller="CatalogueImport" asp-action="Index"><i class="bi bi-dot"></i> Catalogue import</a>
+                                </div>
                             }
-                        </div>
                     </div>
                 </nav>
 

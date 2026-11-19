@@ -101,10 +101,6 @@
                             <th class="py-2">Code "IBGE"</th>
                             <th class="py-2">Code EURAL</th>
                             <th class="py-2">Traitement</th>
-                            @if (canEdit)
-                            {
-                                <th class="text-end pe-4 py-2">Actions</th>
-                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -112,29 +108,24 @@
                         {
                             foreach (var item in activeCodes)
                             {
-                                <tr>
+                                var editUrl = Url.Action("EditEural", "Catalogue", new { id = item.Id_code_EURAL });
+                                <tr class="@(canEdit ? "eural-row-edit" : "")"
+                                    style="@(canEdit ? "cursor: pointer;" : "")"
+                                    @if (canEdit)
+                                    {
+                                             <text>data-edit-url="@editUrl"</text>
+                                    }>
                                     <td class="ps-4 fw-bold text-cf2d">@(string.IsNullOrEmpty(item.Description) ? "—" : item.Description)</td>
                                     <td class="fw-semibold">@(string.IsNullOrEmpty(item.Code_IBGE) ? "—" : item.Code_IBGE)</td>
                                     <td><span class="badge bg-light text-dark border">@item.Code_EURAL</span></td>
-                                    <td class="fw-bold">@(string.IsNullOrEmpty(item.Directive_ref) ? "—" : item.Directive_ref)</td>
-                                    @if (canEdit)
-                                    {
-                                        <td class="text-end pe-4">
-                                            <form asp-action="Delete" asp-route-type="CodeEURAL" asp-route-id="@item.Id_code_EURAL" method="post" class="d-inline" onsubmit="return confirm('Supprimer ce code actif ?');">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Supprimer" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
-                                                    <i class="bi bi-trash" style="font-size: 0.75rem;"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    }
+                                    <td class="pe-4 fw-bold">@(string.IsNullOrEmpty(item.Directive_ref) ? "—" : item.Directive_ref)</td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="@(canEdit ? 5 : 4)" class="text-center text-muted py-4 small">
+                                <td colspan="4" class="text-center text-muted py-4 small">
                                     Aucun code actif configuré. Utilisez le formulaire ci-dessus pour en ajouter.
                                 </td>
                             </tr>
@@ -145,9 +136,6 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- 2. VTORAYA CHAST: POLNYY INFORMATIVNYY SPISOK VSEH KODOV   -->
-    <!-- ========================================================= -->
     <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
         <div class="card-header bg-white py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom">
             <h5 class="mb-0 fw-bold fs-6 text-dark">
@@ -201,3 +189,21 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("tr.eural-row-edit[data-edit-url]").forEach(function (row) {
+                row.addEventListener("click", function (e) {
+                    if (e.target.closest("a, button, form, input")) {
+                        return;
+                    }
+                    const rawUrl = this.getAttribute("data-edit-url");
+                    const url = rawUrl ? rawUrl.replaceAll('"', '').trim() : "";
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    </script>
+}

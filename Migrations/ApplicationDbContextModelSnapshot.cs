@@ -67,6 +67,9 @@ namespace EcoLogistics.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
                     b.HasKey("Id_code_EURAL");
 
                     b.ToTable("CodeEURALs");

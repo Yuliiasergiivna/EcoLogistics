@@ -1,0 +1,83 @@
+﻿@model EcoLogistics.Models.Catalogues.CodeEURAL
+
+@{
+    ViewData["Title"] = "Modifier un Code EURAL actif";
+    var canManage = User.IsInRole("Admin") || User.IsInRole("Manager");
+}
+
+<div class="container-fluid px-4">
+    <h1 class="h3 fw-bold text-dark mt-4 mb-1">Modifier un Code EURAL actif</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Accueil</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Catalogue" asp-action="Index" asp-route-type="CodeEURAL">Codes EURAL</a></li>
+        <li class="breadcrumb-item active">Modification</li>
+    </ol>
+
+    <div class="card shadow-sm border-0 mb-4 col-md-8 mx-auto rounded-4">
+        <div class="card-body p-4">
+            <form asp-action="EditEural" asp-route-id="@Model.Id_code_EURAL" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id_code_EURAL" />
+                <input type="hidden" asp-for="IsActive" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Matériel / Description</label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Code_IBGE" class="form-label fw-bold"></label>
+                    <input asp-for="Code_IBGE" class="form-control" />
+                    <span asp-validation-for="Code_IBGE" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Code_EURAL" class="form-label fw-bold"></label>
+                    <input asp-for="Code_EURAL" class="form-control" required />
+                    <span asp-validation-for="Code_EURAL" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Directive_ref" class="form-label fw-bold"></label>
+                    <input asp-for="Directive_ref" class="form-control" />
+                    <span asp-validation-for="Directive_ref" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a asp-action="Index" asp-route-type="CodeEURAL" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Retour
+                    </a>
+
+                    @if (canManage)
+                    {
+                        <button type="submit" class="btn btn-cf2d">
+                            <i class="bi bi-save me-1"></i> Enregistrer
+                        </button>
+                    }
+                </div>
+            </form>
+
+            @if (canManage)
+            {
+                <hr class="my-4" />
+                <form asp-action="Delete" asp-route-type="CodeEURAL" asp-route-id="@Model.Id_code_EURAL" method="post"
+                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce code EURAL actif ?');"
+                      class="d-flex justify-content-end">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i> Supprimer cet élément
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

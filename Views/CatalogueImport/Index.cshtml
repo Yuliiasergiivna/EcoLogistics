@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "Import Excel - Catalogues";
+    var selectedType = ViewData["CatalogType"]?.ToString() ?? "CodeEURAL";
+    var catalogTypes = new[] { "CodeEURAL", "CodeDR", "Marques", "Poids", "Divers" };
+}
+
+<div class="container-fluid px-4">
+    <h1 class="h3 fw-bold text-dark mt-4 mb-1">Importation Excel — Catalogues</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Accueil</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Catalogue" asp-action="Index" asp-route-type="@selectedType">Catalogue (@selectedType)</a></li>
+        <li class="breadcrumb-item active">Import Excel</li>
+    </ol>
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@ViewBag.Success
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i>Charger un fichier Excel
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-controller="CatalogImport" asp-action="Upload" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label for="catalogTypeSelect" class="form-label fw-bold">Type de catalogue</label>
+                            <select id="catalogTypeSelect" name="type" class="form-select">
+                                @foreach (var t in catalogTypes)
+                                {
+                                    if (t.Equals(selectedType, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <option value="@t" selected>@t</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@t">@t</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="excelFile" class="form-label fw-bold">Fichier Excel (.xlsx, .xls, .xlsm)</label>
+                            <input type="file" id="excelFile" name="excelFile" class="form-control" accept=".xlsx,.xls,.xlsm" required />
+                            <div class="form-text">
+                                Les doublons sont automatiquement ignorés lors de l'importation.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-controller="Catalogue" asp-action="Index" asp-route-type="@selectedType" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Retour au catalogue
+                            </a>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload me-1"></i> Importer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4 bg-light">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Règles de lecture des fichiers
+                    </h6>
+                    <ul class="small text-secondary mb-0 ps-3">
+                        <li class="mb-2"><strong>CodeEURAL :</strong> colonne B à partir de la ligne 2 (<code>EURAL (versie 2014)</code>) ; séparé en code sans espaces, code IBGE avec espaces et description ; importé avec <code>IsActive = false</code>.</li>
+                        <li class="mb-2"><strong>CodeDR :</strong> feuille <code>CodeTraitementDesDechets</code> à partir de la ligne 3 (colonne A = code, colonne B = description).</li>
+                        <li class="mb-2"><strong>Marques :</strong> colonne A à partir de la ligne 2.</li>
+                        <li class="mb-2"><strong>Poids :</strong> 2 premières colonnes (A = désignation, B = poids) à partir de la ligne 2.</li>
+                        <li><strong>Divers :</strong> colonne A à partir de la ligne 2.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

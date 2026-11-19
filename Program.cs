@@ -27,6 +27,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddScoped<ClientImportService>();
+builder.Services.AddScoped<CatalogueImportService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

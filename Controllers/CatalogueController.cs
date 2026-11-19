@@ -21,6 +21,7 @@ namespace EcoLogistics.Controllers
         {
             "Marques", "Divers", "Poids", "CodeEURAL"
         };
+        //GET Index
         [HttpGet]
         public async Task<IActionResult> Index(string type = "Marques", string? searchString = null)
         {
@@ -31,6 +32,7 @@ namespace EcoLogistics.Controllers
             var items = new List<CatalogueItemViewModel>();
             List<CodeEURAL> activeCodes = new();
             List<CodeEURAL> allEuralCodes = new();
+            List<CodeEURAL> officialCode = new();
 
             switch (type)
             {
@@ -40,7 +42,7 @@ namespace EcoLogistics.Controllers
                         if (!string.IsNullOrWhiteSpace(searchString))
                         {
                             euralQuery = euralQuery.Where(x =>
-                                x.Code_EURAL != null && x.Code_EURAL.Contains(searchString) ||
+                                (x.Code_EURAL != null && x.Code_EURAL.Contains(searchString)) ||
                                 (x.Code_IBGE != null && x.Code_IBGE.Contains(searchString)) ||
                                 (x.Description != null && x.Description.Contains(searchString)));
                         }
@@ -51,7 +53,7 @@ namespace EcoLogistics.Controllers
                         activeCodes = allEuralCodes
                             .Where(c => c.IsActive)
                             .ToList();
-                    var officialCode = allEuralCodes.Where(c => !c.IsActive).ToList();
+                     officialCode = allEuralCodes.Where(c => !c.IsActive).ToList();
 
                     ViewData["ActiveCodes"] = activeCodes;
                     break;
@@ -129,7 +131,7 @@ namespace EcoLogistics.Controllers
 
             if (type == "CodeEURAL")
             {
-                return View("CodeEural", allEuralCodes);
+                return View("CodeEural", officialCode);
             }
 
             return View(items);
@@ -167,7 +169,7 @@ namespace EcoLogistics.Controllers
         {
             var item = await _context.CodeEURALs.FindAsync(id);
             if (item == null) return NotFound();
-            return View(item); // Sozdaem otdelnyy View EditEural.cshtml ili ispolzuem modalnuyu formu
+            return View(item); 
         }
 
         [Authorize(Roles = "Admin,Manager")]
