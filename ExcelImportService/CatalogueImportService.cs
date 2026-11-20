@@ -112,31 +112,29 @@ namespace EcoLogistics.ExcelImportService
 
             for (int row = 3; row <= lastRow; row++)
             {
-                var codeDr = GetCellValue(ws, row, 1, 16); // Kolonka A
-                if (string.IsNullOrWhiteSpace(codeDr))
+                var raw = GetCellValue(ws, row, 2); 
+                if (string.IsNullOrWhiteSpace(raw))
                     continue;
-
-                codeDr = codeDr.Trim();
-                if (seenCodes.Contains(codeDr))
-                    continue;
-
-                var rawDesc = GetCellValue(ws, row, 2); // Kolonka B
-                string? cleanDesc = rawDesc;
-
-                // Esli opisanie nachinaetsya s "R1 - ..." ili "D5 - ...", ubirayem povtor koda v nachale
-                if (!string.IsNullOrWhiteSpace(cleanDesc))
+                string codeDr;
+                string? description = null;
+                int dashIndex = raw.IndexOf('-');
+                if (dashIndex >= 0)
                 {
-                    var prefix = codeDr + " -";
-                    if (cleanDesc.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cleanDesc = cleanDesc.Substring(prefix.Length).Trim();
-                    }
+                    codeDr = raw.Substring(0, dashIndex).Trim();
+                    description = raw.Substring(dashIndex + 1).Trim();
                 }
+                else
+                {
+                    codeDr = raw.Trim();
+                }
+
+                if (string.IsNullOrWhiteSpace(codeDr) || seenCodes.Contains(codeDr))
+                    continue;
 
                 var entity = new CodeDR
                 {
-                    Code_DR = codeDr,
-                    Description = Truncate(cleanDesc, 255)
+                    Code_DR = Truncate( codeDr,16),
+                    Description = Truncate(string.IsNullOrWhiteSpace(description) ? null : description, 255)
                 };
 
                 _context.CodeDRs.Add(entity);
